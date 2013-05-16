@@ -1,10 +1,22 @@
 <?php
+/*
+ * This file is part of the Symfony package.
+ *
+ * (c) Andrew Cassell <me@andrewcassell.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
 namespace Parm;
 
-use \ArrayAccess;
-
-class DataAccessArray implements ArrayAccess
+/**
+ * DataAccessArray is used for creating an object wrapper around an array.
+ * The DatabaseProcessor returns DataAccessArray objects when the getArray function is called.
+ * The DataAccessObject extends this class.
+ *
+ */
+class DataAccessArray implements \ArrayAccess
 {
 	protected $__data = array();
 
@@ -40,6 +52,11 @@ class DataAccessArray implements ArrayAccess
 		return isset($this->__data[$offset]) ? $this->__data[$offset] : null;
 	}
 
+	/**
+     * @param string $fieldName Name of the field/column in the database
+     *
+     * @return string|null The value of the field
+     */
 	function getFieldValue($fieldName)
 	{
 		if (array_key_exists($fieldName, $this->__data))
@@ -52,13 +69,17 @@ class DataAccessArray implements ArrayAccess
 		}
 	}
 
-	// returns an associative array of the row retrieved from the database
+	/**
+     * @return array An associative array of the row retrieved from the database
+     */
 	function toArray()
 	{
 		return $this->__data;
 	}
-
-	// returns an associative array with camel case array keys for use in javascript
+	
+	/**
+     * @return array An associative array with camel case array keys. Great for exporting data to JSON.
+     */
 	function toJSON()
 	{
 		$json = array();
@@ -73,14 +94,16 @@ class DataAccessArray implements ArrayAccess
 		return $json;
 	}
 
-	// returns a string 
+	/**
+     * @return string The row formatted in JSON
+     */
 	function toJSONString()
 	{
 		return self::JSONEncodeArray($this->toJSON());
 	}
 
-	// utils
-	static function toFieldCase($val)
+	
+	static protected function toFieldCase($val)
 	{
 		$result = '';
 
@@ -96,12 +119,12 @@ class DataAccessArray implements ArrayAccess
 		return $result;
 	}
 
-	static function JSONEncodeArray($array)
+	static protected function JSONEncodeArray($array)
 	{
 		return json_encode(self::utf8EncodeArray($array));
 	}
 
-	static function utf8EncodeArray($array)
+	static protected function utf8EncodeArray($array)
 	{
 		foreach ($array as $key => $value)
 		{

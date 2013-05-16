@@ -12,7 +12,11 @@
  * 
  */
 
-class_alias('Parm\DatabaseProcessor', 'DatabaseProcessor');
-class_alias('Parm\DatabaseNode', 'DatabaseNode');
+class_alias(Parm\DatabaseNode, DatabaseNode);
+class_alias(Parm\DatabaseConfiguration, DatabaseConfiguration);
+class_alias(Parm\DataAccessArray, DataAccessArray);
+class_alias(Parm\DatabaseProcessor, DatabaseProcessor);
+class_alias(Parm\DataAccessObject, DataAccessObject);
+class_alias(Parm\DataAccessObjectFactory, DataAccessObjectFactory);
 
 ?>

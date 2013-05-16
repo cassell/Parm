@@ -1,5 +1,7 @@
 <?php
 
+namespace Parm;
+
 class ParmConfiguration implements ArrayAccess
 {
 	var $databases = array();
