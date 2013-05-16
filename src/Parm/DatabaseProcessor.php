@@ -16,11 +16,11 @@ class DatabaseProcessor
 		{
 			$this->databaseNode = $databaseNodeOrConfigurationName;
 		}
-		else if(is_string($databaseNodeOrConfigurationName) && defined('SQLICIOUS_CONFIG_GLOBAL') && array_key_exists(SQLICIOUS_CONFIG_GLOBAL, $GLOBALS))
+		else if(is_string($databaseNodeOrConfigurationName) && defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
 		{
-			if($GLOBALS[SQLICIOUS_CONFIG_GLOBAL][$databaseNodeOrConfigurationName] instanceof DatabaseConfiguration)
+			if($GLOBALS[PARM_CONFIG_GLOBAL][$databaseNodeOrConfigurationName] instanceof DatabaseConfiguration)
 			{
-				$this->databaseNode = $GLOBALS[SQLICIOUS_CONFIG_GLOBAL][$databaseNodeOrConfigurationName]->getMaster();
+				$this->databaseNode = $GLOBALS[PARM_CONFIG_GLOBAL][$databaseNodeOrConfigurationName]->getMaster();
 			}
 			else
 			{
@@ -29,7 +29,7 @@ class DatabaseProcessor
 		}
 		else
 		{
-			throw new \Parm\Exception\ErrorException("A DatabaseNode must be passed to DatabaseProcessor or SQLICIOUS_CONFIG_GLOBAL must be defined.");
+			throw new \Parm\Exception\ErrorException("A DatabaseNode must be passed to DatabaseProcessor or PARM_CONFIG_GLOBAL must be defined.");
 		}
 		
 	}
@@ -353,14 +353,14 @@ class DatabaseProcessor
 	// useful for replacing mysql_real_escape_string in old code with DatabaseProcessor::mysql_real_escape_string()
 	static function mysql_real_escape_string($string)
 	{
-		if(defined('SQLICIOUS_CONFIG_GLOBAL') && array_key_exists(SQLICIOUS_CONFIG_GLOBAL, $GLOBALS))
+		if(defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
 		{
-			$dp = new DatabaseProcessor(reset(array_keys($GLOBALS[SQLICIOUS_CONFIG_GLOBAL]->getDatabases())));
+			$dp = new DatabaseProcessor(reset(array_keys($GLOBALS[PARM_CONFIG_GLOBAL]->getDatabases())));
 			return $dp->escapeString($string);
 		}
 		else
 		{
-			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires SQLICIOUS_CONFIG_GLOBAL");
+			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires PARM_CONFIG_GLOBAL");
 		}
 	}
 	
