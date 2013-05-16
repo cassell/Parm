@@ -1,5 +1,5 @@
 {
-    "name": "Parm/Parm",
+    "name": "parm/parm",
     "type": "library",
     "description": "Active Record ORM with closures and web interface",
     "keywords": ["active record","activerecord","orm","closures","dao","database","mysql"],
