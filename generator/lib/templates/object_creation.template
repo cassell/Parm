@@ -1,0 +1,14 @@
+// non extened object
+${{variableName}} = new {{className}}DaoObject();
+
+// extened object
+${{variableName}} = new {{className}}();
+
+// fields
+{{#columns}}
+{{#notPrimaryKey}}
+${{variableName}}->set{{FieldCase}}($val);
+{{/notPrimaryKey}}
+{{/columns}}
+
+${{variableName}}->save();
