@@ -2,6 +2,8 @@
 
 namespace Parm;
 
+use \mysqli;
+
 class DatabaseNode
 {
 	var $serverDatabaseName;
