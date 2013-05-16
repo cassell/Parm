@@ -24,12 +24,12 @@ class DatabaseProcessor
 			}
 			else
 			{
-				throw new SQLiciousErrorException("databaseNodeOrConfigurationName specified must be an instance of DatabaseConfiguration");
+				throw new \Parm\Exception\ErrorException("databaseNodeOrConfigurationName specified must be an instance of DatabaseConfiguration");
 			}
 		}
 		else
 		{
-			throw new SQLiciousErrorException("A DatabaseNode must be passed to DatabaseProcessor or SQLICIOUS_CONFIG_GLOBAL must be defined.");
+			throw new \Parm\Exception\ErrorException("A DatabaseNode must be passed to DatabaseProcessor or SQLICIOUS_CONFIG_GLOBAL must be defined.");
 		}
 		
 	}
@@ -165,7 +165,7 @@ class DatabaseProcessor
 	{
 		if(count(func_get_args()) > 0)
 		{
-			throw new SQLiciousErrorException("SQLicious DatabaseProcessor query does not accept any parameters");
+			throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor query does not accept any parameters");
 		}
 		
 		$result = $this->getMySQLResult($this->getSQL());
@@ -193,7 +193,7 @@ class DatabaseProcessor
 		{
 			if($conn->errno != 0)
 			{
-				throw new SQLiciousErrorException("SQLicious DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
+				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
 			}
 			
 			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
@@ -223,7 +223,7 @@ class DatabaseProcessor
 		}
 		catch(ErrorException $e)
 		{
-			throw new SQLiciousErrorException("SQLicious DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
+			throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
 		}
 	}
 	
@@ -257,12 +257,12 @@ class DatabaseProcessor
 				}
 				else
 				{
-					throw new SQLiciousErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql));
+					throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql));
 				}
 			}
 			catch(ErrorException $e)
 			{
-				throw new SQLiciousErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql) . '. Reason given ' . $e);
+				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql) . '. Reason given ' . $e);
 			}
 		}
 	}
@@ -360,7 +360,7 @@ class DatabaseProcessor
 		}
 		else
 		{
-			throw new SQLiciousErrorException("DatabaseProcess::mysql_real_escape_string requires SQLICIOUS_CONFIG_GLOBAL");
+			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires SQLICIOUS_CONFIG_GLOBAL");
 		}
 	}
 	

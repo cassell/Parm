@@ -37,7 +37,7 @@ class DatabaseNode
 
 			if($this->connection == null || $this->connection->connect_errno)
 			{
-				throw new Parm\Exception\ConnectionErrorException($this->connection);
+				throw new \Parm\Exception\ConnectionErrorException($this->connection);
 			}
 		}
 		

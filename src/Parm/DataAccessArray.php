@@ -48,7 +48,7 @@ class DataAccessArray implements ArrayAccess
 		}
 		else
 		{
-			throw new Parm\Exception\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
+			throw new \Parm\Exception\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
 		}
 	}
 

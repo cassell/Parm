@@ -102,7 +102,7 @@ abstract class DataAccessObject extends DataAccessArray
 				}
 				else
 				{
-					throw new Parm\Exception\ErrorException("Insert failed: " . $sql);
+					throw new \Parm\Exception\ErrorException("Insert failed: " . $sql);
 				}
 			}
 
