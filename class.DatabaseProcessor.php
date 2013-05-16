@@ -1,5 +1,7 @@
 <?php
 
+namespace Parm;
+
 class DatabaseProcessor
 {
 	var $connection;

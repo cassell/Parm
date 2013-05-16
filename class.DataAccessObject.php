@@ -1,6 +1,6 @@
 <?php
 
-require_once('class.DataAccessArray.php');
+namespace Parm;
 
 abstract class DataAccessObject extends DataAccessArray
 {
@@ -17,24 +17,24 @@ abstract class DataAccessObject extends DataAccessArray
 
 	function __construct($row = null)
 	{
-		// setup $this->data
+		// setup $this->__data
 		parent::__construct($row);
 
-		// if $this->data is null setup with defaults from table
-		if ($this->data == null)
+		// if $this->__data is null setup with defaults from table
+		if ($this->__data == null)
 		{
-			$this->data = static::getDefaultRow();
+			$this->__data = static::getDefaultRow();
 			if (static::getIdField() != null)
 			{
-				$this->data[static::getIdField()] = self::NEW_OBJECT_ID;
-				$this->modifiedColumns[static::getIdField()] = 1;
+				$this->__data[static::getIdField()] = self::NEW_OBJECT_ID;
+				$this->__modifiedColumns[static::getIdField()] = 1;
 			}
 		}
 	}
 
 	static function getFactory()
 	{
-		throw new SQLiciousErrorException("static getFactory must be overridden");
+		throw new Parm\ErrorException("static getFactory must be overridden");
 	}
 
 	static function findId($id)
@@ -48,7 +48,7 @@ abstract class DataAccessObject extends DataAccessArray
 		$obj = new static();
 
 		// clone data
-		$obj->data = $this->data;
+		$obj->data = $this->__data;
 
 		// set object_id to NEW_OBJECT_ID (-1)
 		$obj->data[static::getIdField()] = static::NEW_OBJECT_ID;
@@ -64,15 +64,15 @@ abstract class DataAccessObject extends DataAccessArray
 	{
 		$f = static::getFactory();
 
-		if (!empty($this->modifiedColumns))
+		if (!empty($this->__modifiedColumns))
 		{
-			foreach (array_keys($this->modifiedColumns) as $field)
+			foreach (array_keys($this->__modifiedColumns) as $field)
 			{
 				if ($field != $this->getIdField())
 				{
-					if ($this->data[$field] !== null)
+					if ($this->__data[$field] !== null)
 					{
-						$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this->data[$field]) . '"';
+						$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this->__data[$field]) . '"';
 					}
 					else
 					{
@@ -101,15 +101,15 @@ abstract class DataAccessObject extends DataAccessArray
 
 				if($f->databaseNode && $f->databaseNode->connection && $f->databaseNode->connection->insert_id > 0)
 				{
-					$this->data[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+					$this->__data[$this->getIdField()] = $f->databaseNode->connection->insert_id;
 				}
 				else
 				{
-					throw new SQLiciousErrorException("Insert failed: " . $sql);
+					throw new Parm\ErrorException("Insert failed: " . $sql);
 				}
 			}
 
-			unset($this->modifiedColumns);
+			unset($this->__modifiedColumns);
 		}
 	}
 
@@ -136,9 +136,9 @@ abstract class DataAccessObject extends DataAccessArray
 	function toJSON()
 	{
 		$j = array();
-		if ($this->data != null)
+		if ($this->__data != null)
 		{
-			foreach ($this->data as $field => $value)
+			foreach ($this->__data as $field => $value)
 			{
 				if ($field == $this->getIdField())
 				{
@@ -156,11 +156,11 @@ abstract class DataAccessObject extends DataAccessArray
 
 	function setFieldValue($fieldName, $val)
 	{
-		if (strcmp($this->data[$fieldName], $val) !== 0)
+		if (strcmp($this->__data[$fieldName], $val) !== 0)
 		{
-			$this->modifiedColumns[$fieldName] = 1;
+			$this->__modifiedColumns[$fieldName] = 1;
 		}
-		$this->data[$fieldName] = $val;
+		$this->__data[$fieldName] = $val;
 	}
 
 	function setDatetimeFieldValue($fieldName, $val)

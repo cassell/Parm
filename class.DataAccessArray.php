@@ -6,65 +6,65 @@ use \ArrayAccess;
 
 class DataAccessArray implements ArrayAccess
 {
-	var $data = array();
+	protected $data = array();
 
 	function __construct($row)
 	{
-		$this->data = $row;
+		$this->__data = $row;
 	}
 
 	public function offsetSet($offset, $value)
 	{
 		if(is_null($offset))
 		{
-			$this->data[] = $value;
+			$this->__data[] = $value;
 		}
 		else
 		{
-			$this->data[$offset] = $value;
+			$this->__data[$offset] = $value;
 		}
 	}
 
 	public function offsetExists($offset)
 	{
-		return isset($this->data[$offset]);
+		return isset($this->__data[$offset]);
 	}
 
 	public function offsetUnset($offset)
 	{
-		unset($this->data[$offset]);
+		unset($this->__data[$offset]);
 	}
 
 	public function offsetGet($offset)
 	{
-		return isset($this->data[$offset]) ? $this->data[$offset] : null;
+		return isset($this->__data[$offset]) ? $this->__data[$offset] : null;
 	}
 
 	function getFieldValue($fieldName)
 	{
-		if (array_key_exists($fieldName, $this->data))
+		if (array_key_exists($fieldName, $this->__data))
 		{
-			return $this->data[$fieldName];
+			return $this->__data[$fieldName];
 		}
 		else
 		{
-			throw new SQLiciousGetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
+			throw new Parm\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
 		}
 	}
 
 	// returns an associative array of the row retrieved from the database
 	function toArray()
 	{
-		return $this->data;
+		return $this->__data;
 	}
 
 	// returns an associative array with camel case array keys for use in javascript
 	function toJSON()
 	{
 		$json = array();
-		if ($this->data != null)
+		if ($this->__data != null)
 		{
-			foreach ($this->data as $field => $value)
+			foreach ($this->__data as $field => $value)
 			{
 				$json[self::toFieldCase($field)] = $value;
 			}

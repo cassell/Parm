@@ -1,6 +1,6 @@
 <?php
 
-require_once('class.DatabaseProcessor.php');
+namespace Parm;
 
 abstract class DataAccessObjectFactory extends DatabaseProcessor
 {
