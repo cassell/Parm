@@ -2,7 +2,7 @@
 
 namespace Parm\Exception;
 
-class GetFieldValueException extends Parm\ErrorException
+class GetFieldValueException extends ErrorException
 {
 	function __construct($message)
 	{
