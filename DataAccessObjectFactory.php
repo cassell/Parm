@@ -1,6 +1,7 @@
 <?php
 
-namespace Parm;
+/*
+
 
 abstract class DataAccessObjectFactory extends DatabaseProcessor
 {
@@ -369,7 +370,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this->getObjects();
 	}
 
-	/* below are functions that are slowly being phased out */
+// deprecate below
 
 	function find($clause = "")
 	{
@@ -502,7 +503,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 }
 
-/* abstract sql string class, bindings and conditionals extend this class */
 
 abstract class SQLString
 {
@@ -515,7 +515,6 @@ abstract class SQLString
 	abstract protected function getSQL($factory);
 }
 
-/* used to logical AND together bindings */
 
 class Conditional extends SQLString
 {
@@ -567,8 +566,6 @@ class Conditional extends SQLString
 	}
 
 }
-
-/* used to logical OR together bidnings */
 
 class OrConditional extends Conditional
 {
@@ -625,8 +622,6 @@ class FactoryConditional extends Conditional
 
 }
 
-/* logical test binding */
-
 class Binding extends SQLString
 {
 
@@ -645,7 +640,6 @@ class Binding extends SQLString
 
 }
 
-/* string binding is a simple string */
 
 class StringBinding extends SQLString
 {
@@ -663,7 +657,6 @@ class StringBinding extends SQLString
 
 }
 
-/* test if equal */
 
 class EqualsBinding extends Binding
 {
@@ -718,7 +711,6 @@ class FalseBooleanBinding extends Binding
 
 }
 
-/* see if field contains query */
 
 class ContainsBinding extends SQLString
 {
@@ -829,5 +821,7 @@ class ForeignKeyObjectBinding extends EqualsBinding
 		parent::__construct($localField, $value);
 	}
 }
+ 
+*/
 
 ?>

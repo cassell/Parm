@@ -5,7 +5,7 @@ namespace Parm;
 abstract class DataAccessObject extends DataAccessArray
 {
 	const NEW_OBJECT_ID = -1;
-	var $modifiedColumns;
+	protected $modifiedColumns;
 
 	abstract function getDatabaseName();
 
@@ -14,6 +14,8 @@ abstract class DataAccessObject extends DataAccessArray
 	abstract function getIdField();
 
 	abstract function getDefaultRow();
+	
+	abstract static function getFactory();
 
 	function __construct($row = null)
 	{
@@ -32,18 +34,13 @@ abstract class DataAccessObject extends DataAccessArray
 		}
 	}
 
-	static function getFactory()
-	{
-		throw new Parm\ErrorException("static getFactory must be overridden");
-	}
-
 	static function findId($id)
 	{
 		$f = static::getFactory();
 		return $f->findId($id);
 	}
-
-	function cloneNewObject()
+	
+	function createClone()
 	{
 		$obj = new static();
 
@@ -105,7 +102,7 @@ abstract class DataAccessObject extends DataAccessArray
 				}
 				else
 				{
-					throw new Parm\ErrorException("Insert failed: " . $sql);
+					throw new Parm\Exception\ErrorException("Insert failed: " . $sql);
 				}
 			}
 
