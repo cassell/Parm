@@ -1,7 +1,6 @@
 <?php
 
-/*
-
+namespace Parm;
 
 abstract class DataAccessObjectFactory extends DatabaseProcessor
 {
@@ -13,7 +12,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	abstract function getFields();
 
 	abstract function getDatabaseName();
-
+	
 	private $fields = array();
 	private $conditional;
 	private $joinClause = '';
@@ -30,9 +29,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		$this->setSelectFields($this->getFields());
 
 		// conditional used in building the WHERE clause
-		$this->conditional = new FactoryConditional();
+		$this->conditional = new AndConditional();
+		
+		return $this;
 	}
 	
+	/**
+	 * Return and array of the objects based on Bindings
+	 * @return array of DataAccessObjects
+	 */
 	function getObjects()
 	{
 		$data = array();
@@ -52,6 +57,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $data;
 	}
 
+	/**
+     * @param integer $id ID of the row in the database
+     * @return object|null The record from the database
+     */
 	static function getObject($id)
 	{
 		$f = new static();
@@ -67,6 +76,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Return the first object from a getObjects
+	 * @return DataAccessObject
+	 */
 	function getFirstObject()
 	{
 		$this->limit(1);
@@ -77,19 +90,35 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Adds to the default Factory Binding which is an AND conditional
+     * @param Binding|string $binding
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
 	function addBinding($binding)
 	{
 		$this->conditional->addBinding($binding);
+		return $this;
 	}
 	
+	/**
+	 * Adds to the default Factory Binding which is an AND conditional
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
 	function addForeignKeyObjectBinding($object, $localField = null, $remoteField = null)
 	{
 		$this->addBinding(new ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
+		return $this;
 	}
 
+	/**
+	 * Adds a conditional to the default FactoryConditional which is an AND conditional
+     * @return DataAccessObjectFactory so that you can chain bindings and conditionals
+     */
 	function addConditional($conditional)
 	{
-		$this->conditional->addConditional($conditional);
+		$this->conditional->addConditional($conditional);	
+		return $this;
 	}
 
 	function getSQL()
@@ -157,6 +186,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		{
 			$this->setSelectFields(func_get_args());
 		}
+		
+		return $this;
 	}
 
 	function addSelectField($field)
@@ -169,17 +200,23 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		{
 			$this->fields[] = $this->getTableName() . "." . $field;
 		}
+		
+		return $this;
 	}
 
 	// joins
 	function join($clause)
 	{
 		$this->setJoinClause($this->getJoinClause() . " " . $clause);
+		
+		return $this;
 	}
 
 	function setJoinClause($val)
 	{
 		$this->joinClause = $val;
+		
+		return $this;
 	}
 
 	function getJoinClause()
@@ -191,6 +228,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	function addJoinClause($clause)
 	{
 		$this->join($clause);
+		return $this;
 	}
 
 	// group by
@@ -221,11 +259,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 				$this->setGroupByClause($this->getGroupByClause() . ", " . $this->escapeString($fieldOrArray));
 			}
 		}
+		
+		return $this;
 	}
 
 	function setGroupByClause($val)
 	{
 		$this->groupByClause = $val;
+		
+		return $this;
 	}
 
 	function getGroupByClause()
@@ -246,6 +288,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 
 		$this->setOrderByClause($this->getOrderByClause() . $this->escapeString($field) . " " . $this->escapeString($direction));
+		
+		return $this;
 	}
 
 	function setOrderByClause($val)
@@ -271,6 +315,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		{
 			$this->orderByAsc(func_get_args());
 		}
+		
+		return $this;
 	}
 
 	// limits
@@ -284,11 +330,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		{
 			$this->setLimitClause("LIMIT " . (int) $number);
 		}
+		
+		return $this;
 	}
 
 	function setLimitClause($val)
 	{
 		$this->limitClause = $val;
+		
+		return $this;
 	}
 
 	function getLimitClause()
@@ -299,6 +349,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	function paging($pageNumber, $rowsPerPage = 20)
 	{
 		$this->limit($rowsPerPage, ($pageNumber - 1) * $rowsPerPage);
+		
+		return $this;
 	}
 
 	function count()
@@ -337,7 +389,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	// clear	
 	protected function clearBindings()
 	{
-		$this->conditional = new FactoryConditional();
+		$this->conditional = new AndConditional();
+		
+		return $this;
 	}
 
 	public function truncateTable()
@@ -502,326 +556,5 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 }
-
-
-abstract class SQLString
-{
-
-	function __construct()
-	{
-		
-	}
-
-	abstract protected function getSQL($factory);
-}
-
-
-class Conditional extends SQLString
-{
-
-	var $items = array();
-
-	function __construct()
-	{
-		parent::__construct();
-	}
-
-	function addBinding($binding)
-	{
-		if(is_string($binding))
-		{
-			$this->addItem(new StringBinding($binding));
-		}
-		else
-		{
-			$this->addItem($binding);
-		}
-	}
-
-	function addConditional($conditional)
-	{
-		$this->addItem($conditional);
-	}
-
-	private function addItem($item)
-	{
-		$this->items[] = $item;
-	}
-
-	function getSQL($factory)
-	{
-		if($this->items != null && count($this->items) > 0)
-		{
-			$sql = array();
-
-			foreach($this->items as $item)
-			{
-				$sql[] = $item->getSQL($factory);
-			}
-
-			return "(" . implode(" AND ", $sql) . ")";
-		}
-		else
-			return '';
-	}
-
-}
-
-class OrConditional extends Conditional
-{
-
-	function __construct()
-	{
-		parent::__construct();
-	}
-
-	function getSQL($factory)
-	{
-		if($this->items != null && count($this->items) > 0)
-		{
-			$sql = array();
-
-			foreach($this->items as $item)
-			{
-				$sql[] = $item->getSQL($factory);
-			}
-
-			return "(" . implode(" OR ", $sql) . ")";
-		}
-		else
-			return '';
-	}
-
-}
-
-// FactoryConditional is an AND conditional with WHERE in front an no parenthesis, used in DaoAccessObjectFactory
-class FactoryConditional extends Conditional
-{
-
-	function __construct()
-	{
-		parent::__construct();
-	}
-
-	function getSQL($factory)
-	{
-		if($this->items != null && count($this->items) > 0)
-		{
-			$sql = array();
-
-			foreach($this->items as $item)
-			{
-				$sql[] = $item->getSQL($factory);
-			}
-
-			return implode(" AND ", $sql);
-		}
-		else
-			return '';
-	}
-
-}
-
-class Binding extends SQLString
-{
-
-	function __construct($field, $operator, $value)
-	{
-		$this->field = $field;
-		$this->value = $value;
-		$this->operator = $operator;
-		parent::__construct();
-	}
-
-	function getSQL($factory)
-	{
-		return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($this->value) . "'";
-	}
-
-}
-
-
-class StringBinding extends SQLString
-{
-
-	function __construct($sql)
-	{
-		$this->sql = $sql;
-		parent::__construct();
-	}
-
-	function getSQL($factory)
-	{
-		return $this->sql;
-	}
-
-}
-
-
-class EqualsBinding extends Binding
-{
-
-	function __construct($field, $value)
-	{
-		parent::__construct($field, '=', $value);
-	}
-
-}
-
-class CaseSensitiveEqualsBinding extends EqualsBinding
-{
-	function __construct($field, $value)
-	{
-		parent::__construct($field, $value);
-	}
-
-	function getSQL($factory)
-	{
-		return $factory->escapeString($this->field) . " COLLATE " . $factory->databaseNode->serverCaseSensitiveCollation . " LIKE '" . $factory->escapeString(str_replace("_", "\_", str_replace("%", "\%", $this->value))) . "'";
-	}
-}
-
-class NotEqualsBinding extends Binding
-{
-
-	function __construct($field, $value)
-	{
-		parent::__construct($field, '!=', $value);
-	}
-
-}
-
-class TrueBooleanBinding extends Binding
-{
-
-	function __construct($field)
-	{
-		parent::__construct($field, '=', '1');
-	}
-
-}
-
-class FalseBooleanBinding extends Binding
-{
-
-	function __construct($field)
-	{
-		parent::__construct($field, '=', '0');
-	}
-
-}
-
-
-class ContainsBinding extends SQLString
-{
-
-	function __construct($field, $query)
-	{
-		parent::__construct();
-
-		$this->field = $field;
-		$this->query = $query;
-	}
-
-	function getSQL($factory)
-	{
-		return $factory->escapeString($this->field) . " LIKE '%" . $factory->escapeString(str_replace("_", "\_", str_replace("%", "\%", $this->query))) . "%'";
-	}
-}
-
-
-
-class InBinding extends SQLString
-{
-
-	function __construct($field, $array)
-	{
-		parent::__construct();
-		$this->field = $field;
-		$this->array = $array;
-	}
-
-	function getSQL($factory)
-	{
-		if(count($this->array) == 1)
-		{
-			return $factory->escapeString($this->field) . " = " . reset($this->array);
-		}
-		else if(count($this->array) > 0)
-		{
-			foreach($this->array as $key => $item)
-			{
-				if(is_numeric($item))
-				{
-					$this->array[$key] = (int) $item;
-				}
-				else
-				{
-					$this->array[$key] = "'" . $factory->escapeString($item) . "'";
-				}
-			}
-
-			return $factory->escapeString($this->field) . " IN (" . implode(",", $this->array) . ")";
-		}
-		else
-		{
-			throw new SQLiciousErrorException("The array passed to the InBinding is empty");
-		}
-	}
-
-}
-
-class NotInBinding extends SQLString
-{
-
-	function __construct($field, $array)
-	{
-		parent::__construct();
-		$this->field = $field;
-		$this->array = $array;
-	}
-
-	function getSQL($factory)
-	{
-		if(count($this->array > 0))
-		{
-			foreach($this->array as $key => $item)
-			{
-				$this->array[$key] = $factory->escapeString($item);
-			}
-
-			return $factory->escapeString($this->field) . " NOT IN (" . implode(",", $this->array) . ")";
-		}
-		else
-		{
-			throw new SQLiciousErrorException("The array passed to the NotInBinding is empty");
-		}
-	}
-
-}
-
-class ForeignKeyObjectBinding extends EqualsBinding
-{
-	function __construct($object, $localField = null, $remoteField = null)
-	{
-		if($localField == null)
-		{
-			$localField = $object->getIdField();
-		}
-		
-		if($remoteField == null)
-		{
-			$value = $object->getId();
-		}
-		else
-		{
-			$value = $object->getFieldValue($remoteField);
-		}
-		
-		parent::__construct($localField, $value);
-	}
-}
- 
-*/
 
 ?>

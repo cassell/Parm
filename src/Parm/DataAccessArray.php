@@ -1,6 +1,6 @@
 <?php
 /*
- * This file is part of the Symfony package.
+ * This file is part of the Parm package.
  *
  * (c) Andrew Cassell <me@andrewcassell.com>
  *
@@ -14,17 +14,52 @@ namespace Parm;
  * DataAccessArray is used for creating an object wrapper around an array.
  * The DatabaseProcessor returns DataAccessArray objects when the getArray function is called.
  * The DataAccessObject extends this class.
- *
  */
 class DataAccessArray implements \ArrayAccess
 {
 	protected $__data = array();
 
+	/**
+	 * Constructor
+     * @param array $row Array of data
+     */
 	function __construct($row)
 	{
 		$this->__data = $row;
+		
+		return $this;
+	}
+	
+	
+	/**
+	 * Whether a offset exists
+	 * @param mixed $offset  An offset to check for.
+	 * @return boolean TRUE on success or FALSE on failure.
+	 * The return value will be casted to boolean if non-boolean was returned.
+	 */
+	public function offsetExists($offset)
+	{
+		return isset($this->__data[$offset]);
 	}
 
+	
+	/**
+	 * Offset to retrieve
+	 * @param mixed $offset The offset to retrieve.
+	 * @return mixed Can return all value types.
+	 */
+	public function offsetGet($offset)
+	{
+		return isset($this->__data[$offset]) ? $this->__data[$offset] : null;
+	}
+
+	
+	/**
+	 * Offset to set
+	 * @param mixed $offset The offset to assign the value to.
+	 * @param mixed $value The value to set.
+	 * @return void No value is returned.
+	 */
 	public function offsetSet($offset, $value)
 	{
 		if(is_null($offset))
@@ -37,24 +72,21 @@ class DataAccessArray implements \ArrayAccess
 		}
 	}
 
-	public function offsetExists($offset)
-	{
-		return isset($this->__data[$offset]);
-	}
-
+	
+	/**
+	 * Offset to unset
+	 * @param mixed $offset The offset to unset.
+	 * @return void No value is returned.
+	 */
 	public function offsetUnset($offset)
 	{
 		unset($this->__data[$offset]);
 	}
 
-	public function offsetGet($offset)
-	{
-		return isset($this->__data[$offset]) ? $this->__data[$offset] : null;
-	}
-
+	
 	/**
-     * @param string $fieldName Name of the field/column in the database
-     *
+     * Get the value of a column from the database row
+	 * @param string $fieldName Name of the field/column in the database
      * @return string|null The value of the field
      */
 	function getFieldValue($fieldName)
@@ -69,7 +101,9 @@ class DataAccessArray implements \ArrayAccess
 		}
 	}
 
+	
 	/**
+	 * Get the array of data
      * @return array An associative array of the row retrieved from the database
      */
 	function toArray()
@@ -77,8 +111,10 @@ class DataAccessArray implements \ArrayAccess
 		return $this->__data;
 	}
 	
+	
 	/**
-     * @return array An associative array with camel case array keys. Great for exporting data to JSON.
+	 * Convert to a JSON ready array
+     * @return array An associative array with camel case array keys
      */
 	function toJSON()
 	{
@@ -87,27 +123,33 @@ class DataAccessArray implements \ArrayAccess
 		{
 			foreach ($this->__data as $field => $value)
 			{
-				$json[self::toFieldCase($field)] = $value;
+				$json[self::columnToCamelCase($field)] = $value;
 			}
 		}
 
 		return $json;
 	}
 
+	
 	/**
+	 * Convert to a JSON string
      * @return string The row formatted in JSON
      */
 	function toJSONString()
 	{
-		return self::JSONEncodeArray($this->toJSON());
+		return json_encode(self::utf8EncodeArray($this->toJSON()));
 	}
 
 	
-	static protected function toFieldCase($val)
+	/**
+	 * Encode the values of an array to UTF-8
+     * @return string A column name with underscores converted to camel case. Example: "first_name" becomes "firstName", "first_born_child_id" becomes "firstBornChildId"
+     */
+	static protected function columnToCamelCase($columnName)
 	{
 		$result = '';
 
-		$segments = explode("_", $val);
+		$segments = explode("_", $columnName);
 		for ($i = 0; $i < count($segments); $i++)
 		{
 			$segment = $segments[$i];
@@ -119,11 +161,11 @@ class DataAccessArray implements \ArrayAccess
 		return $result;
 	}
 
-	static protected function JSONEncodeArray($array)
-	{
-		return json_encode(self::utf8EncodeArray($array));
-	}
-
+	
+	/**
+	 * Encode the values of an array to UTF-8
+     * @return array with UTF-8 Encoded values
+     */
 	static protected function utf8EncodeArray($array)
 	{
 		foreach ($array as $key => $value)

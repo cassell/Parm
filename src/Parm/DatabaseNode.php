@@ -28,6 +28,10 @@ class DatabaseNode
 		$this->serverCaseSensitiveCollation = $serverCaseSensitiveCollation;
 	}
 	
+	/**
+	 * Get the id of the last inserted row from the database
+     * @return object mysqli connection
+     */
 	function getConnection()
 	{
 		if($this->connection == null)
@@ -44,7 +48,26 @@ class DatabaseNode
 		return $this->connection;
 	}
 	
-	function closeConnection($conn)
+	/**
+	 * Get the id of the last inserted row from the database
+     * @return integer id of the last inserted row from the database
+     */
+	function getLastInsertId()
+	{
+		if($this->connection)
+		{
+			return $this->connection->insert_id;
+		}
+		else
+		{
+			throw new \Parm\Exception\ConnectionErrorException($this->connection);
+		}
+	}
+	
+	/**
+	 * Close the connection to the database node
+     */
+	function closeConnection()
 	{
 		$this->connection->close();
 	}

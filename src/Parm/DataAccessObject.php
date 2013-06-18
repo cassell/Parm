@@ -17,6 +17,10 @@ abstract class DataAccessObject extends DataAccessArray
 	
 	abstract static function getFactory();
 
+	/**
+	 * Constructor
+     * @param array $row Array of data
+     */
 	function __construct($row = null)
 	{
 		// setup $this->__data
@@ -32,31 +36,48 @@ abstract class DataAccessObject extends DataAccessArray
 				$this->__modifiedColumns[static::getIdField()] = 1;
 			}
 		}
+		
+		return $this;
 	}
 
+	
+	/**
+     * @param integer $id ID of the row in the database
+     * @return object|null The record from the database
+     */
 	static function findId($id)
 	{
-		$f = static::getFactory();
-		return $f->findId($id);
+		static::getFactory()->getObject($id);
 	}
 	
+	/**
+     * Create a clone of the object in order to save a duplicate
+	 * 
+	 * @return object|null A record that hasn't been save to the database
+     */
 	function createClone()
 	{
 		$obj = new static();
 
 		// clone data
-		$obj->data = $this->__data;
+		$obj->__data = $this->__data;
 
 		// set object_id to NEW_OBJECT_ID (-1)
-		$obj->data[static::getIdField()] = static::NEW_OBJECT_ID;
+		$obj->__data[static::getIdField()] = static::NEW_OBJECT_ID;
 
 		// set all modified colums to 1
-		$obj->modifiedColumns = static::getDefaultRow();
-		array_walk($obj->modifiedColumns, function(&$v, $k){ $v = 1; });
+		$obj->__modifiedColumns = static::getDefaultRow();
+		array_walk($obj->__modifiedColumns, function(&$v, $k){ $v = 1; });
 
 		return $obj;
 	}
 
+	/**
+     * Save the object to the database.
+	 * 
+	 * @return object
+	 * 
+     */
 	function save()
 	{
 		$f = static::getFactory();
@@ -108,28 +129,52 @@ abstract class DataAccessObject extends DataAccessArray
 
 			unset($this->__modifiedColumns);
 		}
+		
+		return $this;
+		
 	}
 
+	/**
+     * Delete the object from the database.
+	 * @return TRUE if successful, False if failed or ID is not greater than 
+     */
 	function delete()
 	{
-		if (intval($this->getId()) > 0)
+		if((int)$this->getId() > 0)
 		{
 			$f = static::getFactory();
-			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . $this->getId());
+			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
+			return true;
+		}
+		else
+		{
+			return false;
 		}
 	}
 
+	/**
+     * Get the ID (Primary Key) of the object
+	 * @return integer ID of the record in the database, it will be -1 if a new record
+     */
 	function getId()
 	{
 		return $this->getFieldValue($this->getIdField());
 	}
-
-	function getObjectId()
+	
+	/**
+     * Test if the object has been saved to the database
+	 * @return boolean If the record has an ID other than the NEW_OBJECT_ID (-1)
+     */
+	function hasObjectBeenSaved()
 	{
-		return $this->getId();
+		return ($this->getId() != self::NEW_OBJECT_ID);
 	}
+	
 
-	// overridden to make id always the name of the primary key
+	/**
+     * Convert to JSON ready array. The primary key is always 'id'
+	 * @return array JSON ready with camel case fields and primary key is 'id'
+     */
 	function toJSON()
 	{
 		$j = array();
@@ -143,15 +188,15 @@ abstract class DataAccessObject extends DataAccessArray
 				}
 				else
 				{
-					$j[static::toFieldCase($field)] = $value;
+					$j[static::columnToCamelCase($field)] = $value;
 				}
 			}
 		}
 
 		return $j;
 	}
-
-	function setFieldValue($fieldName, $val)
+	
+	protected function setFieldValue($fieldName, $val)
 	{
 		if (strcmp($this->__data[$fieldName], $val) !== 0)
 		{
@@ -160,7 +205,7 @@ abstract class DataAccessObject extends DataAccessArray
 		$this->__data[$fieldName] = $val;
 	}
 
-	function setDatetimeFieldValue($fieldName, $val)
+	protected function setDatetimeFieldValue($fieldName, $val)
 	{
 		if ($val != "" && $val != '')
 		{
@@ -179,7 +224,7 @@ abstract class DataAccessObject extends DataAccessArray
 		}
 	}
 
-	function getDatetimeFieldValue($fieldName, $format = null)
+	protected function getDatetimeFieldValue($fieldName, $format = null)
 	{
 		if ($format == null)
 		{
@@ -190,7 +235,17 @@ abstract class DataAccessObject extends DataAccessArray
 			return ($this->getFieldValue($fieldName) ? date($format, strtotime($this->getFieldValue($fieldName))) : null);
 		}
 	}
-
+	
+	
+	/**
+     * DEPRECATED: Get the Id (Primary Key) of the object
+     */
+	function getObjectId()
+	{
+		trigger_error('Get the getObjectId() has been deprecated in favor of getId()', E_USER_WARNING);
+		return $this->getId();
+	}
+	
 }
 
 ?>

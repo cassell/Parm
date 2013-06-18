@@ -8,6 +8,7 @@ class DatabaseConfiguration
 	private $master;
 	private $slaves = array();
 
+	
 	function __construct($databaseName)
 	{
 		$this->databaseName = $databaseName;
@@ -16,11 +17,22 @@ class DatabaseConfiguration
 		$this->setGeneratorCodeDestinationDirectory(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . $this->databaseName);
 	}
 	
+	
+	/**
+     * Set the master database node for the configuration
+	 * 
+	 * @param $master DatabaseNode
+     */
 	function setMaster($master)
 	{
 		$this->master = $master;
 	}
 	
+	/**
+     * Get the master database node for the configuration
+	 * 
+	 * @return DatabaseNode|null The DatabaseNode that is the Master connection
+     */
 	function getMaster()
 	{
 		return $this->master;
