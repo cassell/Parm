@@ -14,26 +14,26 @@
  * 
  */
 
-class_alias(Parm\DatabaseNode, DatabaseNode);
-class_alias(Parm\DatabaseConfiguration, DatabaseConfiguration);
-class_alias(Parm\DataAccessArray, DataAccessArray);
-class_alias(Parm\DatabaseProcessor, DatabaseProcessor);
-class_alias(Parm\DataAccessObject, DataAccessObject);
-class_alias(Parm\DataAccessObjectFactory, DataAccessObjectFactory);
+class_alias('Parm\DatabaseNode', 'DatabaseNode');
+class_alias('Parm\DatabaseConfiguration', 'DatabaseConfiguration');
+class_alias('Parm\DataAccessArray', 'DataAccessArray');
+class_alias('Parm\DatabaseProcessor', 'DatabaseProcessor');
+class_alias('Parm\DataAccessObject', 'DataAccessObject');
+class_alias('Parm\DataAccessObjectFactory', 'DataAccessObjectFactory');
 
-class_alias(Parm\Conditional\AndConditional, AndConditional);
-class_alias(Parm\Conditional\OrConditional, OrConditional);
+class_alias('Parm\Conditional\AndConditional', 'AndConditional');
+class_alias('Parm\Conditional\OrConditional', 'OrConditional');
 
-class_alias(Parm\Binding\SQLString, SQLString);
-class_alias(Parm\Binding\Binding, Binding);
-class_alias(Parm\Binding\StringBinding, StringBinding);
-class_alias(Parm\Binding\CaseSensitiveEqualsBinding, CaseSensitiveEqualsBinding);
-class_alias(Parm\Binding\ContainsBidning, ContainsBidning);
-class_alias(Parm\Binding\EqualsBinding, EqualsBinding);
-class_alias(Parm\Binding\FalseBooleanBinding, FalseBooleanBinding);
-class_alias(Parm\Binding\ForeignKeyObjectBinding, ForeignKeyObjectBinding);
-class_alias(Parm\Binding\InBinding, InBinding);
-class_alias(Parm\Binding\NotEqualsBinding, NotEqualsBinding);
-class_alias(Parm\Binding\TrueBooleanBinding, TrueBooleanBinding);
+class_alias('Parm\Binding\SQLString', 'SQLString');
+class_alias('Parm\Binding\Binding', 'Binding');
+class_alias('Parm\Binding\StringBinding', 'StringBinding');
+class_alias('Parm\Binding\CaseSensitiveEqualsBinding', 'CaseSensitiveEqualsBinding');
+class_alias('Parm\Binding\ContainsBidning', 'ContainsBidning');
+class_alias('Parm\Binding\EqualsBinding', 'EqualsBinding');
+class_alias('Parm\Binding\FalseBooleanBinding', 'FalseBooleanBinding');
+class_alias('Parm\Binding\ForeignKeyObjectBinding', 'ForeignKeyObjectBinding');
+class_alias('Parm\Binding\InBinding', 'InBinding');
+class_alias('Parm\Binding\NotEqualsBinding', 'NotEqualsBinding');
+class_alias('Parm\Binding\TrueBooleanBinding', 'TrueBooleanBinding');
 
 ?>
