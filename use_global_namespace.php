@@ -21,10 +21,9 @@ class_alias('Parm\DatabaseProcessor', 'DatabaseProcessor');
 class_alias('Parm\DataAccessObject', 'DataAccessObject');
 class_alias('Parm\DataAccessObjectFactory', 'DataAccessObjectFactory');
 
-class_alias('Parm\Conditional\AndConditional', 'AndConditional');
-class_alias('Parm\Conditional\OrConditional', 'OrConditional');
-
 class_alias('Parm\Binding\SQLString', 'SQLString');
+class_alias('Parm\Binding\Conditional\AndConditional', 'AndConditional');
+class_alias('Parm\Binding\Conditional\OrConditional', 'OrConditional');
 class_alias('Parm\Binding\Binding', 'Binding');
 class_alias('Parm\Binding\StringBinding', 'StringBinding');
 class_alias('Parm\Binding\CaseSensitiveEqualsBinding', 'CaseSensitiveEqualsBinding');
