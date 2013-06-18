@@ -1,8 +1,8 @@
 <?php
 
-namespace Parm\Conditional;
+namespace Parm\Binding\Conditional;
 
-abstract class Conditional extends SQLString
+abstract class Conditional extends Parm\Binding\SQLString
 {
 	abstract function getSeparator();
 	

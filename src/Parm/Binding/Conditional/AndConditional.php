@@ -1,8 +1,8 @@
 <?php
 
-namespace Parm\Conditional;
+namespace Parm\Binding\Conditional;
 
-class OrConditional extends Conditional
+class AndConditional extends Conditional
 {
 	function __construct()
 	{
@@ -11,7 +11,7 @@ class OrConditional extends Conditional
 
 	function getSeparator()
 	{
-		return "OR";
+		return "AND";
 	}
 }
 

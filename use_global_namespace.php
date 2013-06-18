@@ -28,7 +28,7 @@ class_alias('Parm\Binding\SQLString', 'SQLString');
 class_alias('Parm\Binding\Binding', 'Binding');
 class_alias('Parm\Binding\StringBinding', 'StringBinding');
 class_alias('Parm\Binding\CaseSensitiveEqualsBinding', 'CaseSensitiveEqualsBinding');
-class_alias('Parm\Binding\ContainsBidning', 'ContainsBidning');
+class_alias('Parm\Binding\ContainsBinding', 'ContainsBinding');
 class_alias('Parm\Binding\EqualsBinding', 'EqualsBinding');
 class_alias('Parm\Binding\FalseBooleanBinding', 'FalseBooleanBinding');
 class_alias('Parm\Binding\ForeignKeyObjectBinding', 'ForeignKeyObjectBinding');
