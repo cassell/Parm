@@ -8,9 +8,9 @@ class DatabaseGenerator
 	var $destinationDirectory;
 	var $generatedNamespace;
 	
-	function __construct()
+	function __construct($databaseNode)
 	{
-		
+		$this->setDatabaseNode($databaseNode);
 	}
 	
 	function setDatabaseNode($databaseNode)
@@ -23,7 +23,6 @@ class DatabaseGenerator
 		{
 			throw new Exception('Database must be a \Parm\DatabaseNode');
 		}
-		
 	}
 	
 	function setDestinationDirectory($directory)
@@ -36,28 +35,31 @@ class DatabaseGenerator
 		$this->generatedNamespace = $namespaceString;
 	}
 	
-	function getTableNames()
+	private function getTableNames()
 	{
-		$dp = new DatabaseProcessor($this->getDatabaseName());
+		$databaseName = $this->databaseNode->serverDatabaseName;
+		
+		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
 		$dp->setSQL('SHOW TABLES');
 		
-//		$tableNames = array();
+		$tableNames = array();
 		
-		$dp->process(function($array){
+		$dp->process(function($row) use(&$tableNames,$databaseName) {
 			
-			
+			$tableNames[] = $row['Tables_in_'.$databaseName];
 		});
 		
-//		if($data != null && count($data) > 0)
-//		{
-//			foreach($data as $d)
-//			{
-//				$tableNames[] = $d['Tables_in_'.$this->getDatabaseName()];
-//			}
-//		}
-//		
-//		return $tableNames;
+		return $tableNames;
 	}
+	
+	function generate()
+	{
+		$tableNames = $this->getTableNames();
+		
+		print_r($tableNames);
+		
+	}
+	
 	
 	
 }
