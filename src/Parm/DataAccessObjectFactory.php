@@ -20,10 +20,18 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	private $orderByClause = '';
 	private $limitClause = '';
 
-	function __construct()
+	function __construct($databaseNode = null)
 	{
 		// setup connection properties
-		parent::__construct($this->getDatabaseName());
+		if($databaseNode)
+		{
+			parent::__construct($databaseNode);
+		}
+		else
+		{
+			parent::__construct($this->getDatabaseName());
+		}
+		
 
 		// fields used in the SELECT clause
 		$this->setSelectFields($this->getFields());

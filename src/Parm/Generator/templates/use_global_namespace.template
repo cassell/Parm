@@ -1,0 +1,20 @@
+<?php
+
+/*
+ * Use this file to add all of your generated database classes to the global namespace.
+ * You might also consider includind the use_global_namespace.php file
+ * located in the Parm root folder.
+ *
+ * (c) Andrew Cassell <me@andrewcassell.com>
+ *
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ * 
+ */
+ 
+{{#tables}}
+class_alias('{{nameSpace}}\{{className}}DaoObject', '{{className}}DaoObject');
+class_alias('{{nameSpace}}\{{className}}DaoFactory', '{{className}}DaoFactory');
+{{/tables}}
+
+?>

@@ -179,11 +179,16 @@ class DatabaseGenerator
 
 		$tableNames = $this->getTableNames();
 		
+		$globalNamespaceData = array();
+		
 		if($tableNames != null && count($tableNames) > 0)
 		{
 			foreach($tableNames as $tableName)
 			{
 				$data = $this->getTemplatingDataFromTableName($tableName);
+				
+				$globalNamespaceData[] = array("className" => $data['className'],
+								"nameSpace" => $this->generatedNamespace);
 				
 				$m = new \Mustache_Engine;
 				
@@ -192,6 +197,9 @@ class DatabaseGenerator
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.template'),$data));
 				
 			}
+			
+			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/use_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/use_global_namespace.template'),array("tables" => $globalNamespaceData)));
+			
 		}
 		else
 		{
