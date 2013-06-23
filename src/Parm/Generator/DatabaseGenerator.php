@@ -129,16 +129,17 @@ class DatabaseGenerator
 			}
 		}
 		
-		return array( 'tableName' => $tableName,
-					   'variableName' => \Parm\DataAccessArray::columnToCamelCase($tableName),
-					   'className' => $className,
-					   'databaseName' => $this->databaseNode->serverDatabaseName,
-					   'idFieldName' => $idFieldName,
-					   'columns' => $columns,
-					   'defaultValuePack' => implode(", ",$defaultValuePack),
-					   'fieldList' => implode(", ", $fieldsPack),
-					   'bindingsPack' => implode("\n", $bindingsPack)
-				    );
+		return array(	'tableName' => $tableName,
+						'variableName' => \Parm\DataAccessArray::columnToCamelCase($tableName),
+						'className' => $className,
+						'databaseName' => $this->databaseNode->serverDatabaseName,
+						'idFieldName' => $idFieldName,
+						'nameSpace' => $this->generatedNamespace,
+						'columns' => $columns,
+						'defaultValuePack' => implode(", ", $defaultValuePack),
+						'fieldList' => implode(", ", $fieldsPack),
+						'bindingsPack' => implode("\n", $bindingsPack)
+		);
 		
 	}
 	
@@ -166,14 +167,36 @@ class DatabaseGenerator
 			}
 		}
 		
+		$files = glob($this->destinationDirectory.'/*.php'); 
+
+		if($files != null)
+		{
+			foreach($files as $file)
+			{
+				@unlink($file); 
+			}
+		}
+
 		$tableNames = $this->getTableNames();
 		
-		foreach($tableNames as $tableName)
+		if($tableNames != null && count($tableNames) > 0)
 		{
-			print_r($this->getTemplatingDataFromTableName($tableName));
+			foreach($tableNames as $tableName)
+			{
+				$data = $this->getTemplatingDataFromTableName($tableName);
+				
+				$m = new \Mustache_Engine;
+				
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoObject.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.template'),$data));
+				
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.template'),$data));
+				
+			}
 		}
-		
-//		print_r($tableNames);
+		else
+		{
+			throw new \Exception("No tables in database.");
+		}
 		
 	}
 	
