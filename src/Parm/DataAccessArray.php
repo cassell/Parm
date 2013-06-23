@@ -145,7 +145,7 @@ class DataAccessArray implements \ArrayAccess
 	 * Encode the values of an array to UTF-8
      * @return string A column name with underscores converted to camel case. Example: "first_name" becomes "firstName", "first_born_child_id" becomes "firstBornChildId"
      */
-	static protected function columnToCamelCase($columnName)
+	static function columnToCamelCase($columnName)
 	{
 		$result = '';
 
