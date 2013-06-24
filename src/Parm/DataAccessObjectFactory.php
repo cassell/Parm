@@ -123,6 +123,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 	/**
 	 * Adds a conditional to the default FactoryConditional which is an AND conditional
+	 * @param Parm\Binding\Conditional $conditional
      * @return DataAccessObjectFactory so that you can chain bindings and conditionals
      */
 	function addConditional($conditional)
@@ -157,6 +158,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 	/**
 	 * Find an object by primary key
+	 * @param integer $id
 	 * @return object
      */
 	function findId($id)
@@ -196,7 +198,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	 * Set the coluns to return from the database. You would use this to limit the number of fields return per row
 	 * or select other fields from a join clause.
 	 * Usage: $f->setSelectFields("first_name","last_name","email");
-	 * @param array|string An array of strings or all the fields separated by commas
+	 * @param array|string|strings $arrayOfFields An array of strings or all the fields separated by commas
 	 * @return DataAccessObject
      */
 	function setSelectFields($arrayOfFields)
@@ -230,7 +232,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	/**
 	 * Add a column to the select clause. Useful when using join.
 	 * Usage: $f->addSelectField("company.company_name");
-	 * @param string The name of the column
+	 * @param string $field The name of the column
 	 * @return DataAccessObject for chaining
      */
 	function addSelectField($field)
@@ -249,7 +251,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 	/**
 	 * Add a join to the select clause
-	 * @param string The join clause
+	 * @param string $clause The join clause
 	 * @return DataAccessObject for chaining
      */
 	function join($clause)
@@ -260,8 +262,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 	/**
-	 * Set the join clause, this replaces the entire join clause
-	 * @param string The join clause
+	 * Set and replace the entire join clause
+	 * @param string $val The join clause
 	 * @return DataAccessObject for chaining
      */
 	function setJoinClause($val)
@@ -282,7 +284,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 	/**
 	 * Alias to the join() function
-	 * @param string join clause
+	 * @param string $clause join clause
 	 * @return DataAccessObject
      */
 	function addJoinClause($clause)
@@ -293,7 +295,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	/**
 	 * Add to the group by clause
 	 * Usage: $f->groupBy("last_name");
-	 * @param array|string An array of strings or all the fields separated by commas
+	 * @param array|string $fieldOrArray An array of strings or all the fields separated by commas
 	 * @return DataAccessObject
      */
 	function groupBy($fieldOrArray)
@@ -328,13 +330,13 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 	/**
-	 * Set the group by clause, this replaces the entire group by clause
-	 * @param string The group by clause
+	 * Set and replace the entire group yb clause
+	 * @param string $groupByClause The group by clause
 	 * @return DataAccessObject for chaining
      */
-	function setGroupByClause($val)
+	function setGroupByClause($groupByClause)
 	{
-		$this->groupByClause = $val;
+		$this->groupByClause = $groupByClause;
 		
 		return $this;
 	}
@@ -372,7 +374,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 	/**
-	 * Set the order by clause, this replaces the entire order by clause
+	 * Set and eplace the entire order by clause
 	 * @param string The order by clause
 	 * @return DataAccessObject for chaining
      */
@@ -394,7 +396,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	/**
 	 * Add a bunch of fields to the order by clause ascending
 	 * Usage: $f->orderByAsc("last_name","first_name");
-	 * @param array|string An array of strings or all the fields separated by commas
+	 * @param array|string $arrayOfFields An array of strings or all the fields separated by commas
 	 * @return DataAccessObject
      */
 	function orderByAsc($arrayOfFields)
@@ -414,7 +416,13 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
-	// limits
+	/**
+	 * Limit the number of rows returned by the database
+	 * Usage: $f->limit(10);
+	 * @param integer $number The number of rows to return
+	 * @param integer $offset The row to start at
+	 * @return DataAccessObject
+     */
 	function limit($number, $offset = 0)
 	{
 		if((int) $offset > 0)
@@ -428,19 +436,35 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		
 		return $this;
 	}
-
-	function setLimitClause($val)
+	
+	/**
+	 * Set and replace the entire limit clause
+	 * @param string $limitClause The limit clause
+	 * @return DataAccessObject for chaining
+     */
+	function setLimitClause($limitClause)
 	{
-		$this->limitClause = $val;
+		$this->limitClause = $limitClause;
 		
 		return $this;
 	}
 
+	/**
+	 * Get the limit clause
+	 * @return string
+     */
 	function getLimitClause()
 	{
 		return $this->limitClause;
 	}
 
+	/**
+	 * Wrapper to the limit function to paging to page through data
+	 * Usage: $f->paging(2,50);
+	 * @param integer $pageNumber The page number the dataset is on
+	 * @param integer $rowsPerPage Number of rows per page
+	 * @return DataAccessObject
+     */
 	function paging($pageNumber, $rowsPerPage = 20)
 	{
 		$this->limit($rowsPerPage, ($pageNumber - 1) * $rowsPerPage);
@@ -448,6 +472,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Get count of the number of rows from the database (based on Bindings).
+	 * @return integer The count of rows
+     */
 	function count()
 	{
 		if($this->getIdField())
@@ -460,78 +488,66 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Sum a field in the rows returned (based on Bindings).
+	 * @return integer
+     */
 	function sum($field)
 	{
 		return $this->getSingleFieldFunctionValue('SUM', $field);
 	}
 
-	private function getSingleFieldFunctionValue($function, $field)
-	{
-		$result = $this->getMySQLResult(implode(" ", array("SELECT " . $function . "(" . $field . ") as val", $this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql())));
-
-		if($result != null)
-		{
-			$row = $result->fetch_row();
-			$this->freeResult($result);
-			return intval($row[0]);
-		}
-		else
-		{
-			return null;
-		}
-	}
-
-	// clear	
-	protected function clearBindings()
-	{
-		$this->conditional = new AndConditional();
-		
-		return $this;
-	}
-
-	public function truncateTable()
+	/**
+	 * Truncate all the data in the table
+     */
+	function truncateTable()
 	{
 		$this->update("TRUNCATE TABLE " . $this->getTableName());
 	}
 
-	protected function getConditionalSql()
-	{
-		$conditionalSQL = $this->conditional->getSql($this);
-
-		if($conditionalSQL != "")
-		{
-			$conditionalSQL = " WHERE " . $conditionalSQL;
-		}
-
-		return $conditionalSQL;
-	}
-
 	// used to do completely custom queries but bit have to write the select query
-	function findObjectsWhere($whereClause)
+	
+	/**
+	 * Get objects with completely custom join, where, group, and order by clause
+	 * @param string $clause
+	 * @return array of DataAccessObjects
+     */
+	function findObjectsWhere($clause)
 	{
 		if(count($this->conditional->items) > 0)
 		{
 			throw new SQLiciousErrorException("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
 		}
 
-		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $whereClause);
+		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
 
 		return $this->getObjects();
 	}
 
-// deprecate below
-
+	/**
+	 * Alias of findObjectsWhere
+	 * @param string $whereClause
+	 * @return array of DataAccessObjects
+     */
 	function find($clause = "")
 	{
 		return $this->findObjectsWhere($clause);
 	}
 
+	/**
+	 * Delete rows based on where clause
+	 * @param string $whereClause
+     */
 	function deleteWhere($whereClause)
 	{
 		return $this->update("DELETE FROM " . $this->getTableName() . " WHERE " . $whereClause);
 	}
 
-	// find the first object matching the clause
+	/**
+	 * Find the first object based on the clause
+	 * @param string $clause
+	 * @return DataAccessObject
+     */
 	function findFirst($clause = "")
 	{
 		$a = $this->find($clause . " LIMIT 1");
@@ -545,6 +561,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Find distinct values of a single column. Can be filtered by the clause
+	 * @param string $field The field to select
+	 * @param string $clause The the clause to filter on
+	 * @return array
+     */
 	function findDistinctField($field, $clause = "")
 	{
 		$array = array();
@@ -564,6 +586,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $array;
 	}
 
+	/**
+	 * Find all the values of a single column. Can be filtered by the clause
+	 * @param string $field The field to select
+	 * @param string $clause The the clause to filter on
+	 * @return array
+     */
 	function findField($field, $clause = "")
 	{
 		$array = array();
@@ -583,6 +611,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $array;
 	}
 
+	/**
+	 * Find the first value of a single column. Can be filtered by the clause
+	 * @param string $field The field to select
+	 * @param string $clause The the clause to filter on
+	 * @return string
+     */
 	function findFirstField($field, $clause = "")
 	{
 		$a = $this->findField($field, $clause . " LIMIT 1");
@@ -597,6 +631,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Get a count of rows based on the filter clause
+	 * @param string $clause The the clause to filter on
+	 * @return integer the count of rows
+     */
 	function getCount($clause = "")
 	{
 		if($this->getIdField() != '')
@@ -609,11 +648,23 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Find the maximum value of a single column. Can be filtered by the clause
+	 * @param string $field The field to get the max value of
+	 * @param string $clause The the clause to filter on
+	 * @return string
+     */
 	function getMaxField($field, $clause = "")
 	{
 		return $this->sqlFunctionFieldQuery('MAX', $field, $clause);
 	}
 
+	/**
+	 * Find the sum of values for a single column. Can be filtered by the clause
+	 * @param string $field The field to sum
+	 * @param string $clause The the clause to filter on
+	 * @return string
+     */
 	function getSumField($field, $clause = "")
 	{
 		return $this->sqlFunctionFieldQuery('SUM', $field, $clause);
@@ -648,6 +699,41 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 
 		return $data;
+	}
+	
+	protected function getConditionalSql()
+	{
+		$conditionalSQL = $this->conditional->getSql($this);
+
+		if($conditionalSQL != "")
+		{
+			$conditionalSQL = " WHERE " . $conditionalSQL;
+		}
+
+		return $conditionalSQL;
+	}
+
+	protected function clearBindings()
+	{
+		$this->conditional = new AndConditional();
+		
+		return $this;
+	}
+	
+	private function getSingleFieldFunctionValue($function, $field)
+	{
+		$result = $this->getMySQLResult(implode(" ", array("SELECT " . $function . "(" . $field . ") as val", $this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql())));
+
+		if($result != null)
+		{
+			$row = $result->fetch_row();
+			$this->freeResult($result);
+			return intval($row[0]);
+		}
+		else
+		{
+			return null;
+		}
 	}
 
 }
