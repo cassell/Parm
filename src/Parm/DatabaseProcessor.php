@@ -25,7 +25,7 @@ class DatabaseProcessor
 		}
 		else if(is_string($mixed) && defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
 		{
-			if($GLOBALS[PARM_CONFIG_GLOBAL][$mixed] instanceof DatabaseConfiguration)
+			if($GLOBALS[PARM_CONFIG_GLOBAL][$mixed] instanceof Database)
 			{
 				$this->databaseNode = $GLOBALS[PARM_CONFIG_GLOBAL][$mixed]->getMaster();
 			}
