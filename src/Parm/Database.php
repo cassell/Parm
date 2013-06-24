@@ -2,30 +2,32 @@
 
 namespace Parm;
 
-class DatabaseConfiguration
+class Database
 {
-	private $databaseName = null;
 	private $master;
 	private $slaves = array();
 
 	
-	function __construct($databaseName)
+	function __construct()
 	{
-		$this->databaseName = $databaseName;
 		
-		// default to a folder per database in the same folder as classes, generator, etc.
-		$this->setGeneratorCodeDestinationDirectory(dirname(dirname(__FILE__)) . DIRECTORY_SEPARATOR . $this->databaseName);
 	}
-	
 	
 	/**
      * Set the master database node for the configuration
 	 * 
 	 * @param $master DatabaseNode
      */
-	function setMaster($master)
+	function setMaster($masterDatabaseNode)
 	{
-		$this->master = $master;
+		if($master instanceof \Parm\DatabaseNode)
+		{
+			$this->master = $masterDatabaseNode;
+		}
+		else
+		{
+			throw new Exception('Master DatabaseNode must be a Parm\DatabaseNode');
+		}
 	}
 	
 	/**
@@ -64,8 +66,6 @@ class DatabaseConfiguration
 	}
 	 */
 	
-	function setGeneratorCodeDestinationDirectory($val) { $this->generatorCodeDestinationDirectory = $val; }
-	function getGeneratorCodeDestinationDirectory() { return $this->generatorCodeDestinationDirectory; }
 	
 }
 

@@ -10,35 +10,41 @@ class DatabaseProcessor
 	protected $sql = null;
 	
 	/**
-	 * @param DatabaseNode|string $databaseNodeOrConfigurationName The database to connect to
+	 * @param Database|DatabaseNode|string $mixed The database to connect to
      */
-	function __construct($databaseNodeOrConfigurationName)
+	function __construct($mixed)
 	{
 		// setup node
-		if($databaseNodeOrConfigurationName instanceof DatabaseNode)
+		if($mixed instanceof DatabaseNode)
 		{
-			$this->databaseNode = $databaseNodeOrConfigurationName;
+			$this->databaseNode = $mixed;
 		}
-		else if(is_string($databaseNodeOrConfigurationName) && defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
+		else if($mixed instanceof Database)
 		{
-			if($GLOBALS[PARM_CONFIG_GLOBAL][$databaseNodeOrConfigurationName] instanceof DatabaseConfiguration)
+			$this->databaseNode = $mixed->getMaster();
+		}
+		else if(is_string($mixed) && defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
+		{
+			if($GLOBALS[PARM_CONFIG_GLOBAL][$mixed] instanceof DatabaseConfiguration)
 			{
-				$this->databaseNode = $GLOBALS[PARM_CONFIG_GLOBAL][$databaseNodeOrConfigurationName]->getMaster();
+				$this->databaseNode = $GLOBALS[PARM_CONFIG_GLOBAL][$mixed]->getMaster();
 			}
 			else
 			{
-				throw new \Parm\Exception\ErrorException("databaseNodeOrConfigurationName specified must be an instance of DatabaseConfiguration");
+				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in PARM_CONFIG_GLOBAL configuration.");
 			}
 		}
 		else
 		{
-			throw new \Parm\Exception\ErrorException("A DatabaseNode must be passed to DatabaseProcessor or PARM_CONFIG_GLOBAL must be defined.");
+			throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or PARM_CONFIG_GLOBAL must be defined for Parm to work.");
 		}
 		
 	}
 	
-	
-	// returns an array of rows from the database
+	/**
+	 * Get the rows as an associative array
+	 * @return array
+     */
 	function getArray()
 	{
 		$data = array();
@@ -52,7 +58,10 @@ class DatabaseProcessor
 	}
 	
 	
-	// returns an array of rows from the database
+	/**
+	 * Get the rows as an associative array JSON-ified with camelCase array keys 
+	 * @return array
+     */
 	function getJSON()
 	{
 		$data = array();
@@ -66,6 +75,10 @@ class DatabaseProcessor
 	}
 
 	
+	/**
+	 * Get a single dimension array of values
+	 * @return array
+     */
 	function getSingleColumnArray()
 	{
 		$data = array();
@@ -90,7 +103,11 @@ class DatabaseProcessor
 		return $data;
 	}
 	
-	// return a single value from the database
+	/**
+	 * Get the first value from a single column from the database
+	 * @param string $columnName The name of the column to select from
+	 * @return array
+     */
 	function getFirstField($columnName)
 	{
 		$a = $this->getArray();
@@ -102,23 +119,41 @@ class DatabaseProcessor
 		}
 	}
 	
+	/**
+	 * Set the SQL to proccess
+	 * @param string $sql
+	 * @return DatabaseProcessor
+     */
 	function setSQL($sql)
 	{
 		$this->sql = $sql;
+		return $this;
 	}
 	
+	/**
+	 * Get the SQL that has been set
+	 * @return string
+     */
 	function getSQL()
 	{
 		return $this->sql;
 	}
 	
-	// build a data object from the row data
+	/**
+	 * Build a data object from the row data
+	 * @param array $row The associative array of data
+	 * @return DataAccessArray
+     */
 	function loadDataObject($row)
 	{
 		return new DataAccessArray($row);
 	}
 	
-	// loop through rows return from database calling closure function provided
+	/**
+	 * Loop through the rows of a query and process with a closure
+	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
+	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
+     */
 	function process($closure)
 	{
 		$conn = $this->databaseNode->getConnection();
@@ -139,9 +174,17 @@ class DatabaseProcessor
 		}
 	
 		$this->freeResult($result);
+		
+		return $this;
 	}
 	
-	// same as process but uses unbuffered connection
+	/**
+	 * Using an Unbuffered Query, Loop through the rows of a query and process with a closure
+	 * You can use this on millions of rows without memory problems
+	 * Does lock the table to writes on some databases
+	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
+	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
+     */
 	function unbufferedProcess($closure)
 	{
 		$conn = $this->databaseNode->getConnection();
@@ -157,13 +200,24 @@ class DatabaseProcessor
 		
 		$this->freeResult($result);
 		
+		return $this;
+		
 	}
 	
+	/**
+	 * Get the number of rows for a query from the MySQL database via the result
+	 * @param mysqli $result
+	 * @return integer The number of rows reported from the database
+     */
 	function getNumberOfRowsFromResult($result)
 	{
 		return (int)$result->num_rows;
 	}
 	
+	/**
+	 * Execute the query stored by setSQL()
+	 * @return mysql result
+     */
 	function query()
 	{
 		if(count(func_get_args()) > 0)
@@ -175,6 +229,10 @@ class DatabaseProcessor
 		return $result;
 	}
 	
+	/**
+	 * Execute a sql update
+	 * @param string $sql The SQL to execute
+     */
 	function update($sql)
 	{
 		$result = $this->getMySQLResult($sql);
@@ -186,28 +244,12 @@ class DatabaseProcessor
 		return $this->__multiQuery();
 	}
 	
-	private function __multiQuery()
-	{
-		$conn = $this->databaseNode->getConnection();
-		
-		$conn->multi_query($this->getSQL());
-		
-		do
-		{
-			if($conn->errno != 0)
-			{
-				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
-			}
-			
-			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
-			{
-				break;
-			}
-			
-		} while (true);
-		
-	}
 	
+	/**
+	 * Get a MySQL result from a SQL string
+	 * @param string $sql The SQL to execute
+	 * @return mysql result
+     */
 	function getMySQLResult($sql)
 	{
 		$conn = $this->databaseNode->getConnection();
@@ -230,7 +272,13 @@ class DatabaseProcessor
 		}
 	}
 	
-	// convert timezones, use "US/Eastern" mysql format (mysql.time_zone_name)
+	/**
+	 * Convert a datetime from one timezone to another. Use the "US/Eastern" format
+	 * @param timestamp|string $dateTime The datetime in the source timezone
+	 * @param string $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+	 * @param string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+	 * @return mysql result
+     */
 	function convertTimezone($dateTime,$sourceTimezone,$destTimezone)
 	{
 		if(!is_integer($dateTime))
@@ -270,6 +318,9 @@ class DatabaseProcessor
 		}
 	}
 	
+	/**
+	 * Free a mysqli_result
+     */
 	function freeResult($result)
 	{
 		if($result != null)
@@ -289,6 +340,9 @@ class DatabaseProcessor
 		}
 	}
 	
+	/**
+	 * Output a JSON string using a real_query from the SQL that has been set using setSQL($sql)
+     */
 	function outputJSONString()
 	{
 		echo "[";
@@ -324,7 +378,9 @@ class DatabaseProcessor
 		return true;
 	}
 	
-	// escape a string to prevent mysql injection
+	/**
+	 * Escape a string to prevent mysql injection
+     */
 	function escapeString($string)
 	{
 		$conn = $this->databaseNode->getConnection();
@@ -332,7 +388,9 @@ class DatabaseProcessor
 		return $conn->real_escape_string($string);
 	}
 	
-	// util
+	/**
+	 * Format some text for CSV
+     */
 	static function formatTextCSV($text)
 	{
 		$text = preg_replace("/<(.|\n)*?>/","",$text);
@@ -353,7 +411,9 @@ class DatabaseProcessor
 		return html_entity_decode($text);
 	}
 	
-	// useful for replacing mysql_real_escape_string in old code with DatabaseProcessor::mysql_real_escape_string()
+	/**
+	 * Useful for replacing mysql_real_escape_string in old code with DatabaseProcessor::mysql_real_escape_string()
+     */
 	static function mysql_real_escape_string($string)
 	{
 		if(defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
@@ -365,6 +425,28 @@ class DatabaseProcessor
 		{
 			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires PARM_CONFIG_GLOBAL");
 		}
+	}
+	
+	private function __multiQuery()
+	{
+		$conn = $this->databaseNode->getConnection();
+		
+		$conn->multi_query($this->getSQL());
+		
+		do
+		{
+			if($conn->errno != 0)
+			{
+				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
+			}
+			
+			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
+			{
+				break;
+			}
+			
+		} while (true);
+		
 	}
 	
 }
