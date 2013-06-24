@@ -38,6 +38,7 @@ class DatabaseConfiguration
 		return $this->master;
 	}
 	
+	/*
 	function addSlave($slave, $slaveName = null)
 	{
 		if($slaveName != null)
@@ -61,6 +62,7 @@ class DatabaseConfiguration
 			return array_rand($this->slaves,1);
 		}
 	}
+	 */
 	
 	function setGeneratorCodeDestinationDirectory($val) { $this->generatorCodeDestinationDirectory = $val; }
 	function getGeneratorCodeDestinationDirectory() { return $this->generatorCodeDestinationDirectory; }

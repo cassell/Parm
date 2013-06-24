@@ -15,7 +15,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 	abstract function getDefaultRow();
 	
-	abstract static function getFactory($databaseNode = null);
+	abstract static function getFactory();
 
 	/**
 	 * Constructor
@@ -42,6 +42,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 	
 	/**
+	 * Find an object by ID
      * @param integer $id ID of the row in the database
      * @return object|null The record from the database
      */
@@ -52,7 +53,6 @@ abstract class DataAccessObject extends DataAccessArray
 	
 	/**
      * Create a clone of the object in order to save a duplicate
-	 * 
 	 * @return object|null A record that hasn't been save to the database
      */
 	function createClone()
@@ -74,13 +74,11 @@ abstract class DataAccessObject extends DataAccessArray
 
 	/**
      * Save the object to the database.
-	 * 
 	 * @return object
-	 * 
      */
-	function save($databaseNode = null)
+	function save()
 	{
-		$f = static::getFactory($databaseNode);
+		$f = static::getFactory();
 
 		if (!empty($this->__modifiedColumns))
 		{
@@ -136,7 +134,8 @@ abstract class DataAccessObject extends DataAccessArray
 
 	/**
      * Delete the object from the database.
-	 * @return TRUE if successful, False if failed or ID is not greater than 
+	 * @return TRUE if successful, False if failed or ID is not greater than
+	 *  
      */
 	function delete()
 	{
@@ -162,8 +161,8 @@ abstract class DataAccessObject extends DataAccessArray
 	}
 	
 	/**
-     * Test if the object has been saved to the database
-	 * @return boolean If the record has an ID other than the NEW_OBJECT_ID (-1)
+     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (-1)
+	 * @return boolean
      */
 	function hasObjectBeenSaved()
 	{

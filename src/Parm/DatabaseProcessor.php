@@ -9,6 +9,9 @@ class DatabaseProcessor
 	
 	protected $sql = null;
 	
+	/**
+	 * @param DatabaseNode|string $databaseNodeOrConfigurationName The database to connect to
+     */
 	function __construct($databaseNodeOrConfigurationName)
 	{
 		// setup node

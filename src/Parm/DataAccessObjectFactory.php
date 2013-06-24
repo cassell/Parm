@@ -20,6 +20,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	private $orderByClause = '';
 	private $limitClause = '';
 
+	/**
+	 * Find an object by ID
+	 * @param DatabaseNode $databaseNode optional The database to retrieve the objects from
+     * @return DataAccessObjectFactory
+     */
 	function __construct($databaseNode = null)
 	{
 		// setup connection properties

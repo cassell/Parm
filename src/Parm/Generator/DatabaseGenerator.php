@@ -7,13 +7,10 @@ class DatabaseGenerator
 	const DestinationDirectoryFolderPermissions = 0777;
 	const GenereatedCodeFilePermissions = 0777;
 	
-	
 	var $databaseNode;
 	var $destinationDirectory;
-	
 	var $generatedNamespace = "\\Parm\\Dao\\";
 
-	
 	function __construct($databaseNode)
 	{
 		$this->setDatabaseNode($databaseNode);
@@ -28,7 +25,7 @@ class DatabaseGenerator
 		}
 		else
 		{
-			throw new Exception('Database must be a \Parm\DatabaseNode');
+			throw new Exception('DatabaseNode must be a \Parm\DatabaseNode');
 		}
 	}
 	
