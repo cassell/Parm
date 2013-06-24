@@ -397,7 +397,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	// clear	
 	protected function clearBindings()
 	{
-		$this->conditional = new Binding\Conditional\AndConditional();
+		$this->conditional = new AndConditional();
 		
 		return $this;
 	}
