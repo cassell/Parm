@@ -6,14 +6,17 @@ namespace {{nameSpace}};
 
 class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 {
-	function __construct()
+	function __construct($databaseNode = null)
 	{
-		parent::__construct();
-	}
-
-	function {{className}}DaoFactory()
-	{
-		self::__construct();
+		// setup connection properties
+		if($databaseNode)
+		{
+			parent::__construct($databaseNode);
+		}
+		else
+		{
+			parent::__construct(null);
+		}
 	}
 
 	function getDatabaseName()
