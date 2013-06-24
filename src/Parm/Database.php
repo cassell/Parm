@@ -26,7 +26,7 @@ class Database
 		}
 		else
 		{
-			throw new Exception('Master DatabaseNode must be a Parm\DatabaseNode');
+			throw new \Exception('Master DatabaseNode must be a Parm\DatabaseNode');
 		}
 	}
 	
