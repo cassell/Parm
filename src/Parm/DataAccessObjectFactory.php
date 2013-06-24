@@ -32,7 +32,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 			parent::__construct($this->getDatabaseName());
 		}
 		
-
 		// fields used in the SELECT clause
 		$this->setSelectFields($this->getFields());
 
@@ -111,6 +110,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	
 	/**
 	 * Adds to the default Factory Binding which is an AND conditional
+	 * @param DataAccessObject $object
+	 * @param string $localField
+	 * @param string $remoteField 
      * @return DataAccessObjectFactory so that you can chain bindings
      */
 	function addForeignKeyObjectBinding($object, $localField = null, $remoteField = null)
@@ -129,6 +131,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Get the SQL  that will be executed against the database
+     * @return string
+     */
 	function getSQL()
 	{
 		if($this->sql == null)
@@ -141,35 +147,58 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Delete based bindings
+     */
 	function delete()
 	{
 		$this->update("DELETE " . implode(" ", array($this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql(), $this->getGroupByClause(), $this->getOrderByClause(), $this->getLimitClause())));
 	}
 
-	// find an object or data by primary key
+	/**
+	 * Find an object by primary key
+	 * @return object
+     */
 	function findId($id)
 	{
 		return $this->getObject($id);
 	}
 
-	// return all objects
+	/**
+	 * Return all the rows in a table
+	 * @return array of objects
+     */
 	function findAll()
 	{
 		$this->clearBindings();
 		return $this->getObjects();
 	}
 
-	// generate the select clause from $this->fields
+	/**
+	 * Generate the SELECT clause from $this->fields
+	 * @return string
+     */
 	function getSelectClause()
 	{
 		return 'SELECT ' . implode(",", $this->fields);
 	}
 
+	/**
+	 * Generate the FROM clause from the table name
+	 * @return string
+     */
 	function getFromClause()
 	{
 		return 'FROM ' . $this->getTableName();
 	}
 
+	/**
+	 * Set the coluns to return from the database. You would use this to limit the number of fields return per row
+	 * or select other fields from a join clause.
+	 * Usage: $f->setSelectFields("first_name","last_name","email");
+	 * @param array|string An array of strings or all the fields separated by commas
+	 * @return DataAccessObject
+     */
 	function setSelectFields($arrayOfFields)
 	{
 		if(func_num_args() == 1 && is_array($arrayOfFields))
@@ -198,6 +227,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Add a column to the select clause. Useful when using join.
+	 * Usage: $f->addSelectField("company.company_name");
+	 * @param string The name of the column
+	 * @return DataAccessObject for chaining
+     */
 	function addSelectField($field)
 	{
 		if(strpos($field, ".") !== false)
@@ -212,7 +247,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
-	// joins
+	/**
+	 * Add a join to the select clause
+	 * @param string The join clause
+	 * @return DataAccessObject for chaining
+     */
 	function join($clause)
 	{
 		$this->setJoinClause($this->getJoinClause() . " " . $clause);
@@ -220,6 +259,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Set the join clause, this replaces the entire join clause
+	 * @param string The join clause
+	 * @return DataAccessObject for chaining
+     */
 	function setJoinClause($val)
 	{
 		$this->joinClause = $val;
@@ -227,19 +271,31 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Get the join clause
+	 * @return string
+     */
 	function getJoinClause()
 	{
 		return $this->joinClause;
 	}
 
-	// eventually deprecate old naming convention
+	/**
+	 * Alias to the join() function
+	 * @param string join clause
+	 * @return DataAccessObject
+     */
 	function addJoinClause($clause)
 	{
-		$this->join($clause);
-		return $this;
+		return $this->join($clause);
 	}
 
-	// group by
+	/**
+	 * Add to the group by clause
+	 * Usage: $f->groupBy("last_name");
+	 * @param array|string An array of strings or all the fields separated by commas
+	 * @return DataAccessObject
+     */
 	function groupBy($fieldOrArray)
 	{
 		if(func_num_args() > 1)
@@ -271,6 +327,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Set the group by clause, this replaces the entire group by clause
+	 * @param string The group by clause
+	 * @return DataAccessObject for chaining
+     */
 	function setGroupByClause($val)
 	{
 		$this->groupByClause = $val;
@@ -278,12 +339,22 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Get the group by clause
+	 * @return string
+     */
 	function getGroupByClause()
 	{
 		return $this->groupByClause;
 	}
 
-	// order by
+	/**
+	 * Add to the order by clause
+	 * Usage: $f->orderBy("last_name","asc");
+	 * @param string $field The field to sort by
+	 * @param string $direction The direction to sort. asc or desc
+	 * @return DataAccessObject
+     */
 	function orderBy($field, $direction = 'asc')
 	{
 		if($this->getOrderByClause() == "")
@@ -300,16 +371,32 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this;
 	}
 
+	/**
+	 * Set the order by clause, this replaces the entire order by clause
+	 * @param string The order by clause
+	 * @return DataAccessObject for chaining
+     */
 	function setOrderByClause($val)
 	{
 		$this->orderByClause = $val;
+		return $this;
 	}
 
+	/**
+	 * Get the order by clause
+	 * @return string
+     */
 	function getOrderByClause()
 	{
 		return $this->orderByClause;
 	}
 
+	/**
+	 * Add a bunch of fields to the order by clause ascending
+	 * Usage: $f->orderByAsc("last_name","first_name");
+	 * @param array|string An array of strings or all the fields separated by commas
+	 * @return DataAccessObject
+     */
 	function orderByAsc($arrayOfFields)
 	{
 		if(func_num_args() == 1 && is_array($arrayOfFields) && count($arrayOfFields) > 0)
