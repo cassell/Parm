@@ -15,7 +15,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 	abstract function getDefaultRow();
 	
-	abstract static function getFactory();
+	abstract static function getFactory($databaseNode = null);
 
 	/**
 	 * Constructor
@@ -78,9 +78,9 @@ abstract class DataAccessObject extends DataAccessArray
 	 * @return object
 	 * 
      */
-	function save()
+	function save($databaseNode = null)
 	{
-		$f = static::getFactory();
+		$f = static::getFactory($databaseNode);
 
 		if (!empty($this->__modifiedColumns))
 		{
