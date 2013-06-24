@@ -2,6 +2,11 @@
 
 namespace Parm;
 
+if(!defined('PARM_CONFIG_GLOBAL'))
+{
+	define('PARM_CONFIG_GLOBAL','PARM_CONFIG_GLOBAL');
+}
+
 class DatabaseProcessor
 {
 	var $connection;
