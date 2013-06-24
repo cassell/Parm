@@ -37,7 +37,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		$this->setSelectFields($this->getFields());
 
 		// conditional used in building the WHERE clause
-		$this->conditional = new AndConditional();
+		$this->conditional = new Binding\Conditional\AndConditional();
 		
 		return $this;
 	}
@@ -397,7 +397,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	// clear	
 	protected function clearBindings()
 	{
-		$this->conditional = new AndConditional();
+		$this->conditional = new Binding\Conditional\AndConditional();
 		
 		return $this;
 	}
