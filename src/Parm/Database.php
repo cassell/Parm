@@ -20,7 +20,7 @@ class Database
      */
 	function setMaster($masterDatabaseNode)
 	{
-		if($master instanceof \Parm\DatabaseNode)
+		if($masterDatabaseNode instanceof \Parm\DatabaseNode)
 		{
 			$this->master = $masterDatabaseNode;
 		}
