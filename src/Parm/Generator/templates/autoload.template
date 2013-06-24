@@ -1,0 +1,11 @@
+<?php
+
+spl_autoload_register(function($class) {
+	
+	if(strpos($class, "{{nameSpace}}") !== false)
+	{
+		require_once dirname(__FILE__) . '/' . substr($class, {{nameSpaceLength}}) . '.php';
+	}
+});
+
+?>
