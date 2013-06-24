@@ -202,7 +202,7 @@ class DatabaseGenerator
 			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/use_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/use_global_namespace.template'),array("tables" => $globalNamespaceData)));
 			
 			//autoloader
-			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.template'),array("nameSpace" => $this->generatedNamespace, "nameSpaceLength" => (strlen($this->generatedNamespace) + 1)  )));
+			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.template'),array("nameSpace" => $this->generatedNamespace, "nameSpaceLength" => (strlen($this->generatedNamespace) + 1), "DIRECTORY_SEPARATOR" => DIRECTORY_SEPARATOR  )));
 		}
 		else
 		{
