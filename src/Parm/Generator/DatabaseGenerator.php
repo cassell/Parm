@@ -204,17 +204,17 @@ class DatabaseGenerator
 				
 				$m = new \Mustache_Engine;
 				
-				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoObject.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.template'),$data));
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoObject.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.mustache'),$data));
 				
-				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.template'),$data));
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.mustache'),$data));
 				
 			}
 			
 			// global namespace file
-			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/use_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/use_global_namespace.template'),array("tables" => $globalNamespaceData)));
+			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/use_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/use_global_namespace.mustache'),array("tables" => $globalNamespaceData)));
 			
 			//autoloader
-			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.template'),array("nameSpace" => $this->generatedNamespace, "nameSpaceLength" => (strlen($this->generatedNamespace) + 1), "DIRECTORY_SEPARATOR" => DIRECTORY_SEPARATOR  )));
+			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.mustache'),array("nameSpace" => $this->generatedNamespace, "nameSpaceLength" => (strlen($this->generatedNamespace) + 1), "DIRECTORY_SEPARATOR" => DIRECTORY_SEPARATOR  )));
 		}
 		else
 		{
