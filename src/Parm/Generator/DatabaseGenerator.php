@@ -26,7 +26,7 @@ class DatabaseGenerator
 		}
 		else
 		{
-			throw new Exception('Database must be a Parm\Database');
+			throw new \Exception('Database must be a Parm\Database');
 		}
 		
 		$this->setDatabaseNode($database->getMaster());
@@ -40,7 +40,7 @@ class DatabaseGenerator
 		}
 		else
 		{
-			throw new Exception('DatabaseNode must be a Parm\DatabaseNode');
+			throw new \Exception('DatabaseNode must be a Parm\DatabaseNode');
 		}
 	}
 	
@@ -160,14 +160,14 @@ class DatabaseGenerator
 	{
 		if($this->destinationDirectory == null)
 		{
-			throw new Exception('Destination directory required');
+			throw new \Exception('Destination directory required');
 		}
 		
 		if(!file_exists($this->destinationDirectory))
 		{
 			if(!@mkdir($this->destinationDirectory))
 			{
-				throw new Exception('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
+				throw new \Exception('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
 			}
 			try
 			{
@@ -175,7 +175,7 @@ class DatabaseGenerator
 			}
 			catch(Exception $e)
 			{
-				throw new Exception('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
+				throw new \Exception('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
 			}
 		}
 		
@@ -227,7 +227,7 @@ class DatabaseGenerator
 	{
 		if(file_exists($fileName) && !is_writable($fileName))
 		{
-			throw new Exception('File is unwritable: ' . $fileName);
+			throw new \Exception('File is unwritable: ' . $fileName);
 		}
 		else if(@file_put_contents($fileName,$contents) !== FALSE)
 		{
@@ -237,19 +237,15 @@ class DatabaseGenerator
 			}
 			catch(Exception $e)
 			{
-				throw new Exception('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
+				throw new \Exception('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
 			}
 			return true;
 		}
 		else
 		{
-			throw new Exception('Unable to write file: ' . htmlentities($fileName));
+			throw new \Exception('Unable to write file: ' . htmlentities($fileName));
 		}
 	}
-	
-	
-	
-	
 }
 
 
