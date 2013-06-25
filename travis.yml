@@ -1,0 +1,14 @@
+language: php
+php:
+  - 5.5
+  - 5.4
+  
+env:
+  - DB=mysql
+
+before_script:
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql -e 'create database IF NOT EXISTS parm_tests;'; fi"
+  - sh -c "if [ '$DB' = 'mysql' ]; then mysql < tests/travis/test-data.sql; fi"
+  - composer install --prefer-source --dev
+
+script: phpunit
