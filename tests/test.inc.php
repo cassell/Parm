@@ -62,6 +62,11 @@ if(!file_exists(dirname(__FILE__).'/dao/ZipcodesDaoObject.php'))
 	throw new Exception('ZipcodesDaoObject does not exist');
 }
 
+require_once dirname(__FILE__).'/dao/PeopleDaoObject.php';
+require_once dirname(__FILE__).'/dao/PeopleDaoFactory.php';
+require_once dirname(__FILE__).'/dao/ZipcodesDaoObject.php';
+require_once dirname(__FILE__).'/dao/ZipcodesDaoFactory.php';
+
 
 
 ?>
