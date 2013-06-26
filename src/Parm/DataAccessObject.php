@@ -15,7 +15,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 	abstract function getDefaultRow();
 	
-	abstract static function getFactory();
+	abstract function getFactory();
 
 	/**
 	 * Constructor

@@ -32,7 +32,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 		return '{{idFieldName}}';
 	}
 
-	static function getFactory($databaseNode = null)
+	function getFactory($databaseNode = null)
 	{
 		return new {{className}}DaoFactory($databaseNode);
 	}

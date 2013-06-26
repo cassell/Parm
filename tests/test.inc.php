@@ -22,7 +22,10 @@ require_once dirname(dirname(__FILE__)) . '/src/Parm/Binding/InBinding.php';
 require_once dirname(dirname(__FILE__)) . '/src/Parm/Binding/NotEqualsBinding.php';
 require_once dirname(dirname(__FILE__)) . '/src/Parm/Binding/TrueBooleanBinding.php';
 
-define('PARM_CONFIG_GLOBAL','PARM_CONFIG_GLOBAL');
+if(!defined('PARM_CONFIG_GLOBAL'))
+{
+	define('PARM_CONFIG_GLOBAL','PARM_CONFIG_GLOBAL');
+}
 $GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests'] = new Parm\Database();
 $GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']->setMaster(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
 
