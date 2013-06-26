@@ -67,7 +67,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 		$array = $dp->getArray();
 		
 		$this->assertTrue(is_array($array));
-		$this->assertEquals(count($array), 6);
+		$this->assertEquals(6,count($array));
 	}
 	
 	
@@ -79,7 +79,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 		$array = $dp->getArray();
 		
 		$this->assertTrue(is_array($array));
-		$this->assertEquals(count($array), 0);
+		$this->assertEquals(0,count($array));
 	}
 	
 	public function testGetJSON()
@@ -90,8 +90,16 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertTrue(is_array($jsonObjects));
 		$this->assertEquals(count($jsonObjects), 2);
-		$this->assertEquals($jsonObjects[1], "Pennsylvania");
+		$this->assertEquals("Pennsylvania", $jsonObjects[1]['stateName']);
 		
+	}
+	
+	public function testGetFirstField()
+	{
+		$dp = new Parm\DatabaseProcessor('sqlicious_test');
+		$dp->setSQL("select zipcode from zipcodes where city = 'Scranton' order by zipcode asc");
+		
+		$this->assertEquals("18503",$dp->getFirstField("zipcode"));
 	}
 	
 	
