@@ -96,7 +96,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetFirstField()
 	{
-		$dp = new Parm\DatabaseProcessor('sqlicious_test');
+		$dp = new Parm\DatabaseProcessor('parm_tests');
 		$dp->setSQL("select zipcode from zipcodes where city = 'Scranton' order by zipcode asc");
 		
 		$this->assertEquals("18503",$dp->getFirstField("zipcode"));
