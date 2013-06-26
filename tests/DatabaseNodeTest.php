@@ -12,7 +12,19 @@ class DatabaseNodeTest extends PHPUnit_Framework_TestCase
 		{
 			$connection = $node->getConnection();
 			
-			$connection->closeConnection();
+			if($connection instanceof mysqli)
+			{
+				if($connection->connect_errno !== 0)
+				{
+					$this->fail('$connection->connect_errno !== 0');
+				}
+			}
+			else
+			{
+				$this->fail('$node was not instanceOf \Parm\DatabaseNode');
+			}
+			
+			$node->closeConnection();
 		}
 		else
 		{
