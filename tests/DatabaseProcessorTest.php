@@ -20,15 +20,15 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testPassingStringToConstructor()
 	{
-		$dp = new DatabaseProcessor('parm_tests');
-		$dp->setSQL('select * from user');
+		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp->setSQL('select * from people');
 		$result = $dp->query();
 	}
 	
 	public function testPassingNodeToConstructor()
 	{
-		$dp = new DatabaseProcessor(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
-		$dp->setSQL('select * from user');
+		$dp = new Parm\DatabaseProcessor(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
+		$dp->setSQL('select * from people');
 		$result = $dp->query();
 	}
 	
