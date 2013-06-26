@@ -23,8 +23,19 @@ require_once dirname(dirname(__FILE__)) . '/src/Parm/Binding/NotEqualsBinding.ph
 require_once dirname(dirname(__FILE__)) . '/src/Parm/Binding/TrueBooleanBinding.php';
 
 define('PARM_CONFIG_GLOBAL','PARM_CONFIG_GLOBAL');
-$GLOBALS[PARM_CONFIG_GLOBAL]['devq'] = new Parm\Database();
-$GLOBALS[PARM_CONFIG_GLOBAL]['devq']->setMaster(new Parm\DatabaseNode('devq', 'localhost', 'web', 'spillresponse'));
+$GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests'] = new Parm\Database();
+$GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']->setMaster(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
+
+if(!file_exists(dirname(__FILE__).'/dao'))
+{
+	mkdir(dirname(__FILE__).'/dao');
+	chmod(dirname(__FILE__).'/dao', 0777);
+	
+	$generator = new Parm\Generator\DatabaseGenerator($GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']);
+	$generator->setDestinationDirectory(dirname(__FILE__).'/dao');
+	$generator->setGeneratedNamespace("Parm\\Dao");
+	$generator->generate();
+}
 
 
 ?>
