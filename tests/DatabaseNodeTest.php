@@ -6,7 +6,7 @@ class DatabaseNodeTest extends PHPUnit_Framework_TestCase
 {
 	public function testConnection()
 	{
-		$node = $GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']->getMaster();
+		$node = new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']);
 		
 		if($node instanceOf \Parm\DatabaseNode)
 		{
