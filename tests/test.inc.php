@@ -38,7 +38,30 @@ if(!file_exists(dirname(__FILE__).'/dao'))
 	$generator->setDestinationDirectory(dirname(__FILE__).'/dao');
 	$generator->setGeneratedNamespace("Parm\\Dao");
 	$generator->generate();
+	
+	
 }
+
+if(!file_exists(dirname(__FILE__).'/dao/PeopleDaoObject.php'))
+{
+	throw new Exception('PeopleDaoObject does not exist');
+}
+
+if(!file_exists(dirname(__FILE__).'/dao/PeopleDaoFactory.php'))
+{
+	throw new Exception('PeopleDaoFactory does not exist');
+}
+
+if(!file_exists(dirname(__FILE__).'/dao/ZipcodesDaoFactory.php'))
+{
+	throw new Exception('ZipcodesDaoFactory does not exist');
+}
+
+if(!file_exists(dirname(__FILE__).'/dao/ZipcodesDaoObject.php'))
+{
+	throw new Exception('ZipcodesDaoObject does not exist');
+}
+
 
 
 ?>
