@@ -1,6 +1,6 @@
 <?php
 
-require '../vendor/autoload.php';
+require dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 class DatabaseConnectionTest extends PHPUnit_Framework_TestCase
 {
