@@ -79,7 +79,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 		if($f->getIdField())
 		{
-			$f->addBinding(new EqualsBinding($f->getIdField(), intval($id)));
+			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), intval($id)));
 			return $f->getFirstObject();
 		}
 		else
@@ -122,7 +122,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function addForeignKeyObjectBinding($object, $localField = null, $remoteField = null)
 	{
-		$this->addBinding(new ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
+		$this->addBinding(new Binding\ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
 		return $this;
 	}
 
