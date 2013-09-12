@@ -48,7 +48,7 @@ abstract class DataAccessObject extends DataAccessArray
      */
 	static function findId($id)
 	{
-		static::getFactory()->getObject($id);
+		return static::getFactory()->getObject($id);
 	}
 	
 	/**
@@ -161,12 +161,12 @@ abstract class DataAccessObject extends DataAccessArray
 	}
 	
 	/**
-     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (-1)
+     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (-1). Returns true if the object has never been saved to the database
 	 * @return boolean
      */
-	function hasObjectBeenSaved()
+	function isNewObject()
 	{
-		return ($this->getId() != self::NEW_OBJECT_ID);
+		return ($this->getId() == self::NEW_OBJECT_ID);
 	}
 	
 
@@ -210,7 +210,7 @@ abstract class DataAccessObject extends DataAccessArray
 		{
 			if (is_integer($val))
 			{
-				$this->setFieldValue($fieldName, date(SQLICIOUS_MYSQL_DATETIME_FORMAT, $val));
+				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->dateTimeStorageFormat, $val));
 			}
 			else
 			{

@@ -84,7 +84,7 @@ class DatabaseProcessor
 	 * Get a single dimension array of values
 	 * @return array
      */
-	function getSingleColumnArray()
+	function getSingleColumnArray($columnName = null)
 	{
 		$data = array();
 		
@@ -98,15 +98,16 @@ class DatabaseProcessor
 			{
 				$result->data_seek(0);
 				
-				while($row = $result->fetch_array(MYSQLI_NUM))
+				while($row = $result->fetch_array($columnName ? MYSQLI_ASSOC : MYSQLI_NUM))
 				{
-					$data[] = $row[0];
+					$data[] = $row[$columnName ? $columnName : 0];
 				}
 			}
 		}
 		
 		return $data;
 	}
+	
 	
 	/**
 	 * Get the first value from a single column from the database
@@ -227,7 +228,7 @@ class DatabaseProcessor
 	{
 		if(count(func_get_args()) > 0)
 		{
-			throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor query does not accept any parameters");
+			throw new \Parm\Exception\ErrorException("DatabaseProcessor query does not accept any parameters");
 		}
 		
 		$result = $this->getMySQLResult($this->getSQL());
@@ -273,7 +274,7 @@ class DatabaseProcessor
 		}
 		catch(ErrorException $e)
 		{
-			throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
+			throw new \Parm\Exception\ErrorException("DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
 		}
 	}
 	

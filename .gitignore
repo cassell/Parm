@@ -1,3 +1,6 @@
 composer.lock
 vendor
 nbproject
+tests/dao
+phpunit.xml.local
+run_tests.sh

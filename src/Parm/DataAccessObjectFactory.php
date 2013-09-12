@@ -79,7 +79,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 		if($f->getIdField())
 		{
-			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), intval($id)));
+			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), (int)$id));
 			return $f->getFirstObject();
 		}
 		else
@@ -521,7 +521,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		if(count($this->conditional->items) > 0)
 		{
-			throw new SQLiciousErrorException("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
+			throw new Exception("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
 		}
 
 		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
@@ -720,7 +720,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 	protected function clearBindings()
 	{
-		$this->conditional = new AndConditional();
+		$this->conditional = new Binding\Conditional\AndConditional();
 		
 		return $this;
 	}

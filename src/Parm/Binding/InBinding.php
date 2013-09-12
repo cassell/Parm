@@ -35,7 +35,7 @@ class InBinding extends SQLString
 		}
 		else
 		{
-			throw new SQLiciousErrorException("The array passed to the InBinding is empty");
+			throw new Exception("The array passed to the InBinding is empty");
 		}
 	}
 

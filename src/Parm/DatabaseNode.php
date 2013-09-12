@@ -14,9 +14,11 @@ class DatabaseNode
 	var $serverSocket;
 	var $serverCharset; // default utf8
 	var $serverCaseSensitiveCollation;  // default utf8_bin
+	var $dateTimeStorageFormat;
+	var $dateStorageFormat;
 	var $connection;
 	
-	function __construct($serverDatabaseName, $serverHost, $serverUsername, $serverPassword, $serverPort = null, $serverSocket = null, $serverCharset = 'utf8', $serverCaseSensitiveCollation = 'utf8_bin')
+	function __construct($serverDatabaseName, $serverHost, $serverUsername, $serverPassword, $serverPort = null, $serverSocket = null, $serverCharset = 'utf8', $serverCaseSensitiveCollation = 'utf8_bin', $dateTimeStorageFormat = 'Y-m-d H:i:s', $dateStorageFormat = 'Y-m-d')
 	{
 		$this->serverDatabaseName = $serverDatabaseName;
 		$this->serverHost = $serverHost;
@@ -26,6 +28,9 @@ class DatabaseNode
 		$this->serverSocket = $serverSocket;
 		$this->serverCharset = $serverCharset;
 		$this->serverCaseSensitiveCollation = $serverCaseSensitiveCollation;
+		$this->dateTimeStorageFormat = $dateTimeStorageFormat;
+		$this->dateStorageFormat = $dateStorageFormat;
+		
 	}
 	
 	/**

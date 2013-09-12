@@ -25,7 +25,7 @@ class NotInBinding extends SQLString
 		}
 		else
 		{
-			throw new SQLiciousErrorException("The array passed to the NotInBinding is empty");
+			throw new Exception("The array passed to the NotInBinding is empty");
 		}
 	}
 
