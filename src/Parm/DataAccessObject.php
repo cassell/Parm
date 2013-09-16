@@ -48,7 +48,8 @@ abstract class DataAccessObject extends DataAccessArray
      */
 	static function findId($id)
 	{
-		return static::getFactory()->getObject($id);
+		$t = new static();
+		return $t->getFactory()->getObject($id);
 	}
 	
 	/**
