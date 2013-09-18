@@ -2,9 +2,9 @@
 
 spl_autoload_register(function($class) {
 	
-	if(strpos($class, "{{nameSpace}}") !== false)
+	if((strpos($class, "DaoFactory") !== false || strpos($class, "DaoObject") !== false) && strpos($class, "{{autoloaderNamespace}}") !== false)
 	{
-		require_once dirname(__FILE__) . '{{DIRECTORY_SEPARATOR}}' . substr($class, {{nameSpaceLength}}) . '.php';
+		require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . substr($class, {{namespaceLength}}) . '.php';
 	}
 });
 
