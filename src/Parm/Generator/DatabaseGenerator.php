@@ -132,10 +132,10 @@ class DatabaseGenerator
 				
 				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
 				{
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataAccessArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
 					$bindingsPack[] = "\n";
 				}
 			}
@@ -146,11 +146,14 @@ class DatabaseGenerator
 						'className' => $className,
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,
-						'nameSpace' => $this->generatedNamespace,
+						'namespace' => $this->generatedNamespace,
+						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : 'xxxxxxx',
+						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
+						'namespaceLength' => strlen($this->generatedNamespace),
 						'columns' => $columns,
 						'defaultValuePack' => implode(", ", $defaultValuePack),
 						'fieldList' => implode(", ", $fieldsPack),
-						'bindingsPack' => implode("\n", $bindingsPack)
+						'bindingsPack' => implode("\n", $bindingsPack),
 		);
 		
 	}
@@ -199,8 +202,7 @@ class DatabaseGenerator
 			{
 				$data = $this->getTemplatingDataFromTableName($tableName);
 				
-				$globalNamespaceData[] = array("className" => $data['className'],
-								"nameSpace" => $this->generatedNamespace);
+				$globalNamespaceData["tables"][] = $data;
 				
 				$m = new \Mustache_Engine;
 				
@@ -210,11 +212,21 @@ class DatabaseGenerator
 				
 			}
 			
-			// global namespace file
-			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/alias_all_tables_to_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'),array("tables" => $globalNamespaceData)));
+			$globalNamespaceData['namespace'] = $this->generatedNamespace;
+			$globalNamespaceData['autoloaderNamespace'] = ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : '';
+			$globalNamespaceData['namespaceLength'] = strlen($this->generatedNamespace) + 1;
 			
-			//autoloader
-			$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.mustache'),array("nameSpace" => $this->generatedNamespace, "nameSpaceLength" => (strlen($this->generatedNamespace) + 1), "DIRECTORY_SEPARATOR" => DIRECTORY_SEPARATOR  )));
+			// global namespace file
+			if($this->generatedNamespace != "\\" && $this->generatedNamespace != "")
+			{
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/alias_all_tables_to_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'),$globalNamespaceData));
+				
+				//autoloader
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.mustache'),$globalNamespaceData));
+			}
+			
+			
+			
 		}
 		else
 		{
@@ -247,8 +259,6 @@ class DatabaseGenerator
 		}
 	}
 }
-
-
 
 
 ?>
