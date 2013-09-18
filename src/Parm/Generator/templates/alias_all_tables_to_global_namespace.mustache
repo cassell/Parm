@@ -5,16 +5,17 @@
  * You might also consider includind the use_global_namespace.php file
  * located in the Parm root folder.
  *
- * (c) Andrew Cassell <me@andrewcassell.com>
+ * (c) Andrew Cassell @andrewcassell
  *
  * For the full copyright and license information, please view the LICENSE
  * file that was distributed with this source code.
  * 
  */
+
  
 {{#tables}}
-class_alias('{{nameSpace}}\{{className}}DaoObject', '{{className}}DaoObject');
-class_alias('{{nameSpace}}\{{className}}DaoFactory', '{{className}}DaoFactory');
+class_alias('{{autoloaderNamespace}}{{className}}DaoObject', '{{className}}DaoObject');
+class_alias('{{autoloaderNamespace}}{{className}}DaoFactory', '{{className}}DaoFactory');
 {{/tables}}
 
 ?>
