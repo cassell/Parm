@@ -5,13 +5,24 @@ abstract class Conditional extends \Parm\Binding\SQLString
 {
 	abstract public function getSeparator();
 	
-	var $items = array();
+	/**
+     * @var array
+     */
+	public $items = array();
 
-	function __construct()
+	/**
+     * Creates a new conditional
+     */
+	public function __construct()
 	{
 		parent::__construct();
 	}
 
+	/**
+     * Add a binding to the list of bindings that will be joined together to make a SQL string
+	 * 
+	 * @param string|Binding|Conditional $binding The binding to add to the conditional
+     */
 	public function addBinding($binding)
 	{
 		if(is_string($binding))
@@ -24,16 +35,21 @@ abstract class Conditional extends \Parm\Binding\SQLString
 		}
 	}
 
+	/**
+     * Add a conditional to the list of bindings that will be joined together to make a SQL string
+	 * 
+	 * @param Conditional $binding The binding to add to the conditional
+     */
 	public function addConditional($conditional)
 	{
 		$this->addItem($conditional);
 	}
 
-	private function addItem($item)
-	{
-		$this->items[] = $item;
-	}
-
+	/**
+     * Return the SQL String
+	 * 
+	 * @return string SQL that will be added to a WHERE clause
+     */
 	public function getSQL($factory)
 	{
 		if($this->items != null && count($this->items) > 0)
@@ -51,5 +67,9 @@ abstract class Conditional extends \Parm\Binding\SQLString
 			return '';
 	}
 	
-
+	private function addItem($item)
+	{
+		$this->items[] = $item;
+	}
+	
 }
