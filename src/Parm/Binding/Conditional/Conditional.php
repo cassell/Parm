@@ -17,7 +17,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	{
 		if(is_string($binding))
 		{
-			$this->addItem(new StringBinding($binding));
+			$this->addItem(new \Parm\Binding\StringBinding($binding));
 		}
 		else
 		{
