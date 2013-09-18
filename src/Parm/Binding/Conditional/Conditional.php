@@ -1,10 +1,9 @@
 <?php
-
 namespace Parm\Binding\Conditional;
 
 abstract class Conditional extends \Parm\Binding\SQLString
 {
-	abstract function getSeparator();
+	abstract public function getSeparator();
 	
 	var $items = array();
 
@@ -13,7 +12,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
 		parent::__construct();
 	}
 
-	function addBinding($binding)
+	public function addBinding($binding)
 	{
 		if(is_string($binding))
 		{
@@ -25,7 +24,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
 		}
 	}
 
-	function addConditional($conditional)
+	public function addConditional($conditional)
 	{
 		$this->addItem($conditional);
 	}
@@ -35,7 +34,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
 		$this->items[] = $item;
 	}
 
-	function getSQL($factory)
+	public function getSQL($factory)
 	{
 		if($this->items != null && count($this->items) > 0)
 		{
@@ -51,7 +50,6 @@ abstract class Conditional extends \Parm\Binding\SQLString
 		else
 			return '';
 	}
+	
 
 }
-
-?>

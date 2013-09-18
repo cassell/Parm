@@ -1,5 +1,4 @@
 <?php
-
 namespace Parm\Binding\Conditional;
 
 class OrConditional extends Conditional
@@ -14,5 +13,3 @@ class OrConditional extends Conditional
 		return "OR";
 	}
 }
-
-?>

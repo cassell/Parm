@@ -1,5 +1,4 @@
 <?php
-
 namespace Parm\Binding\Conditional;
 
 class AndConditional extends Conditional
@@ -14,5 +13,3 @@ class AndConditional extends Conditional
 		return "AND";
 	}
 }
-
-?>
