@@ -54,6 +54,11 @@ class DatabaseGenerator
 		$this->generatedNamespace = $namespaceString;
 	}
 	
+	function useGlobalNamespace()
+	{
+		$this->setGeneratedNamespace("");
+	}
+	
 	private function getTableNames()
 	{
 		$databaseName = $this->databaseNode->serverDatabaseName;
