@@ -1,0 +1,11 @@
+<?php
+
+spl_autoload_register(function($class) {
+	
+	if(strpos($class, "\\") === false && (strpos($class, "DaoFactory") !== false || strpos($class, "DaoObject") !== false) && file_exists(dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.php'))
+	{
+		require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.php';
+	}
+});
+
+?>

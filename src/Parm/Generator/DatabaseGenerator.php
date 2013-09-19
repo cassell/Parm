@@ -227,7 +227,11 @@ class DatabaseGenerator
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/alias_all_tables_to_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'),$globalNamespaceData));
 				
 				//autoloader
-				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/autoload.mustache'),$globalNamespaceData));
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/namespaced_autoload.mustache'),$globalNamespaceData));
+			}
+			else
+			{
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'),$globalNamespaceData));
 			}
 			
 			
