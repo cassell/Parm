@@ -419,7 +419,7 @@ class DatabaseProcessor
 	{
 		if(defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
 		{
-			$dp = new DatabaseProcessor(reset(array_keys($GLOBALS[PARM_CONFIG_GLOBAL]->getDatabases())));
+			$dp = new DatabaseProcessor(reset(array_keys($GLOBALS[PARM_CONFIG_GLOBAL])));
 			return $dp->escapeString($string);
 		}
 		else
