@@ -2,8 +2,6 @@
 
 namespace Parm;
 
-use \mysqli;
-
 class DatabaseNode
 {
 	var $serverDatabaseName;
@@ -41,7 +39,7 @@ class DatabaseNode
 	{
 		if($this->connection == null)
 		{
-			$this->connection = new mysqli($this->serverHost, $this->serverUsername, $this->serverPassword, $this->serverDatabaseName, $this->serverPort ? $this->serverPort : null, $this->serverSocket);
+			$this->connection = new \mysqli($this->serverHost, $this->serverUsername, $this->serverPassword, $this->serverDatabaseName, $this->serverPort ? $this->serverPort : null, $this->serverSocket);
 			$this->connection->set_charset($this->serverCharset);
 
 			if($this->connection == null || $this->connection->connect_errno)
