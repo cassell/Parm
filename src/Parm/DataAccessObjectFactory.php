@@ -4,7 +4,6 @@ namespace Parm;
 
 abstract class DataAccessObjectFactory extends DatabaseProcessor
 {
-	// generated classes create these
 	abstract function getTableName();
 
 	abstract function getIdField();
