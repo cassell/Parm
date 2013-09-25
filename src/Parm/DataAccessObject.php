@@ -154,7 +154,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 	/**
      * Get the ID (Primary Key) of the object
-	 * @return integer ID of the record in the database, it will be -1 if a new record
+	 * @return integer ID of the record in the database. -1 if a new record
      */
 	function getId()
 	{
