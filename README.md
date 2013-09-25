@@ -1,9 +1,7 @@
-Parm
-====
-
 ![Parm Logo](https://raw.github.com/cassell/Parm/logo/parm-logo-600.png)
 
-[![Build Status](https://travis-ci.org/cassell/Parm.png?branch=master)](https://travis-ci.org/cassell/Parm)
+Parm [![Build Status](https://travis-ci.org/cassell/Parm.png?branch=master)](https://travis-ci.org/cassell/Parm)
+====
 
 This project is currently under heavy development.
 
