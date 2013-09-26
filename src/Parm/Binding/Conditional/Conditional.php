@@ -3,9 +3,16 @@ namespace Parm\Binding\Conditional;
 
 abstract class Conditional extends \Parm\Binding\SQLString
 {
+	/**
+     * The separator that should be used in the SQL string
+	 * 
+	 * @return string The separator that should be used in the SQL
+     */
 	abstract public function getSeparator();
 	
 	/**
+	 * The array of items that will be joined together to make the SQL string
+	 * 
      * @var array
      */
 	public $items = array();
@@ -19,36 +26,34 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	}
 
 	/**
-     * Add a binding to the list of bindings that will be joined together to make a SQL string
+     * Add a binding to the list of bindings that will be joined together to make the SQL string.
 	 * 
-	 * @param string|Binding|Conditional $binding The binding to add to the conditional
+	 * @param string|Binding|Conditional $binding
+	 * @return Conditional Returns itself for chaining
      */
 	public function addBinding($binding)
 	{
-		if(is_string($binding))
-		{
-			$this->addItem(new \Parm\Binding\StringBinding($binding));
-		}
-		else
-		{
-			$this->addItem($binding);
-		}
+		$this->addItem($binding);
+		return $this;
 	}
 
 	/**
-     * Add a conditional to the list of bindings that will be joined together to make a SQL string
+     * Add a conditional to the list of conditionals that will be joined together to make a SQL string
 	 * 
-	 * @param Conditional $binding The binding to add to the conditional
+	 * @param Conditional $conditional
+	 * @return Conditional Returns itself for chaining
      */
 	public function addConditional($conditional)
 	{
 		$this->addItem($conditional);
+		return $this;
 	}
 
 	/**
      * Return the SQL String
 	 * 
-	 * @return string SQL that will be added to a WHERE clause
+	 * @param DatabaseAccessObjectFactory $factory The factory to use for escaping values
+	 * @return string
      */
 	public function getSQL($factory)
 	{
@@ -69,7 +74,14 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	
 	private function addItem($item)
 	{
-		$this->items[] = $item;
+		if(is_string($item))
+		{
+			$this->items[] = new \Parm\Binding\StringBinding($item);
+		}
+		else
+		{
+			$this->items[] = $item;
+		}
 	}
 	
 }

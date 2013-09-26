@@ -14,7 +14,7 @@ class Database
 	/**
      * Set the master database node for the configuration
 	 * 
-	 * @param $master DatabaseNode
+	 * @param DatabaseNode $masterDatabaseNode
      */
 	function setMaster($masterDatabaseNode)
 	{

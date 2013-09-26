@@ -5,22 +5,25 @@ namespace Parm\Binding;
 class Binding extends SQLString
 {
 	/**
+	 * The field/column to filter on
      * @var string
      */
 	public $field;
 	
 	/**
+	 * The value to filter the field/column on
      * @var string
      */
 	public $value;
 	
 	/**
+	 * The operator for the filtering
      * @var string
      */
 	public $operator;
 	
 	/**
-     * Create a new Binding from the field(column_name), operatore(=,!=,etc), and value. The binding will be added to a conditional
+     * Create a new Binding from the field(column_name), operator(=,!=,etc), and value.
 	 * @param $field string
 	 * @param $operator string
 	 * @param $value string
@@ -36,11 +39,12 @@ class Binding extends SQLString
 	/**
      * Return the SQL String
 	 * 
-	 * @return string SQL that will be added to a WHERE clause
+	 * @param $factory DataAccessObjectFactory
+	 * @return string
      */
 	function getSQL($factory)
 	{
 		return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($this->value) . "'";
 	}
-
+	
 }

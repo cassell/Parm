@@ -22,5 +22,3 @@ class ConnectionErrorException extends ErrorException
 		}
 	}
 }
-
-?>

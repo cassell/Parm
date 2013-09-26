@@ -43,6 +43,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Get the rows as an associative array
+	 * 
 	 * @return array
      */
 	function getArray()
@@ -77,6 +78,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Get a single dimension array of values
+	 * 
 	 * @return array
      */
 	function getSingleColumnArray($columnName = null)
@@ -106,6 +108,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Get the first value from a single column from the database
+	 * 
 	 * @param string $columnName The name of the column to select from
 	 * @return array
      */
@@ -122,6 +125,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Set the SQL to proccess
+	 * 
 	 * @param string $sql
 	 * @return DatabaseProcessor
      */
@@ -142,6 +146,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Build a data object from the row data
+	 * 
 	 * @param array $row The associative array of data
 	 * @return DataAccessArray
      */
@@ -152,6 +157,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Loop through the rows of a query and process with a closure
+	 * 
 	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
@@ -183,6 +189,7 @@ class DatabaseProcessor
 	 * Using an Unbuffered Query, Loop through the rows of a query and process with a closure
 	 * You can use this on millions of rows without memory problems
 	 * Does lock the table to writes on some databases
+	 * 
 	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
@@ -207,6 +214,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Get the number of rows for a query from the MySQL database via the result
+	 * 
 	 * @param mysqli $result
 	 * @return integer The number of rows reported from the database
      */
@@ -217,6 +225,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Execute the query stored by setSQL()
+	 * 
 	 * @return mysql result
      */
 	function query()
@@ -232,6 +241,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Execute a sql update
+	 * 
 	 * @param string $sql The SQL to execute
      */
 	function update($sql)
@@ -248,6 +258,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Get a MySQL result from a SQL string
+	 * 
 	 * @param string $sql The SQL to execute
 	 * @return mysql result
      */
@@ -275,6 +286,7 @@ class DatabaseProcessor
 	
 	/**
 	 * Convert a datetime from one timezone to another. Use the "US/Eastern" format
+	 * 
 	 * @param timestamp|string $dateTime The datetime in the source timezone
 	 * @param string $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
 	 * @param string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)

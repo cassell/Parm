@@ -4,7 +4,7 @@ namespace Parm\Binding\Conditional;
 class AndConditional extends Conditional
 {
 	/**
-     * Createa a new conditional that will joing bindings with AND
+     * Create a new conditional that will joing bindings with AND
      */
 	public function __construct()
 	{

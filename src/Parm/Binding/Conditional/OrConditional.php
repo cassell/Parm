@@ -4,7 +4,7 @@ namespace Parm\Binding\Conditional;
 class OrConditional extends Conditional
 {
 	/**
-     * Createa a new conditional that will joing bindings with OR
+     * Create a new OR conditional statement
      */
 	function __construct()
 	{

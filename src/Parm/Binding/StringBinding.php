@@ -4,6 +4,17 @@ namespace Parm\Binding;
 
 class StringBinding extends SQLString
 {
+	/**
+	 * The sql to filter on
+     * @var string
+     */
+	public $sql;
+	
+	/**
+     * Filter rows on a string
+	 * @param $field string
+	 * @param $value string
+     */
 	function __construct($sql)
 	{
 		$this->sql = $sql;
@@ -15,5 +26,3 @@ class StringBinding extends SQLString
 		return $this->sql;
 	}
 }
-
-?>

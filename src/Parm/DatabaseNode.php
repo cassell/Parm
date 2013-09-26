@@ -16,6 +16,21 @@ class DatabaseNode
 	var $dateStorageFormat;
 	var $connection;
 	
+	/**
+     * Create a database node
+	 * 
+	 * @param string $serverDatabaseName
+	 * @param string $serverHost
+	 * @param string $serverUsername
+	 * @param string $serverPassword
+	 * @param string $serverPort
+	 * @param string $serverSocket
+	 * @param string $serverCharset
+	 * @param string $serverCaseSensitiveCollation
+	 * @param string $dateTimeStorageFormat
+	 * @param string $dateStorageFormat
+	 * 
+     */
 	function __construct($serverDatabaseName, $serverHost, $serverUsername, $serverPassword, $serverPort = null, $serverSocket = null, $serverCharset = 'utf8', $serverCaseSensitiveCollation = 'utf8_bin', $dateTimeStorageFormat = 'Y-m-d H:i:s', $dateStorageFormat = 'Y-m-d')
 	{
 		$this->serverDatabaseName = $serverDatabaseName;

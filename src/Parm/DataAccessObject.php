@@ -20,6 +20,7 @@ abstract class DataAccessObject extends DataAccessArray
 	/**
 	 * Constructor
      * @param array $row Array of data
+	 * @return DataAccessObject Returns itself for chaining
      */
 	function __construct($row = null)
 	{
@@ -144,17 +145,12 @@ abstract class DataAccessObject extends DataAccessArray
 		{
 			$f = static::getFactory();
 			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
-			return true;
-		}
-		else
-		{
-			return false;
 		}
 	}
 
 	/**
      * Get the ID (Primary Key) of the object
-	 * @return integer ID of the record in the database. -1 if a new record
+	 * @return integer ID of the record in the database. NEW_OBJECT_ID if a new record
      */
 	function getId()
 	{
@@ -162,7 +158,7 @@ abstract class DataAccessObject extends DataAccessArray
 	}
 	
 	/**
-     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (-1). Returns true if the object has never been saved to the database
+     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (usually -1). Returns true if the object has never been saved to the database
 	 * @return boolean
      */
 	function isNewObject()
@@ -172,8 +168,8 @@ abstract class DataAccessObject extends DataAccessArray
 	
 
 	/**
-     * Convert to JSON ready array. The primary key is always 'id'
-	 * @return array JSON ready with camel case fields and primary key is 'id'
+     * Convert to JSON ready array. The camel case fields and the primary key is always 'id'
+	 * @return array
      */
 	function toJSON()
 	{
@@ -196,6 +192,9 @@ abstract class DataAccessObject extends DataAccessArray
 		return $j;
 	}
 	
+	/**
+     * Used by the generated classes
+     */
 	protected function setFieldValue($fieldName, $val)
 	{
 		if (strcmp($this->__data[$fieldName], $val) !== 0)
@@ -205,6 +204,9 @@ abstract class DataAccessObject extends DataAccessArray
 		$this->__data[$fieldName] = $val;
 	}
 
+	/**
+     * Used by the generated classes
+     */
 	protected function setDatetimeFieldValue($fieldName, $val)
 	{
 		if ($val != "" && $val != '')
@@ -224,6 +226,9 @@ abstract class DataAccessObject extends DataAccessArray
 		}
 	}
 
+	/**
+     * Used by the generated classes
+     */
 	protected function getDatetimeFieldValue($fieldName, $format = null)
 	{
 		if ($format == null)
@@ -236,16 +241,4 @@ abstract class DataAccessObject extends DataAccessArray
 		}
 	}
 	
-	
-	/**
-     * DEPRECATED: Get the Id (Primary Key) of the object
-     */
-	function getObjectId()
-	{
-		trigger_error('Get the getObjectId() has been deprecated in favor of getId()', E_USER_WARNING);
-		return $this->getId();
-	}
-	
 }
-
-?>

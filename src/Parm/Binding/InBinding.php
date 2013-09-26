@@ -4,6 +4,24 @@ namespace Parm\Binding;
 
 class InBinding extends SQLString
 {
+	
+	/**
+	 * The field/column to filter on
+     * @var string
+     */
+	public $field;
+	
+	/**
+	 * The array to filter the field/column on
+     * @var array
+     */
+	public $array;
+	
+	/**
+     * Filter rows by an array of values
+	 * @param $field The field or column to filter on
+	 * @param $array The array of values to filter the field or column on
+     */
 	function __construct($field, $array)
 	{
 		parent::__construct();
@@ -15,9 +33,9 @@ class InBinding extends SQLString
 	{
 		if(count($this->array) == 1)
 		{
-			return $factory->escapeString($this->field) . " = " . reset($this->array);
+			return $factory->escapeString($this->field) . " = " . $factory->escapeString(reset($this->array));
 		}
-		else if(count($this->array) > 0)
+		else if(count($this->array) > 1)
 		{
 			foreach($this->array as $key => $item)
 			{
@@ -35,10 +53,8 @@ class InBinding extends SQLString
 		}
 		else
 		{
-			throw new Exception("The array passed to the InBinding is empty");
+			throw new \Exception("The array passed to the InBinding is empty");
 		}
 	}
 
 }
-
-?>
