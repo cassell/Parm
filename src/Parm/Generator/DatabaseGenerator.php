@@ -181,7 +181,7 @@ class DatabaseGenerator
 			{
 				chmod($this->destinationDirectory,self::DestinationDirectoryFolderPermissions);
 			}
-			catch(Exception $e)
+			catch(\Exception $e)
 			{
 				throw new \Exception('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
 			}
@@ -256,7 +256,7 @@ class DatabaseGenerator
 			{
 				@chmod($fileName,self::GenereatedCodeFilePermissions);
 			}
-			catch(Exception $e)
+			catch(\Exception $e)
 			{
 				throw new \Exception('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
 			}
