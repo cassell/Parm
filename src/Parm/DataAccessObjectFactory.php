@@ -86,10 +86,30 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 			return null;
 		}
 	}
+	
+	/**
+     * @param integer $id ID of the row in the database
+     * @return object|null The record from the database
+	 * @throws \Parm\Exception\RecordNotFoundException
+     */
+	static function getObjectOrFail($id)
+	{
+		$f = new static();
+
+		if($f->getIdField())
+		{
+			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), (int)$id));
+			return $f->getFirstObject();
+		}
+		else
+		{
+			throw new \Parm\Exception\RecordNotFoundException('Unable to find object #' . (int)$id);
+		}
+	}
 
 	/**
 	 * Return the first object from a getObjects
-	 * @return DataAccessObject
+	 * @return object
 	 */
 	function getFirstObject()
 	{

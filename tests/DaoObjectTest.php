@@ -38,8 +38,8 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	function testInsertNewObject()
 	{
 		$new = new Parm\Dao\PeopleDaoObject();
-		$new->setFirstName("Joe");
-		$new->setLastName("Paterno");
+		$new->setFirstName("Coach");
+		$new->setLastName("Parmo");
 		$new->setCreateDate(time());
 		$new->setCreateDatetime(time());
 		$new->setZipcodeId(1529);
