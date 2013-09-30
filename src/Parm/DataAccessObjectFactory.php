@@ -540,7 +540,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		if(count($this->conditional->items) > 0)
 		{
-			throw new \Exception("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
+			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
 		}
 
 		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);

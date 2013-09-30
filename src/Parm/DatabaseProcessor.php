@@ -271,16 +271,16 @@ class DatabaseProcessor
 			$result = $conn->query($sql);
 			if($conn->error != null)
 			{
-				throw new \Exception($conn->error);
+				throw new \Parm\Exception\ErrorException($conn->error);
 			}
 			else
 			{
 				return $result;
 			}
 		}
-		catch(\Exception $e)
+		catch(\Parm\Exception\ErrorException $e)
 		{
-			throw new \Exception("DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
+			throw new \Parm\Exception\ErrorException("DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
 		}
 	}
 	

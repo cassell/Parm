@@ -46,7 +46,7 @@ class NotInBinding extends SQLString
 		}
 		else
 		{
-			throw new \Exception("The array passed to the NotInBinding is empty");
+			throw new \Parm\Exception\ErrorException("The array passed to the NotInBinding is empty");
 		}
 	}
 
