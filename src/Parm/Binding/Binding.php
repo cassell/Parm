@@ -44,7 +44,15 @@ class Binding extends SQLString
      */
 	function getSQL($factory)
 	{
-		return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($this->value) . "'";
+		if($this->value == null)
+		{
+			return $factory->escapeString($this->field) . " " . $this->operator . " NULL";
+		}
+		else
+		{
+			return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($this->value) . "'";
+		}
+		
 	}
 	
 }
