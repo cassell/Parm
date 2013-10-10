@@ -10,6 +10,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 		
 		$cond = new \Parm\Binding\Conditional\AndConditional();
 		$this->assertEquals('', $cond->getSQL($f));
+		
 	}
 	
 	function testAndConditionalStringsAndBindings()
@@ -17,13 +18,14 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 		$f = new Parm\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\AndConditional();
-		$this->assertEquals('', $cond->getSQL($f));
 		
 		$cond->addBinding("zipcode_id = 0");
 		$cond->addBinding("archived = 1");
 		$cond->addBinding(new Parm\Binding\EqualsBinding("people_id", 99999999999999999));
 		
 		$this->assertEquals("(zipcode_id = 0 AND archived = 1 AND people_id = '99999999999999999')", $cond->getSQL($f));
+		
+		
 	}
 	
 	function testOrCondtionalEmpty()

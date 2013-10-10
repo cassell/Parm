@@ -57,10 +57,11 @@ class DatabaseNode
 			$this->connection = new \mysqli($this->serverHost, $this->serverUsername, $this->serverPassword, $this->serverDatabaseName, $this->serverPort ? $this->serverPort : null, $this->serverSocket);
 			$this->connection->set_charset($this->serverCharset);
 
-			if($this->connection == null || $this->connection->connect_errno)
-			{
-				throw new \Parm\Exception\ConnectionErrorException($this->connection);
-			}
+		}
+		
+		if($this->connection == null || $this->connection->connect_errno || $this->connection->client_info == "")
+		{
+			throw new \Parm\Exception\ConnectionErrorException($this->connection);
 		}
 		
 		return $this->connection;

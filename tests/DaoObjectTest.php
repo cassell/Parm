@@ -13,7 +13,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	function testCreateClone()
 	{
 		$sharon = Parm\Dao\ZipcodesDaoObject::findId(1445);
-		$sharonClone = $sharon->createClone();
+		$sharonClone = clone $sharon;
 		$this->assertEquals($sharon->getZipcode(),$sharonClone->getZipcode());
 	}
 	
@@ -43,7 +43,19 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$new->setCreateDate(time());
 		$new->setCreateDatetime(time());
 		$new->setZipcodeId(1529);
+		$new->setArchived(0);
 		$new->save();
+		
+		$test = Parm\Dao\PeopleDaoObject::findId($new->getId());
+		
+		if($test != null)
+		{
+			$this->assertEquals($test->getLastName(), $new->getLastName());
+		}
+		else
+		{
+			$this->fail();
+		}
 		
 	}
 

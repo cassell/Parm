@@ -2,10 +2,11 @@
 
 namespace Parm;
 
-abstract class DataAccessObject extends DataAccessArray
+abstract class DataAccessObject extends DataArray
 {
 	const NEW_OBJECT_ID = -1;
-	protected $modifiedColumns;
+	
+	private $__modifiedColumns = array();
 
 	abstract function getDatabaseName();
 
@@ -24,23 +25,41 @@ abstract class DataAccessObject extends DataAccessArray
      */
 	function __construct($row = null)
 	{
-		// setup $this->__data
-		parent::__construct($row);
-
-		// if $this->__data is null setup with defaults from table
-		if ($this->__data == null)
+		if($row != null)
 		{
-			$this->__data = static::getDefaultRow();
-			if (static::getIdField() != null)
-			{
-				$this->__data[static::getIdField()] = self::NEW_OBJECT_ID;
-				$this->__modifiedColumns[static::getIdField()] = 1;
-			}
+			parent::__construct($row);
 		}
-		
-		return $this;
+		else
+		{
+			parent::__construct(static::getDefaultRow());
+			$this->addModifiedColumn(static::getIdField());
+			$this[static::getIdField()] = static::NEW_OBJECT_ID;
+		}
 	}
-
+	
+	protected function getFieldValue($fieldName)
+	{
+		if (array_key_exists($fieldName, $this))
+		{
+			return $this[$fieldName];
+		}
+		else
+		{
+			throw new \Parm\Exception\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
+		}
+	}
+	
+	
+	protected function addModifiedColumn($column)
+	{
+		$this->__modifiedColumns[$column] = 1;
+	}
+	
+	protected function clearModifiedColumns()
+	{
+		$this->__modifiedColumns[] = array();
+	}
+	
 	
 	/**
 	 * Find an object by ID
@@ -53,27 +72,12 @@ abstract class DataAccessObject extends DataAccessArray
 		return $t->getFactory()->getObject($id);
 	}
 	
-	/**
-     * Create a clone of the object in order to save a duplicate
-	 * @return object|null A record that hasn't been save to the database
-     */
-	function createClone()
-	{
-		$obj = new static();
-
-		// clone data
-		$obj->__data = $this->__data;
-
-		// set object_id to NEW_OBJECT_ID (-1)
-		$obj->__data[static::getIdField()] = static::NEW_OBJECT_ID;
-
-		// set all modified colums to 1
-		$obj->__modifiedColumns = static::getDefaultRow();
-		array_walk($obj->__modifiedColumns, function(&$v, $k){ $v = 1; });
-
-		return $obj;
-	}
-
+	public function __clone() {
+		
+		$this[static::getIdField()] = static::NEW_OBJECT_ID;
+		$this->clearModifiedColumns();
+    }
+	
 	/**
      * Save the object to the database.
 	 * @return object
@@ -81,16 +85,97 @@ abstract class DataAccessObject extends DataAccessArray
 	function save()
 	{
 		$f = static::getFactory();
-
-		if (!empty($this->__modifiedColumns))
+		
+		$sql = array();
+		
+		foreach ($this->__modifiedColumns as $field => $j)
 		{
+			if ($field != $this->getIdField())
+			{
+				if ($this[$field] !== null)
+				{
+					$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this[$field]) . '"';
+				}
+				else
+				{
+					$sql[] = ' ' . $this->getTableName() . "." . $field . ' = NULL';
+				}
+			}
+		}
+		
+		if ($this->getId() != static::NEW_OBJECT_ID && count($sql) > 0)
+		{
+			$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+		}
+		else
+		{
+			if (count($sql) > 0)
+			{
+				$f->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
+			}
+			else
+			{
+				$f->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
+			}
+
+			$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+		}
+		
+		$this->clearModifiedColumns();
+		
+		return $this;
+		
+		
+		
+		
+		
+		
+		/*
+		if ($this->getId() != static::NEW_OBJECT_ID && count($sql) > 0)
+		{
+			$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+		}
+		else if (count($sql) > 0)
+		{
+			echo 'INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql);
+			exit;
+			
+			if($sql != null)
+			{
+				
+				
+				$f->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
+			}
+			else
+			{
+				// empty object
+				$f->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
+			}
+			
+			if($f->databaseNode && $f->databaseNode->connection && $f->databaseNode->connection->insert_id > 0)
+			{
+				$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+			}
+			else
+			{
+				throw new \Parm\Exception\ErrorException("Insert failed: " . print_r($this,true));
+			}
+		}
+			
+		$this->clearModifiedColumns();
+		
+		return $this;
+		 * 
+		 */
+
+		/*
 			foreach (array_keys($this->__modifiedColumns) as $field)
 			{
 				if ($field != $this->getIdField())
 				{
-					if ($this->__data[$field] !== null)
+					if ($this[$field] !== null)
 					{
-						$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this->__data[$field]) . '"';
+						$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this[$field]) . '"';
 					}
 					else
 					{
@@ -119,7 +204,7 @@ abstract class DataAccessObject extends DataAccessArray
 
 				if($f->databaseNode && $f->databaseNode->connection && $f->databaseNode->connection->insert_id > 0)
 				{
-					$this->__data[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+					$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
 				}
 				else
 				{
@@ -128,10 +213,10 @@ abstract class DataAccessObject extends DataAccessArray
 			}
 
 			unset($this->__modifiedColumns);
-		}
 		
 		return $this;
 		
+		 */
 	}
 
 	/**
@@ -197,11 +282,11 @@ abstract class DataAccessObject extends DataAccessArray
      */
 	protected function setFieldValue($fieldName, $val)
 	{
-		if (strcmp($this->__data[$fieldName], $val) !== 0)
+		if(strcmp($this[$fieldName], $val) !== 0)
 		{
-			$this->__modifiedColumns[$fieldName] = 1;
+			$this->addModifiedColumn($fieldName);
 		}
-		$this->__data[$fieldName] = $val;
+		$this[$fieldName] = $val;
 	}
 
 	/**

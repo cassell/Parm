@@ -52,7 +52,7 @@ class DatabaseProcessor
 
 		$this->process(function($obj) use (&$data)
 		{
-			$data[] = $obj->toArray();
+			$data[] = (array)$obj;
 		});
 
 		return $data;
@@ -148,17 +148,17 @@ class DatabaseProcessor
 	 * Build a data object from the row data
 	 * 
 	 * @param array $row The associative array of data
-	 * @return DataAccessArray
+	 * @return DataArray
      */
 	function loadDataObject($row)
 	{
-		return new DataAccessArray($row);
+		return new DataArray($row);
 	}
 	
 	/**
 	 * Loop through the rows of a query and process with a closure
 	 * 
-	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
+	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
 	function process($closure)
@@ -190,7 +190,7 @@ class DatabaseProcessor
 	 * You can use this on millions of rows without memory problems
 	 * Does lock the table to writes on some databases
 	 * 
-	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataAccessArray or DataAccessObject
+	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
 	function unbufferedProcess($closure)
