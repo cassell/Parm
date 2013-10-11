@@ -35,7 +35,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 {{#dateTimeField}}
 	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue('{{Field}}',$val); }
 	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue('{{Field}}',$format); }
-	final function get{{FieldCase}}Object() { return new \DateTime($this->getDatetimeFieldValue('{{Field}}')); }
+	final function get{{FieldCase}}DateTimeObject() { return new \DateTime($this->getDatetimeFieldValue('{{Field}}')); }
 	
 {{/dateTimeField}}
 {{^dateTimeField}}
