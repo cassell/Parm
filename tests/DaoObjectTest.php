@@ -58,6 +58,30 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		}
 		
 	}
+	
+	function testJSONNewObject()
+	{
+		$new = new Parm\Dao\PeopleDaoObject();
+		$new->setFirstName("James");
+		$new->setLastName("Buchanan");
+		$new->setZipcodeId(555);
+		$new->setArchived(0);
+		
+		$this->assertEquals('a:8:{s:8:"peopleId";i:-1;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";i:0;s:10:"createDate";N;s:14:"createDatetime";N;s:2:"id";i:-1;}', serialize($new->toJSON()));
+		
+	}
+	
+	function testJSON()
+	{
+		$buchananBirthplace = Parm\Dao\ZipcodesDaoObject::findId(555);
+		$this->assertEquals('a:8:{s:9:"zipcodeId";s:3:"555";s:7:"zipcode";s:5:"17224";s:5:"state";s:2:"PA";s:9:"longitude";s:16:"-77.906230000000";s:8:"latitude";s:15:"39.957564000000";s:4:"city";s:11:"Fort Loudon";s:9:"stateName";s:12:"Pennsylvania";s:2:"id";s:3:"555";}', serialize($buchananBirthplace->toJSON()));
+	}
+	
+	function testJSONString()
+	{
+		$buchananBirthplace = Parm\Dao\ZipcodesDaoObject::findId(555);
+		$this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","city":"Fort Loudon","stateName":"Pennsylvania","id":"555"}',$buchananBirthplace->toJSONString());
+	}
 
 	
 	

@@ -8,11 +8,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	public function testDatabaseConfiguration()
 	{
 		$node = $GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']->getMaster();
-		if($node instanceof \Parm\DatabaseNode)
-		{
-			// hooray!
-		}
-		else
+		if(!($node instanceof \Parm\DatabaseNode))
 		{
 			$this->fail();
 		}
