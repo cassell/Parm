@@ -124,99 +124,6 @@ abstract class DataAccessObject extends DataArray
 		$this->clearModifiedColumns();
 		
 		return $this;
-		
-		
-		
-		
-		
-		
-		/*
-		if ($this->getId() != static::NEW_OBJECT_ID && count($sql) > 0)
-		{
-			$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
-		}
-		else if (count($sql) > 0)
-		{
-			echo 'INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql);
-			exit;
-			
-			if($sql != null)
-			{
-				
-				
-				$f->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
-			}
-			else
-			{
-				// empty object
-				$f->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
-			}
-			
-			if($f->databaseNode && $f->databaseNode->connection && $f->databaseNode->connection->insert_id > 0)
-			{
-				$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
-			}
-			else
-			{
-				throw new \Parm\Exception\ErrorException("Insert failed: " . print_r($this,true));
-			}
-		}
-			
-		$this->clearModifiedColumns();
-		
-		return $this;
-		 * 
-		 */
-
-		/*
-			foreach (array_keys($this->__modifiedColumns) as $field)
-			{
-				if ($field != $this->getIdField())
-				{
-					if ($this[$field] !== null)
-					{
-						$sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this[$field]) . '"';
-					}
-					else
-					{
-						$sql[] = ' ' . $this->getTableName() . "." . $field . ' = NULL';
-					}
-				}
-			}
-
-			if ($this->getId() != static::NEW_OBJECT_ID)
-			{
-				$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
-			}
-			else
-			{
-				if($sql != null)
-				{
-					$sql = 'INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql);
-				}
-				else
-				{
-					// empty object
-					$sql = 'INSERT INTO ' . $this->getTableName() . " VALUES()";
-				}
-
-				$f->update($sql);
-
-				if($f->databaseNode && $f->databaseNode->connection && $f->databaseNode->connection->insert_id > 0)
-				{
-					$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
-				}
-				else
-				{
-					throw new \Parm\Exception\ErrorException("Insert failed: " . $sql);
-				}
-			}
-
-			unset($this->__modifiedColumns);
-		
-		return $this;
-		
-		 */
 	}
 
 	/**
@@ -258,23 +165,9 @@ abstract class DataAccessObject extends DataArray
      */
 	function toJSON()
 	{
-		$j = array();
-		if ($this->__data != null)
-		{
-			foreach ($this->__data as $field => $value)
-			{
-				if ($field == $this->getIdField())
-				{
-					$j['id'] = $value;
-				}
-				else
-				{
-					$j[static::columnToCamelCase($field)] = $value;
-				}
-			}
-		}
-
-		return $j;
+		$json = parent::toJSON();
+		$json['id'] = $this->getId();
+		return $json;
 	}
 	
 	/**

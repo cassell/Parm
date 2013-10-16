@@ -18,52 +18,6 @@ class DataArray extends \ArrayObject
 		parent::__construct($row,\ArrayObject::ARRAY_AS_PROPS);
 	}
 	
-//	public function offsetGet($name)
-//	{
-//		return call_user_func_array(parent::__FUNCTION__, func_get_args());
-////		return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
-//	}
-//
-//	public function offsetSet($name, $value)
-//	{
-//		return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
-//	}
-//
-//	public function offsetExists($name)
-//	{
-//		return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
-//	}
-//
-//	public function offsetUnset($name)
-//	{
-//		return call_user_func_array(array(parent, __FUNCTION__), func_get_args());
-//	}
-	
-	
-
-	/**
-     * Get the value of a column from the database row
-	 * @param string $fieldName Name of the field/column in the database
-     * @return string|null The value of the field
-     */
-//	function getFieldValue($fieldName)
-//	{
-//		echo $fieldName;
-//		exit;
-//		
-//		if (array_key_exists($fieldName, $this))
-//		{
-//			return $this[$fieldName];
-//		}
-//		else
-//		{
-//			throw new \Parm\Exception\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
-//		}
-//	}
-
-	
-	
-	
 	/**
 	 * Convert to a JSON ready array
      * @return array An associative array with camel case array keys
@@ -78,7 +32,6 @@ class DataArray extends \ArrayObject
 		return $json;
 	}
 
-	
 	/**
 	 * Convert to a JSON string
      * @return string The row formatted in JSON
@@ -88,7 +41,6 @@ class DataArray extends \ArrayObject
 		return json_encode(self::utf8EncodeArray($this->toJSON()));
 	}
 
-	
 	/**
 	 * Encode the values of an array to UTF-8
      * @return string A column name with underscores converted to camel case. Example: "first_name" becomes "firstName", "first_born_child_id" becomes "firstBornChildId"
