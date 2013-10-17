@@ -103,11 +103,14 @@ abstract class DataAccessObject extends DataArray
 			}
 		}
 		
-		if ($this->getId() != static::NEW_OBJECT_ID && count($sql) > 0)
+		if((int)$this->getId() != static::NEW_OBJECT_ID)
 		{
-			$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+			if(count($sql) > 0)
+			{
+				$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+			}
 		}
-		else
+		else if((int)$this->getId() == static::NEW_OBJECT_ID)
 		{
 			if (count($sql) > 0)
 			{
