@@ -4,8 +4,6 @@ namespace Parm;
 
 abstract class DataAccessObject extends DataArray
 {
-	const NEW_OBJECT_ID = -1;
-	
 	private $__modifiedColumns = array();
 
 	abstract function getDatabaseName();
@@ -33,7 +31,7 @@ abstract class DataAccessObject extends DataArray
 		{
 			parent::__construct(static::getDefaultRow());
 			$this->addModifiedColumn(static::getIdField());
-			$this[static::getIdField()] = static::NEW_OBJECT_ID;
+			$this[static::getIdField()] = null;
 		}
 	}
 	
@@ -74,7 +72,7 @@ abstract class DataAccessObject extends DataArray
 	
 	public function __clone() {
 		
-		$this[static::getIdField()] = static::NEW_OBJECT_ID;
+		$this[static::getIdField()] = null;
 		$this->clearModifiedColumns();
     }
 	
@@ -103,14 +101,8 @@ abstract class DataAccessObject extends DataArray
 			}
 		}
 		
-		if((int)$this->getId() != static::NEW_OBJECT_ID)
-		{
-			if(count($sql) > 0)
-			{
-				$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
-			}
-		}
-		else if((int)$this->getId() == static::NEW_OBJECT_ID)
+		
+		if ($this->isNewObject())
 		{
 			if (count($sql) > 0)
 			{
@@ -122,6 +114,10 @@ abstract class DataAccessObject extends DataArray
 			}
 
 			$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+		}
+		else if (count($sql) > 0)
+		{
+			$f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
 		}
 		
 		$this->clearModifiedColumns();
@@ -136,7 +132,7 @@ abstract class DataAccessObject extends DataArray
      */
 	function delete()
 	{
-		if((int)$this->getId() > 0)
+		if (!$this->isNewObject())
 		{
 			$f = static::getFactory();
 			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
@@ -145,7 +141,7 @@ abstract class DataAccessObject extends DataArray
 
 	/**
      * Get the ID (Primary Key) of the object
-	 * @return integer ID of the record in the database. NEW_OBJECT_ID if a new record
+	 * @return integer|null ID of the record in the database. null if a new record
      */
 	function getId()
 	{
@@ -158,7 +154,7 @@ abstract class DataAccessObject extends DataArray
      */
 	function isNewObject()
 	{
-		return ($this->getId() == self::NEW_OBJECT_ID);
+		return $this->getId() == null;
 	}
 	
 
