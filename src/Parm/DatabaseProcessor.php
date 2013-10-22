@@ -292,6 +292,7 @@ class DatabaseProcessor
 	 * @param string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
 	 * @return mysql result
      */
+	/*
 	function convertTimezone($dateTime,$sourceTimezone,$destTimezone)
 	{
 		if(!is_integer($dateTime))
@@ -330,6 +331,7 @@ class DatabaseProcessor
 			}
 		}
 	}
+	*/
 	
 	/**
 	 * Free a mysqli_result
