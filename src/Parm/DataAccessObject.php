@@ -55,7 +55,7 @@ abstract class DataAccessObject extends DataArray
 	
 	protected function clearModifiedColumns()
 	{
-		$this->__modifiedColumns[] = array();
+		$this->__modifiedColumns = array();
 	}
 	
 	
