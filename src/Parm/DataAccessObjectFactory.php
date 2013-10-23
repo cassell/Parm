@@ -22,7 +22,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	/**
 	 * Find an object by ID
 	 * @param DatabaseNode $databaseNode optional The database to retrieve the objects from
-     * @return DataAccessObjectFactory
      */
 	function __construct($databaseNode = null)
 	{
@@ -41,12 +40,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 		// conditional used in building the WHERE clause
 		$this->conditional = new Binding\Conditional\AndConditional();
-		
-		return $this;
 	}
 	
 	/**
-	 * Return and array of the objects based on Bindings
+	 * Return an array of the objects based on Bindings
 	 * @return array of DataAccessObjects
 	 */
 	function getObjects()
