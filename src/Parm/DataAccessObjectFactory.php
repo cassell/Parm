@@ -43,7 +43,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	
 	/**
 	 * Return an array of the objects based on Bindings
-	 * @return array of DataAccessObjects
+	 * @return array DataAccessObjects
 	 */
 	function getObjects()
 	{
@@ -135,7 +135,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	 * @param string $whereClause
 	 * @return array of DataAccessObjects
      */
-	function find($clause = "")
+	function customFind($clause = "")
 	{
 		if(count($this->conditional->items) > 0)
 		{
@@ -148,7 +148,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 	/**
-	 * Adds to the default Factory Binding which is an AND conditional
+	 * Adds to the default factory Binding which is an AND conditional
      * @param Binding|string $binding
      * @return DataAccessObjectFactory so that you can chain bindings
      */
@@ -159,6 +159,18 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 	
 	/**
+	 * Alias to addBinding. Adds a binding to the default factory Binding which is an AND conditional
+     * @param Binding|string $binding
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
+	function bind($binding)
+	{
+		$this->conditional->addBinding($binding);
+		return $this->addBinding($binding);
+	}
+	
+	
+	/**
 	 * Adds to the default Factory Binding which is an AND conditional
 	 * @param DataAccessObject $object
 	 * @param string $localField
@@ -167,23 +179,45 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function addForeignKeyObjectBinding($object, $localField = null, $remoteField = null)
 	{
-		$this->addBinding(new Binding\ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
-		return $this;
+		return $this->addBinding(new Binding\ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
 	}
+	
+	/**
+	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * @param string $field
+	 * @param string $value 
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
+	function whereEquals($field,$value)
+	{
+		return $this->addBinding(new Binding\EqualsBinding($field, $value));
+	}
+	
+	/**
+	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * @param string $field
+	 * @param string $value 
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
+	function whereNotEquals($field,$value)
+	{
+		return $this->addBinding(new Binding\NotEqualsBinding($field, $value));
+	}
+	
 
 	/**
 	 * Adds a conditional to the default FactoryConditional which is an AND conditional
 	 * @param Parm\Binding\Conditional $conditional
      * @return DataAccessObjectFactory so that you can chain bindings and conditionals
      */
-	function addConditional($conditional)
+	function addConditional(Binding\Conditional\Conditional $conditional)
 	{
 		$this->conditional->addConditional($conditional);	
 		return $this;
 	}
 
 	/**
-	 * Get the SQL  that will be executed against the database
+	 * Get the SQL that will be executed against the database
      * @return string
      */
 	function getSQL()
