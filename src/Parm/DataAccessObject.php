@@ -21,7 +21,7 @@ abstract class DataAccessObject extends DataArray
      * @param array $row Array of data
 	 * @return DataAccessObject Returns itself for chaining
      */
-	function __construct($row = null)
+	function __construct(Array $row = null)
 	{
 		if($row != null)
 		{
@@ -96,7 +96,7 @@ abstract class DataAccessObject extends DataArray
 				}
 				else
 				{
-					$sql[] = ' ' . $this->getTableName() . "." . $field . ' = NULL';
+					$sql[] = $this->getTableName() . "." . $field . ' = NULL';
 				}
 			}
 		}
@@ -149,7 +149,7 @@ abstract class DataAccessObject extends DataArray
 	}
 	
 	/**
-     * Test if the object has been saved to the database. Checks if the ID = NEW_OBJECT_ID (usually -1). Returns true if the object has never been saved to the database
+     * Test if the object has been saved to the database. The primary key will be null
 	 * @return boolean
      */
 	function isNewObject()
@@ -159,7 +159,7 @@ abstract class DataAccessObject extends DataArray
 	
 
 	/**
-     * Convert to JSON ready array. The camel case fields and the primary key is always 'id'
+     * Convert to JSON ready array. Camel case fields and the primary key is always mapped to 'id'
 	 * @return array
      */
 	function toJSON()
