@@ -46,7 +46,7 @@ class DatabaseProcessor
 	 * 
 	 * @return array
      */
-	function getArray()
+	public function getArray()
 	{
 		$data = array();
 
@@ -63,7 +63,7 @@ class DatabaseProcessor
 	 * Get the rows as an associative array JSON-ified with camelCase array keys 
 	 * @return array
      */
-	function getJSON()
+	public function getJSON()
 	{
 		$data = array();
 
@@ -81,7 +81,7 @@ class DatabaseProcessor
 	 * 
 	 * @return array
      */
-	function getSingleColumnArray($columnName = null)
+	public function getSingleColumnArray($columnName = null)
 	{
 		$data = array();
 		
@@ -112,7 +112,7 @@ class DatabaseProcessor
 	 * @param string $columnName The name of the column to select from
 	 * @return array
      */
-	function getFirstField($columnName)
+	public function getFirstField($columnName)
 	{
 		$a = $this->getArray();
 		
@@ -129,7 +129,7 @@ class DatabaseProcessor
 	 * @param string $sql
 	 * @return DatabaseProcessor
      */
-	function setSQL($sql)
+	public function setSQL($sql)
 	{
 		$this->sql = $sql;
 		return $this;
@@ -139,7 +139,7 @@ class DatabaseProcessor
 	 * Get the SQL that has been set
 	 * @return string
      */
-	function getSQL()
+	public function getSQL()
 	{
 		return $this->sql;
 	}
@@ -161,7 +161,7 @@ class DatabaseProcessor
 	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
-	function process($closure)
+	public function process($closure)
 	{
 		$conn = $this->databaseNode->getConnection();
 		
@@ -193,7 +193,7 @@ class DatabaseProcessor
 	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
-	function unbufferedProcess($closure)
+	public function unbufferedProcess($closure)
 	{
 		$conn = $this->databaseNode->getConnection();
 		
@@ -218,7 +218,7 @@ class DatabaseProcessor
 	 * @param mysqli $result
 	 * @return integer The number of rows reported from the database
      */
-	function getNumberOfRowsFromResult($result)
+	public function getNumberOfRowsFromResult($result)
 	{
 		return (int)$result->num_rows;
 	}
@@ -228,7 +228,7 @@ class DatabaseProcessor
 	 * 
 	 * @return mysql result
      */
-	function query()
+	private function query()
 	{
 		if(count(func_get_args()) > 0)
 		{
@@ -244,13 +244,13 @@ class DatabaseProcessor
 	 * 
 	 * @param string $sql The SQL to execute
      */
-	function update($sql)
+	public function update($sql)
 	{
 		$result = $this->getMySQLResult($sql);
 		$this->freeResult($result);
 	}
 	
-	function executeMultiQuery()
+	public function executeMultiQuery()
 	{
 		return $this->__multiQuery();
 	}
@@ -262,7 +262,7 @@ class DatabaseProcessor
 	 * @param string $sql The SQL to execute
 	 * @return mysql result
      */
-	function getMySQLResult($sql)
+	public function getMySQLResult($sql)
 	{
 		$conn = $this->databaseNode->getConnection();
 		
@@ -336,7 +336,7 @@ class DatabaseProcessor
 	/**
 	 * Free a mysqli_result
      */
-	function freeResult($result)
+	public function freeResult($result)
 	{
 		if($result != null)
 		{
@@ -358,7 +358,7 @@ class DatabaseProcessor
 	/**
 	 * Output a JSON string using a real_query from the SQL that has been set using setSQL($sql)
      */
-	function outputJSONString()
+	public function outputJSONString()
 	{
 		echo "[";
 		
@@ -396,7 +396,7 @@ class DatabaseProcessor
 	/**
 	 * Escape a string to prevent mysql injection
      */
-	function escapeString($string)
+	public function escapeString($string)
 	{
 		$conn = $this->databaseNode->getConnection();
 
@@ -406,7 +406,7 @@ class DatabaseProcessor
 	/**
 	 * Format some text for CSV
      */
-	static function formatTextCSV($text)
+	public static function formatTextCSV($text)
 	{
 		$text = preg_replace("/<(.|\n)*?>/","",$text);
 	
@@ -429,7 +429,7 @@ class DatabaseProcessor
 	/**
 	 * Useful for replacing mysql_real_escape_string in old code with DatabaseProcessor::mysql_real_escape_string()
      */
-	static function mysql_real_escape_string($string)
+	public static function mysql_real_escape_string($string)
 	{
 		if(defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
 		{
