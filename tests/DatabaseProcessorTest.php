@@ -18,14 +18,14 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	{
 		$dp = new Parm\DatabaseProcessor('parm_tests');
 		$dp->setSQL('select * from people');
-		$result = $dp->query();
+		$result = $dp->getArray();
 	}
 	
 	public function testPassingNodeToConstructor()
 	{
 		$dp = new Parm\DatabaseProcessor(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
 		$dp->setSQL('select * from people');
-		$result = $dp->query();
+		$result = $dp->getArray();
 	}
 	
 	public function testPassingDatabaseToConstructor()
@@ -34,7 +34,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 		$db->setMaster(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
 		$dp = new Parm\DatabaseProcessor($db);
 		$dp->setSQL('select * from people');
-		$result = $dp->query();
+		$result = $dp->getArray();
 	}
 	
 	public function testProcess()
