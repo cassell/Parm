@@ -44,7 +44,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 	
 {{/dateTimeField}}
 {{/columns}}
-	function getDefaultRow()
+	final function getDefaultRow()
 	{
 		return array({{{defaultValuePack}}});
 	}
