@@ -11,6 +11,8 @@ class DatabaseGenerator
 	var $databaseNode;
 	var $destinationDirectory;
 	var $generatedNamespace = "\\Parm\\Dao\\";
+	
+	var $arrayOfInvalidColumnNames = array("");
 
 	function __construct($database)
 	{
@@ -84,14 +86,14 @@ class DatabaseGenerator
 	{
 		if($this->destinationDirectory == null)
 		{
-			throw new \Exception('Destination directory required');
+			throw new \Parm\Exception\ErrorException('Destination directory required');
 		}
 		
 		if(!file_exists($this->destinationDirectory))
 		{
 			if(!@mkdir($this->destinationDirectory))
 			{
-				throw new \Exception('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
+				throw new \Parm\Exception\ErrorException('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
 			}
 			try
 			{
@@ -99,7 +101,7 @@ class DatabaseGenerator
 			}
 			catch(\Exception $e)
 			{
-				throw new \Exception('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
+				throw new \Parm\Exception\ErrorException('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
 			}
 		}
 		
@@ -155,7 +157,7 @@ class DatabaseGenerator
 		}
 		else
 		{
-			throw new \Exception("No tables in database.");
+			throw new \Parm\Exception\ErrorException("No tables in database.");
 		}
 		
 	}
@@ -198,6 +200,11 @@ class DatabaseGenerator
 		{
 			foreach($columns as $key => $column)
 			{
+				if(in_array($column['Field'],$this->arrayOfInvalidColumnNames))
+				{
+					throw new \Parm\Exception\ErrorException($column['Field'] . ' is an invalid column name for the Parm\DatabaseGenerator. It causes collisions with internal functions.');
+				}
+				
 				if($column['Key'] == "PRI")
 				{
 					$columns[$key]['primaryKey'] = 1;
@@ -264,7 +271,7 @@ class DatabaseGenerator
 	{
 		if(file_exists($fileName) && !is_writable($fileName))
 		{
-			throw new \Exception('File is unwritable: ' . $fileName);
+			throw new \Parm\Exception\ErrorException('File is unwritable: ' . $fileName);
 		}
 		else if(@file_put_contents($fileName,$contents) !== FALSE)
 		{
@@ -274,13 +281,13 @@ class DatabaseGenerator
 			}
 			catch(\Exception $e)
 			{
-				throw new \Exception('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
+				throw new \Parm\Exception\ErrorException('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
 			}
 			return true;
 		}
 		else
 		{
-			throw new \Exception('Unable to write file: ' . htmlentities($fileName));
+			throw new \Parm\Exception\ErrorException('Unable to write file: ' . htmlentities($fileName));
 		}
 	}
 }
