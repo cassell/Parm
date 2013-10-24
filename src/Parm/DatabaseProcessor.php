@@ -150,7 +150,7 @@ class DatabaseProcessor
 	 * @param array $row The associative array of data
 	 * @return DataArray
      */
-	function loadDataObject($row)
+	protected function loadDataObject($row)
 	{
 		return new DataArray($row);
 	}

@@ -4,7 +4,7 @@ CREATE TABLE `people` (
   `first_name` varchar(50) DEFAULT NULL,
   `last_name` varchar(50) DEFAULT NULL,
   `zipcode_id` int(11) DEFAULT NULL,
-  `archived` tinyint(1) DEFAULT NULL,
+  `archived` tinyint(1) DEFAULT '0',
   `create_date` date DEFAULT NULL,
   `create_datetime` datetime DEFAULT NULL,
   PRIMARY KEY (`people_id`)
@@ -16,6 +16,7 @@ CREATE TABLE `zipcodes` (
   `state` varchar(3) CHARACTER SET latin1 DEFAULT NULL,
   `longitude` decimal(18,12) DEFAULT NULL,
   `latitude` decimal(18,12) DEFAULT NULL,
+  `archived` tinyint(1) DEFAULT '0',
   `city` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `state_name` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   PRIMARY KEY (`zipcode_id`)

@@ -6,27 +6,22 @@
 
 class {{className}}DaoObject extends \Parm\DataAccessObject
 {
-	function __construct($row = null)
-	{
-		parent::__construct($row);
-	}
-
-	function getDatabaseName()
+	public function getDatabaseName()
 	{
 		return '{{databaseName}}';
 	}
 
-	function getTableName()
+	public function getTableName()
 	{
 		return '{{tableName}}';
 	}
 
-	function getIdField()
+	public function getIdField()
 	{
 		return '{{idFieldName}}';
 	}
 
-	function getFactory($databaseNode = null)
+	protected function getFactory($databaseNode = null)
 	{
 		return new {{className}}DaoFactory($databaseNode);
 	}

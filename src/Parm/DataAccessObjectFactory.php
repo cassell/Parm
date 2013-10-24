@@ -4,13 +4,13 @@ namespace Parm;
 
 abstract class DataAccessObjectFactory extends DatabaseProcessor
 {
-	abstract function getTableName();
+	abstract protected function getTableName();
 
-	abstract function getIdField();
+	abstract protected function getIdField();
 
-	abstract function getFields();
+	abstract protected function getFields();
 
-	abstract function getDatabaseName();
+	abstract protected function getDatabaseName();
 	
 	private $fields = array();
 	private $conditional;
@@ -129,17 +129,26 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 	}
 
+	/**
+	 * Return all the rows in a table
+	 * @return array of objects
+     */
+	function findAll()
+	{
+		$this->clearBindings();
+		return $this->getObjects();
+	}
 	
 	/**
 	 * Get objects with completely custom join, where, group, and order by clause
 	 * @param string $whereClause
 	 * @return array of DataAccessObjects
      */
-	function customFind($clause = "")
+	function find($clause = "")
 	{
 		if(count($this->conditional->items) > 0)
 		{
-			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the find method. Use getObjects, getArray, etc. For the find() method you must pass the entire where clause");
+			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the find method. Use getObjects, getArray, etc. For the find() method you must pass the entire join, where, group, and order by clauses");
 		}
 		
 		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
@@ -169,6 +178,16 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this->addBinding($binding);
 	}
 	
+	/**
+	 * Adds a conditional to the default FactoryConditional which is an AND conditional
+	 * @param Parm\Binding\Conditional $conditional
+     * @return DataAccessObjectFactory so that you can chain bindings and conditionals
+     */
+	function addConditional(Binding\Conditional\Conditional $conditional)
+	{
+		$this->conditional->addConditional($conditional);	
+		return $this;
+	}
 	
 	/**
 	 * Adds to the default Factory Binding which is an AND conditional
@@ -204,20 +223,20 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		return $this->addBinding(new Binding\NotEqualsBinding($field, $value));
 	}
 	
-
 	/**
-	 * Adds a conditional to the default FactoryConditional which is an AND conditional
-	 * @param Parm\Binding\Conditional $conditional
-     * @return DataAccessObjectFactory so that you can chain bindings and conditionals
+	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * @param string $field
+	 * @param string $value 
+     * @return DataAccessObjectFactory so that you can chain bindings
      */
-	function addConditional(Binding\Conditional\Conditional $conditional)
+	function whereContains($field,$value)
 	{
-		$this->conditional->addConditional($conditional);	
-		return $this;
+		return $this->addBinding(new Binding\ContainsBinding($field, $query));
 	}
+	
 
 	/**
-	 * Get the SQL that will be executed against the database
+	 * Get the SQL that will be executed against the database. This is useful for debugging.
      * @return string
      */
 	function getSQL()
@@ -238,16 +257,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	function delete()
 	{
 		$this->update("DELETE " . implode(" ", array($this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql(), $this->getGroupByClause(), $this->getOrderByClause(), $this->getLimitClause())));
-	}
-
-	/**
-	 * Return all the rows in a table
-	 * @return array of objects
-     */
-	function findAll()
-	{
-		$this->clearBindings();
-		return $this->getObjects();
 	}
 
 	/**

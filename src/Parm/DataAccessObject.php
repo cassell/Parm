@@ -6,20 +6,19 @@ abstract class DataAccessObject extends DataArray
 {
 	private $__modifiedColumns = array();
 
-	abstract function getDatabaseName();
+	abstract protected function getDatabaseName();
 
-	abstract function getTableName();
+	abstract protected function getTableName();
 
-	abstract function getIdField();
+	abstract protected function getIdField();
 
-	abstract function getDefaultRow();
+	abstract protected function getDefaultRow();
 	
-	abstract function getFactory();
+	abstract protected function getFactory();
 
 	/**
 	 * Constructor
      * @param array $row Array of data
-	 * @return DataAccessObject Returns itself for chaining
      */
 	function __construct(Array $row = null)
 	{

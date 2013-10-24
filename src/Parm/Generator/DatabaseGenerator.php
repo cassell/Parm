@@ -15,155 +15,71 @@ class DatabaseGenerator
 	function __construct($database)
 	{
 		$this->setDatabase($database);
-		$this->setGeneratedNamespace("\\Parm\\Dao\\");
 	}
 	
-	function setDatabase($database)
+	/**
+	 * Set the database configuration to use the master from
+     * @param \Parm\Database $database The database to connect to
+     */
+	function setDatabase(\Parm\Database $database)
 	{
-		if($database instanceof \Parm\Database)
-		{
-			$this->database = $database;
-		}
-		else
-		{
-			throw new \Exception('Database must be a Parm\Database');
-		}
-		
 		$this->setDatabaseNode($database->getMaster());
 	}
 	
-	function setDatabaseNode($databaseNode)
+	/**
+	 * Set the database node to use
+     * @param \Parm\DatabaseNode $databaseNode The database to connect to
+     */
+	function setDatabaseNode(\Parm\DatabaseNode $databaseNode)
 	{
-		if($databaseNode instanceof \Parm\DatabaseNode)
+		$this->databaseNode = $databaseNode;
+	}
+	
+	/**
+	 * Set the destination directory to generate the objects and factories into
+     * @param string $directory
+     */
+	function setDestinationDirectory($directory)
+	{
+		if(is_string($directory))
 		{
-			$this->databaseNode = $databaseNode;
+			$this->destinationDirectory = $directory;
 		}
 		else
 		{
-			throw new \Exception('DatabaseNode must be a Parm\DatabaseNode');
+			throw new \Parm\Exception\ErrorException('setDestinationDirectory($directory) must be a string');
 		}
+		
 	}
 	
-	function setDestinationDirectory($directory)
-	{
-		$this->destinationDirectory = $directory;
-	}
-	
+	/**
+	 * The namespace to generate the objects and factories into
+     * @param string $directory
+     */
 	function setGeneratedNamespace($namespaceString)
 	{
-		$this->generatedNamespace = $namespaceString;
+		if(is_string($namespaceString))
+		{
+			$this->generatedNamespace = $namespaceString;
+		}
+		else
+		{
+			throw new \Parm\Exception\ErrorException('setGeneratedNamespace($namespaceString) must be a string');
+		}
+		
 	}
 	
+	/**
+	 * Use the global namespace for generated objects and factories
+     */
 	function useGlobalNamespace()
 	{
 		$this->setGeneratedNamespace("");
 	}
 	
-	private function getTableNames()
-	{
-		$databaseName = $this->databaseNode->serverDatabaseName;
-		
-		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
-		$dp->setSQL('SHOW TABLES');
-		
-		$tableNames = array();
-		
-		$dp->process(function($row) use(&$tableNames,$databaseName) {
-			
-			$tableNames[] = $row['Tables_in_'.$databaseName];
-		});
-		
-		return $tableNames;
-	}
-	
-	private function getColumns($tableName)
-	{
-		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
-		$dp->setSQL("SHOW COLUMNS FROM " . $dp->escapeString($this->databaseNode->serverDatabaseName) . "." . $dp->escapeString($tableName));
-		return $dp->getArray();
-	}
-	
-	private function getTemplatingDataFromTableName($tableName)
-	{
-		
-		$idFieldName = '';
-		$defaultValuePack = array();
-		$fieldsPack = array();
-		$bindingsPack = array();
-		
-		$className = ucfirst(\Parm\DataArray::columnToCamelCase($tableName));
-		
-		// get columns
-		$columns = $this->getColumns($tableName);
-		
-		// id field
-		if($columns != null && count($columns) > 0)
-		{
-			foreach($columns as $key => $column)
-			{
-				if($column['Key'] == "PRI")
-				{
-					$columns[$key]['primaryKey'] = 1;
-					$columns[$key]['notPrimaryKey'] = 0;
-					$idFieldName = $column['Field'];
-				}
-				else
-				{
-					$columns[$key]['primaryKey'] = 0;
-					$columns[$key]['notPrimaryKey'] = 1;
-				}
-				
-				$fieldsPack[] = "'" . $column['Field'] . "'";
-				
-				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
-				
-				if($column['Type'] == "datetime" || $column['Type'] == "date")
-				{
-					$columns[$key]['dateTimeField'] = 1;
-				}
-				else
-				{
-					$columns[$key]['dateTimeField'] = 0;
-				}
-				
-				if($column['Default'] == null)
-				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => null";
-				}
-				else
-				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => '" . str_replace("'","\'",$column['Default']) . "'";
-				}
-				
-				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
-				{
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
-					$bindingsPack[] = "\n";
-				}
-			}
-		}
-		
-		return array(	'tableName' => $tableName,
-						'variableName' => \Parm\DataArray::columnToCamelCase($tableName),
-						'className' => $className,
-						'databaseName' => $this->databaseNode->serverDatabaseName,
-						'idFieldName' => $idFieldName,
-						'namespace' => $this->generatedNamespace,
-						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : 'xxxxxxx',
-						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
-						'namespaceLength' => strlen($this->generatedNamespace),
-						'columns' => $columns,
-						'defaultValuePack' => implode(", ", $defaultValuePack),
-						'fieldList' => implode(", ", $fieldsPack),
-						'bindingsPack' => implode("\n", $bindingsPack),
-		);
-		
-	}
-	
-	
+	/**
+	 * Generate the objects and factories
+     */
 	function generate()
 	{
 		if($this->destinationDirectory == null)
@@ -241,6 +157,106 @@ class DatabaseGenerator
 		{
 			throw new \Exception("No tables in database.");
 		}
+		
+	}
+	
+	
+	/* Private Functions */
+	private function getTableNames()
+	{
+		$databaseName = $this->databaseNode->serverDatabaseName;
+		
+		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
+		$dp->setSQL('SHOW TABLES');
+		
+		$tableNames = array();
+		
+		$dp->process(function($row) use(&$tableNames,$databaseName) {
+			
+			$tableNames[] = $row['Tables_in_'.$databaseName];
+		});
+		
+		return $tableNames;
+	}
+	
+	private function getTemplatingDataFromTableName($tableName)
+	{
+		
+		$idFieldName = '';
+		$defaultValuePack = array();
+		$fieldsPack = array();
+		$bindingsPack = array();
+		
+		$className = ucfirst(\Parm\DataArray::columnToCamelCase($tableName));
+		
+		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
+		$dp->setSQL("SHOW COLUMNS FROM " . $dp->escapeString($this->databaseNode->serverDatabaseName) . "." . $dp->escapeString($tableName));
+		$columns = $dp->getArray();
+		
+		// id field
+		if($columns != null && count($columns) > 0)
+		{
+			foreach($columns as $key => $column)
+			{
+				if($column['Key'] == "PRI")
+				{
+					$columns[$key]['primaryKey'] = 1;
+					$columns[$key]['notPrimaryKey'] = 0;
+					$idFieldName = $column['Field'];
+				}
+				else
+				{
+					$columns[$key]['primaryKey'] = 0;
+					$columns[$key]['notPrimaryKey'] = 1;
+				}
+				
+				$fieldsPack[] = "'" . $column['Field'] . "'";
+				
+				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
+				
+				if($column['Type'] == "datetime" || $column['Type'] == "date")
+				{
+					$columns[$key]['dateTimeField'] = 1;
+				}
+				else
+				{
+					$columns[$key]['dateTimeField'] = 0;
+				}
+				
+				if($column['Default'] == null)
+				{
+					$defaultValuePack[] = "'" . $column['Field'] . "' => null";
+				}
+				else
+				{
+					$defaultValuePack[] = "'" . $column['Field'] . "' => '" . str_replace("'","\'",$column['Default']) . "'";
+				}
+				
+				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
+				{
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
+					$bindingsPack[] = "\n";
+				}
+			}
+		}
+		
+		return array(	'tableName' => $tableName,
+						'variableName' => \Parm\DataArray::columnToCamelCase($tableName),
+						'className' => $className,
+						'databaseName' => $this->databaseNode->serverDatabaseName,
+						'idFieldName' => $idFieldName,
+						'namespace' => $this->generatedNamespace,
+						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : 'xxxxxxx',
+						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
+						'namespaceLength' => strlen($this->generatedNamespace),
+						'columns' => $columns,
+						'defaultValuePack' => implode(", ", $defaultValuePack),
+						'fieldList' => implode(", ", $fieldsPack),
+						'bindingsPack' => implode("\n", $bindingsPack),
+		);
 		
 	}
 	

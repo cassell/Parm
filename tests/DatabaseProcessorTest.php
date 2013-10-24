@@ -125,7 +125,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 				
 		$json = ob_get_clean();
 		
-		$this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","city":"New Freedom","stateName":"Pennsylvania"}]',$json);
+		$this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]',$json);
 	}
 	
 }
