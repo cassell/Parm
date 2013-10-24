@@ -4,8 +4,6 @@ namespace Parm\Binding;
 
 abstract class SQLString
 {
-	function __construct(){ }
-
-	abstract protected function getSQL($factory);
+	abstract protected function getSQL(\Parm\DataAccessObjectFactory $factory);
 	
 }

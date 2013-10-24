@@ -6,12 +6,6 @@ namespace Parm\Binding\Conditional;
 */
 class AndConditional extends Conditional
 {
-	
-	public function __construct()
-	{
-		parent::__construct();
-	}
-
 	/**
      * The separator that should be used in the SQL
 	 * 

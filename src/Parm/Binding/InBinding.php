@@ -24,12 +24,11 @@ class InBinding extends SQLString
      */
 	function __construct($field, $array)
 	{
-		parent::__construct();
 		$this->field = $field;
 		$this->array = $array;
 	}
 
-	function getSQL($factory)
+	function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		if(count($this->array) == 1)
 		{

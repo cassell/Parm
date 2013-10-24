@@ -57,7 +57,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	 * @param DatabaseAccessObjectFactory $factory The factory to use for escaping values
 	 * @return string
      */
-	public function getSQL($factory)
+	public function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		if($this->items != null && count($this->items) > 0)
 		{

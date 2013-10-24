@@ -24,25 +24,24 @@ class Binding extends SQLString
 	
 	/**
      * Create a new Binding from the field(column_name), operator(=,!=,etc), and value.
-	 * @param $field string
-	 * @param $operator string
-	 * @param $value string
+	 * @param string $field 
+	 * @param string $operator
+	 * @param string $value
      */
 	function __construct($field, $operator, $value)
 	{
 		$this->field = $field;
 		$this->value = $value;
 		$this->operator = $operator;
-		parent::__construct();
 	}
 
 	/**
      * Return the SQL String
 	 * 
-	 * @param $factory DataAccessObjectFactory
+	 * @param \Parm\DataAccessObjectFactory $factory
 	 * @return string
      */
-	function getSQL($factory)
+	function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		if($this->value == null)
 		{

@@ -29,7 +29,7 @@ class NotInBinding extends SQLString
 		$this->array = $array;
 	}
 
-	function getSQL($factory)
+	function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		if(count($this->array) == 1)
 		{

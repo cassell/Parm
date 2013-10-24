@@ -17,11 +17,17 @@ class StringBinding extends SQLString
      */
 	function __construct($sql)
 	{
-		$this->sql = $sql;
-		parent::__construct();
+		if(is_string($sql))
+		{
+			$this->sql = $sql;
+		}
+		else
+		{
+			throw new \Parm\Exception\ErrorException('StringBinding requires a string');
+		}
 	}
 
-	function getSQL($factory)
+	function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		return $this->sql;
 	}
