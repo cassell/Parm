@@ -1,11 +1,12 @@
 <?php
 namespace Parm\Binding\Conditional;
 
+/**
+* Conditional that will join clauses with AND
+*/
 class AndConditional extends Conditional
 {
-	/**
-     * Create a new conditional that will joing bindings with AND
-     */
+	
 	public function __construct()
 	{
 		parent::__construct();
@@ -20,4 +21,5 @@ class AndConditional extends Conditional
 	{
 		return "AND";
 	}
+	
 }

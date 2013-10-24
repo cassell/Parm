@@ -1,16 +1,11 @@
 <?php
 namespace Parm\Binding\Conditional;
 
+/**
+* Conditional that will join clauses with OR
+*/
 class OrConditional extends Conditional
 {
-	/**
-     * Create a new OR conditional statement
-     */
-	function __construct()
-	{
-		parent::__construct();
-	}
-
 	/**
      * The separator that should be used in the SQL
 	 * 

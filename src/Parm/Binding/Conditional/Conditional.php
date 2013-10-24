@@ -15,14 +15,18 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	 * 
      * @var array
      */
-	public $items = array();
-
+	private $items = array();
+	
 	/**
-     * Creates a new conditional
+     * Add a binding to the list of bindings that will be joined together to make the SQL string.
+	 * 
+	 * @param string|Binding|Conditional $binding
+	 * @return Conditional Returns itself for chaining
      */
-	public function __construct()
+	public function bind($binding)
 	{
-		parent::__construct();
+		$this->addItem($binding);
+		return $this;
 	}
 
 	/**
@@ -33,8 +37,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
      */
 	public function addBinding($binding)
 	{
-		$this->addItem($binding);
-		return $this;
+		return $this->bind($binding);
 	}
 
 	/**
@@ -43,10 +46,9 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	 * @param Conditional $conditional
 	 * @return Conditional Returns itself for chaining
      */
-	public function addConditional($conditional)
+	public function addConditional(Conditional $conditional)
 	{
-		$this->addItem($conditional);
-		return $this;
+		return $this->bind($conditional);
 	}
 
 	/**

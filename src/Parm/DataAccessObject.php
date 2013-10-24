@@ -66,8 +66,8 @@ abstract class DataAccessObject extends DataArray
      */
 	static function findId($id)
 	{
-		$t = new static();
-		return $t->getFactory()->getObject($id);
+		$f = new static();
+		return $f->getFactory()->findId($id);
 	}
 	
 	public function __clone() {

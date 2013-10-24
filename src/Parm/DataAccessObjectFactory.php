@@ -20,7 +20,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	private $limitClause = '';
 
 	/**
-	 * Find an object by ID
 	 * @param DatabaseNode $databaseNode optional The database to retrieve the objects from
      */
 	function __construct($databaseNode = null)
@@ -64,46 +63,17 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 		return $data;
 	}
-
-	/**
-     * @param integer $id ID of the row in the database
-     * @return object|null The record from the database
-     */
-	static function getObject($id)
-	{
-		$f = new static();
-
-		if($f->getIdField())
-		{
-			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), (int)$id));
-			return $f->getFirstObject();
-		}
-		else
-		{
-			return null;
-		}
-	}
 	
 	/**
-     * @param integer $id ID of the row in the database
-     * @return object|null The record from the database
-	 * @throws \Parm\Exception\RecordNotFoundException
-     */
-	static function getObjectOrFail($id)
+	 * Alias to getObjects
+	 * Return an array of the objects based on Bindings
+	 * @return array of DataAccessObjects
+	 */
+	function get()
 	{
-		$f = new static();
-
-		if($f->getIdField())
-		{
-			$f->addBinding(new Binding\EqualsBinding($f->getIdField(), (int)$id));
-			return $f->getFirstObject();
-		}
-		else
-		{
-			throw new \Parm\Exception\RecordNotFoundException('Unable to find object #' . (int)$id);
-		}
+		return $this->getObjects();
 	}
-
+	
 	/**
 	 * Return the first object from a getObjects
 	 * @return object
@@ -116,6 +86,65 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		{
 			return reset($array);
 		}
+		else return null;
+	}
+	
+
+	/**
+	 * Find an object by primary key
+     * @param integer $id ID of the row in the database
+     * @return object|null The record from the database
+     */
+	function findId($id)
+	{
+		$this->clearBindings();
+
+		if($this->getIdField())
+		{
+			$this->addBinding(new Binding\EqualsBinding($this->getIdField(), (int)$id));
+			return $this->getFirstObject();
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	/**
+     * @param integer $id ID of the row in the database
+     * @return object|null The record from the database
+	 * @throws \Parm\Exception\RecordNotFoundException
+     */
+	static function findIdOrFail($id)
+	{
+		$object = $this->findId($id);
+		
+		if($object)
+		{
+			return $object;
+		}
+		else
+		{
+			throw new \Parm\Exception\RecordNotFoundException('Unable to find object #' . (int)$id);
+		}
+	}
+
+	
+	/**
+	 * Get objects with completely custom join, where, group, and order by clause
+	 * @param string $whereClause
+	 * @return array of DataAccessObjects
+     */
+	function find($clause = "")
+	{
+		if(count($this->conditional->items) > 0)
+		{
+			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the find method. Use getObjects, getArray, etc. For the find() method you must pass the entire where clause");
+		}
+		
+		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
+
+		return $this->getObjects();
 	}
 
 	/**
@@ -175,16 +204,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	function delete()
 	{
 		$this->update("DELETE " . implode(" ", array($this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql(), $this->getGroupByClause(), $this->getOrderByClause(), $this->getLimitClause())));
-	}
-
-	/**
-	 * Find an object by primary key
-	 * @param integer $id
-	 * @return object
-     */
-	function findId($id)
-	{
-		return $this->getObject($id);
 	}
 
 	/**
@@ -526,37 +545,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		$this->update("TRUNCATE TABLE " . $this->getTableName());
 	}
 
-	// used to do completely custom queries but bit have to write the select query
-	
-	/**
-	 * Get objects with completely custom join, where, group, and order by clause
-	 * @param string $clause
-	 * @return array of DataAccessObjects
-     */
-	function findObjectsWhere($clause)
-	{
-		if(count($this->conditional->items) > 0)
-		{
-			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the findObjectsWhere method. Use getObjects, getArray, etc.");
-		}
-
-		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
-
-		return $this->getObjects();
-	}
 
 	/**
-	 * Alias of findObjectsWhere
-	 * @param string $whereClause
-	 * @return array of DataAccessObjects
-     */
-	function find($clause = "")
-	{
-		return $this->findObjectsWhere($clause);
-	}
-
-	/**
-	 * Delete rows based on where clause
+	 * Delete rows based on custom where clause
 	 * @param string $whereClause
      */
 	function deleteWhere($whereClause)
