@@ -185,14 +185,41 @@ abstract class DataAccessObject extends DataArray
      */
 	protected function setDatetimeFieldValue($fieldName, $val)
 	{
+		
+		if ((string)$val != "")
+		{
+			if (is_integer($val))
+			{
+				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
+			}
+			else
+			{
+				
+				
+				$this->setFieldValue($fieldName, $val);
+			}
+		}
+		else
+		{
+			$this->setFieldValue($fieldName, NULL);
+		}
+	}
+	
+	/**
+     * Used by the generated classes
+     */
+	protected function setDateFieldValue($fieldName, $val)
+	{
 		if ($val != "" && $val != '')
 		{
 			if (is_integer($val))
 			{
-				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->dateTimeStorageFormat, $val));
+				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
 			}
 			else
 			{
+				
+				
 				$this->setFieldValue($fieldName, $val);
 			}
 		}
