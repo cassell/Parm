@@ -792,5 +792,3 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 
 }
-
-?>

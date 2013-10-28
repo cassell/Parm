@@ -16,6 +16,9 @@ class DatabaseNode
 	var $dateStorageFormat;
 	var $connection;
 	
+	const DATE_STORAGE_FORMAT = 'Y-m-d';
+	const DATETIME_STORAGE_FORMAT = 'Y-m-d H:i:s';
+	
 	/**
      * Create a database node
 	 * 
@@ -27,11 +30,9 @@ class DatabaseNode
 	 * @param string $serverSocket
 	 * @param string $serverCharset
 	 * @param string $serverCaseSensitiveCollation
-	 * @param string $dateTimeStorageFormat
-	 * @param string $dateStorageFormat
 	 * 
      */
-	function __construct($serverDatabaseName, $serverHost, $serverUsername, $serverPassword, $serverPort = null, $serverSocket = null, $serverCharset = 'utf8', $serverCaseSensitiveCollation = 'utf8_bin', $dateTimeStorageFormat = 'Y-m-d H:i:s', $dateStorageFormat = 'Y-m-d')
+	function __construct($serverDatabaseName, $serverHost, $serverUsername, $serverPassword, $serverPort = null, $serverSocket = null, $serverCharset = 'utf8', $serverCaseSensitiveCollation = 'utf8_bin')
 	{
 		$this->serverDatabaseName = $serverDatabaseName;
 		$this->serverHost = $serverHost;
@@ -41,8 +42,6 @@ class DatabaseNode
 		$this->serverSocket = $serverSocket;
 		$this->serverCharset = $serverCharset;
 		$this->serverCaseSensitiveCollation = $serverCaseSensitiveCollation;
-		$this->dateTimeStorageFormat = $dateTimeStorageFormat;
-		$this->dateStorageFormat = $dateStorageFormat;
 		
 	}
 	
@@ -89,6 +88,16 @@ class DatabaseNode
 	function closeConnection()
 	{
 		$this->connection->close();
+	}
+	
+	function getDateTimeStorageFormat()
+	{
+		return static::DATETIME_STORAGE_FORMAT;
+	}
+	
+	function getDateStorageFormat()
+	{
+		return static::DATE_STORAGE_FORMAT;
 	}
 	
 	

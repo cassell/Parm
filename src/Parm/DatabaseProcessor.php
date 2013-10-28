@@ -465,5 +465,3 @@ class DatabaseProcessor
 	}
 	
 }
-
-?>

@@ -9,5 +9,3 @@ class GetFieldValueException extends ErrorException
 		parent::__construct($message, null, E_USER_ERROR);
 	}
 }
-
-?>
