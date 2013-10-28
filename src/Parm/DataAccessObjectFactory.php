@@ -65,16 +65,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 	
 	/**
-	 * Alias to getObjects
-	 * Return an array of the objects based on Bindings
-	 * @return array of DataAccessObjects
-	 */
-	function get()
-	{
-		return $this->getObjects();
-	}
-	
-	/**
 	 * Return the first object from a getObjects
 	 * @return object
 	 */
