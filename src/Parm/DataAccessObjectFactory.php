@@ -2,16 +2,8 @@
 
 namespace Parm;
 
-abstract class DataAccessObjectFactory extends DatabaseProcessor
+abstract class DataAccessObjectFactory extends DatabaseProcessor implements TableInterface
 {
-	abstract protected function getTableName();
-
-	abstract protected function getIdField();
-
-	abstract protected function getFields();
-
-	abstract protected function getDatabaseName();
-	
 	private $fields = array();
 	private $conditional;
 	private $joinClause = '';
@@ -31,11 +23,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 		else
 		{
-			parent::__construct($this->getDatabaseName());
+			parent::__construct(static::getDatabaseName());
 		}
 		
 		// fields used in the SELECT clause
-		$this->setSelectFields($this->getFields());
+		$this->setSelectFields(static::getFields());
 
 		// conditional used in building the WHERE clause
 		$this->conditional = new Binding\Conditional\AndConditional();
@@ -51,7 +43,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 
 		$this->process(function($obj) use (&$data)
 		{
-			if($obj->getIdField() != null)
+			if($obj::getIdField() != null)
 			{
 				$data[$obj->getId()] = $obj;
 			}
@@ -89,9 +81,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		$this->clearBindings();
 
-		if($this->getIdField())
+		if(static::getIdField())
 		{
-			$this->addBinding(new Binding\EqualsBinding($this->getIdField(), (int)$id));
+			$this->addBinding(new Binding\EqualsBinding(static::getIdField(), (int)$id));
 			return $this->getFirstObject();
 		}
 		else
@@ -192,7 +184,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 	
 	/**
-	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * Shorthand to add an Equals Binding to the Factory conditional
 	 * @param string $field
 	 * @param string $value 
      * @return DataAccessObjectFactory so that you can chain bindings
@@ -203,7 +195,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 	
 	/**
-	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * Shorthand to add a NotEqualsBinding to the Factory conditional
 	 * @param string $field
 	 * @param string $value 
      * @return DataAccessObjectFactory so that you can chain bindings
@@ -214,7 +206,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	}
 	
 	/**
-	 * Shorthand to adds an Equals Binding to the Factory conditional
+	 * Shorthand to add a ContainsBinding to the Factory conditional
 	 * @param string $field
 	 * @param string $value 
      * @return DataAccessObjectFactory so that you can chain bindings
@@ -264,7 +256,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function getFromClause()
 	{
-		return 'FROM ' . $this->getTableName();
+		return 'FROM ' . static::getTableName();
 	}
 
 	/**
@@ -281,14 +273,14 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 			// empty the fields array
 			$this->fields = array();
 
-			if($this->getIdField() != null)
+			if(static::getIdField() != null)
 			{
-				$this->addSelectField($this->getIdField());
+				$this->addSelectField(static::getIdField());
 			}
 
 			foreach($arrayOfFields as $field)
 			{
-				if($field != $this->getIdField())
+				if($field != static::getIdField())
 				{
 					$this->addSelectField($field);
 				}
@@ -316,7 +308,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 		}
 		else
 		{
-			$this->fields[] = $this->getTableName() . "." . $field;
+			$this->fields[] = static::getTableName() . "." . $field;
 		}
 		
 		return $this;
@@ -551,9 +543,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function count()
 	{
-		if($this->getIdField())
+		if(static::getIdField())
 		{
-			return $this->getSingleFieldFunctionValue('COUNT', $this->getTableName() . '.' . $this->getIdField());
+			return $this->getSingleFieldFunctionValue('COUNT', static::getTableName() . '.' . static::getIdField());
 		}
 		else
 		{
@@ -575,7 +567,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function truncateTable()
 	{
-		$this->update("TRUNCATE TABLE " . $this->getTableName());
+		$this->update("TRUNCATE TABLE " . static::getTableName());
 	}
 
 
@@ -585,7 +577,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
      */
 	function deleteWhere($whereClause)
 	{
-		return $this->update("DELETE FROM " . $this->getTableName() . " WHERE " . $whereClause);
+		return $this->update("DELETE FROM " . static::getTableName() . " WHERE " . $whereClause);
 	}
 
 	/**
@@ -616,7 +608,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		$array = array();
 
-		$result = $this->getMySQLResult('SELECT DISTINCT(' . $this->escapeString($field) . ") as fdf FROM " . $this->getTableName() . " " . $clause);
+		$result = $this->getMySQLResult('SELECT DISTINCT(' . $this->escapeString($field) . ") as fdf FROM " . static::getTableName() . " " . $clause);
 
 		if($result != null && $result->num_rows > 0)
 		{
@@ -641,7 +633,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		$array = array();
 
-		$result = $this->getMySQLResult('SELECT ' . $this->escapeString($field) . " as ff FROM " . $this->getTableName() . " " . $clause);
+		$result = $this->getMySQLResult('SELECT ' . $this->escapeString($field) . " as ff FROM " . static::getTableName() . " " . $clause);
 
 		if($result != null && $result->num_rows > 0)
 		{
@@ -685,7 +677,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor
 	{
 		if($this->getIdField() != '')
 		{
-			return (int)($this->sqlFunctionFieldQuery('COUNT', $this->getTableName() . "." . $this->getIdField(), $clause));
+			return (int)($this->sqlFunctionFieldQuery('COUNT', static::getTableName() . "." . static::getIdField(), $clause));
 		}
 		else
 		{

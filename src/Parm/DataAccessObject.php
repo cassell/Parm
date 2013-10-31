@@ -2,19 +2,9 @@
 
 namespace Parm;
 
-abstract class DataAccessObject extends DataArray
+abstract class DataAccessObject extends DataArray implements TableInterface
 {
 	private $__modifiedColumns = array();
-
-	abstract protected function getDatabaseName();
-
-	abstract protected function getTableName();
-
-	abstract protected function getIdField();
-
-	abstract protected function getDefaultRow();
-	
-	abstract protected function getFactory();
 
 	/**
 	 * Constructor
@@ -65,8 +55,8 @@ abstract class DataAccessObject extends DataArray
      */
 	static function findId($id)
 	{
-		$f = new static();
-		return $f->getFactory()->findId($id);
+		$f = static::getFactory();
+		return $f->findId($id);
 	}
 	
 	public function __clone() {

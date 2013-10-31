@@ -6,24 +6,29 @@
 
 class {{className}}DaoObject extends \Parm\DataAccessObject
 {
-	public function getDatabaseName()
+	static function getDatabaseName()
 	{
 		return '{{databaseName}}';
 	}
 
-	public function getTableName()
+	public static function getTableName()
 	{
 		return '{{tableName}}';
 	}
 
-	public function getIdField()
+	public static function getIdField()
 	{
 		return '{{idFieldName}}';
 	}
 
-	protected function getFactory($databaseNode = null)
+	protected static function getFactory($databaseNode = null)
 	{
 		return new {{className}}DaoFactory($databaseNode);
+	}
+	
+	static function getFields()
+	{
+		return array({{fieldList}});
 	}
 	
 {{#columns}}

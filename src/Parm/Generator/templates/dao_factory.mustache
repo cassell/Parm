@@ -6,17 +6,17 @@
 
 class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 {
-	protected function getDatabaseName()
+	static function getDatabaseName()
 	{
 		return '{{databaseName}}';
 	}
 
-	protected function getTableName()
+	static function getTableName()
 	{
 		return '{{tableName}}';
 	}
 
-	public function getIdField()
+	static function getIdField()
 	{
 		return '{{idFieldName}}';
 	}
@@ -26,7 +26,7 @@ class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 		return new {{className}}DaoObject($row);
 	}
 
-	protected function getFields()
+	static function getFields()
 	{
 		return array({{fieldList}});
 	}

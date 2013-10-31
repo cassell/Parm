@@ -43,7 +43,7 @@ class Binding extends SQLString
      */
 	function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
-		if($this->value == null)
+		if($this->value === null)
 		{
 			return $factory->escapeString($this->field) . " " . $this->operator . " NULL";
 		}
