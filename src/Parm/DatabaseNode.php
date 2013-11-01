@@ -12,8 +12,6 @@ class DatabaseNode
 	var $serverSocket;
 	var $serverCharset; // default utf8
 	var $serverCaseSensitiveCollation;  // default utf8_bin
-	var $dateTimeStorageFormat;
-	var $dateStorageFormat;
 	var $connection;
 	
 	const DATE_STORAGE_FORMAT = 'Y-m-d';
