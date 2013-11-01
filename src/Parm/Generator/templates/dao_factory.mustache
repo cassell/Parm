@@ -21,7 +21,7 @@ class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 		return '{{idFieldName}}';
 	}
 
-	protected function loadDataObject($row)
+	protected function loadDataObject(Array $row)
 	{
 		return new {{className}}DaoObject($row);
 	}

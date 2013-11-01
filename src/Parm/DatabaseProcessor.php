@@ -150,7 +150,7 @@ class DatabaseProcessor
 	 * @param array $row The associative array of data
 	 * @return DataArray
      */
-	protected function loadDataObject($row)
+	protected function loadDataObject(Array $row)
 	{
 		return new DataArray($row);
 	}
@@ -282,6 +282,17 @@ class DatabaseProcessor
 		{
 			throw new \Parm\Exception\ErrorException("DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
 		}
+	}
+	
+	/**
+	 * Get the id of the last inserted object from the database node
+	 * 
+	 * @param string $sql The SQL to execute
+	 * @return mysql result
+     */
+	public function getLastInsertId()
+	{
+		return $this->databaseNode->getLastInsertId();
 	}
 	
 	/**

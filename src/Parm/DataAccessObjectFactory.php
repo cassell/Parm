@@ -14,7 +14,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	/**
 	 * @param DatabaseNode $databaseNode optional The database to retrieve the objects from
      */
-	function __construct($databaseNode = null)
+	function __construct(DatabaseNode $databaseNode = null)
 	{
 		// setup connection properties
 		if($databaseNode)
@@ -178,7 +178,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	 * @param string $remoteField 
      * @return DataAccessObjectFactory so that you can chain bindings
      */
-	function addForeignKeyObjectBinding($object, $localField = null, $remoteField = null)
+	function addForeignKeyObjectBinding(DataAccessObject $object, $localField = null, $remoteField = null)
 	{
 		return $this->addBinding(new Binding\ForeignKeyObjectBinding($object, $localField = null, $remoteField = null));
 	}
@@ -214,6 +214,26 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	function whereContains($field,$value)
 	{
 		return $this->addBinding(new Binding\ContainsBinding($field, $query));
+	}
+	
+	/**
+	 * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
+	 * @param string $field
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
+	function whereTrue($field)
+	{
+		return $this->addBinding(new Binding\TrueBooleanBinding($field));
+	}
+	
+	/**
+	 * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
+	 * @param string $field
+     * @return DataAccessObjectFactory so that you can chain bindings
+     */
+	function whereFalse($field)
+	{
+		return $this->addBinding(new Binding\FalseBooleanBinding($field));
 	}
 	
 

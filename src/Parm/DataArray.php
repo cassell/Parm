@@ -13,7 +13,7 @@ class DataArray extends \ArrayObject
 	 * Constructor
      * @param array $row Array of data
      */
-	function __construct($row)
+	function __construct(Array $row)
 	{
 		parent::__construct($row,\ArrayObject::ARRAY_AS_PROPS);
 	}
@@ -66,7 +66,7 @@ class DataArray extends \ArrayObject
 	 * Encode the values of an array to UTF-8
      * @return array with UTF-8 Encoded values
      */
-	static protected function utf8EncodeArray($array)
+	static protected function utf8EncodeArray(Array $array)
 	{
 		foreach ($array as $key => $value)
 		{

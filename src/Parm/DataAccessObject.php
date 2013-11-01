@@ -102,7 +102,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 				$f->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
 			}
 
-			$this[$this->getIdField()] = $f->databaseNode->connection->insert_id;
+			$this[$this->getIdField()] = $f->getLastInsertId();
 		}
 		else if (count($sql) > 0)
 		{

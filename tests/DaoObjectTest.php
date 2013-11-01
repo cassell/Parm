@@ -38,6 +38,31 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	function testInsertNewObject()
 	{
 		$new = new Parm\Dao\PeopleDaoObject();
+		$new->setFirstName("Núñez"); // spanish
+		$new->setLastName("κόσμε"); // greek
+		$new->setCreateDate(time());
+		$new->setCreateDatetime(time());
+		$new->setZipcodeId(1529);
+		$new->setArchived(0);
+		$new->save();
+		
+		$test = Parm\Dao\PeopleDaoObject::findId($new->getId());
+		
+		if($test != null)
+		{
+			$this->assertEquals("Núñez", $test->getFirstName());
+			$this->assertEquals("κόσμε", $test->getLastName());
+		}
+		else
+		{
+			$this->fail();
+		}
+		
+	}
+	
+	function testUTF8Saving()
+	{
+		$new = new Parm\Dao\PeopleDaoObject();
 		$new->setFirstName("Coach");
 		$new->setLastName("Parmo");
 		$new->setCreateDate(time());

@@ -10,9 +10,9 @@ class DatabaseNode
 	var $serverPassword;
 	var $serverPort;
 	var $serverSocket;
-	var $serverCharset; // default utf8
-	var $serverCaseSensitiveCollation;  // default utf8_bin
-	var $connection;
+	var $serverCharset = 'utf8'; // default utf8
+	var $serverCaseSensitiveCollation = 'utf8_bin';  // default utf8_bin
+	private $connection;
 	
 	const DATE_STORAGE_FORMAT = 'Y-m-d';
 	const DATETIME_STORAGE_FORMAT = 'Y-m-d H:i:s';

@@ -54,22 +54,24 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("zipcode_id = '1445'", $binding->getSQL($f));
 	}
 	
-	
-	function testEqualsBindingNull()
-	{
-		$f = new Parm\Dao\PeopleDaoFactory();
-		
-		$binding = new \Parm\Binding\EqualsBinding("last_name",null);
-		$this->assertEquals("last_name = NULL", $binding->getSQL($f));
-	}
-	
 	function testEqualsBinding()
 	{
-		
 		$f = new Parm\Dao\PeopleDaoFactory();
 		
 		$binding = new \Parm\Binding\EqualsBinding("people_id",1);
 		$this->assertEquals("people_id = '1'", $binding->getSQL($f));
+		
+		$binding = new \Parm\Binding\EqualsBinding("last_name","Montoya");
+		$this->assertEquals("last_name = 'Montoya'", $binding->getSQL($f));
+		
+		$binding = new \Parm\Binding\EqualsBinding("last_name",null);
+		$this->assertEquals("last_name = NULL", $binding->getSQL($f));
+		
+		$binding = new \Parm\Binding\EqualsBinding("last_name","");
+		$this->assertEquals("last_name = ''", $binding->getSQL($f));
+		
+		$binding = new \Parm\Binding\EqualsBinding("last_name","κόσμε");
+		$this->assertEquals("last_name = 'κόσμε'", $binding->getSQL($f));
 	}
 	
 	function testInBinding()
@@ -90,6 +92,10 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$f = new Parm\Dao\PeopleDaoFactory();
 		$binding = new Parm\Binding\InBinding("zipcode_id",array("apple","orange","dumptruck"));
 		$this->assertEquals("zipcode_id IN ('apple','orange','dumptruck')", $binding->getSQL($f));
+		
+		$f = new Parm\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\InBinding("zipcode_id",array(null,"",''));
+		$this->assertEquals("zipcode_id IN ('','','')", $binding->getSQL($f));
 	}
 	
 	
