@@ -11,7 +11,7 @@ class ForeignKeyObjectBinding extends EqualsBinding
 	 * @param $localField The field to bind against in the factory you are using (optional)
 	 * @param $remoteField The field from the object to get the value from (optional)
      */
-	function __construct(DataAccessObject $object, $localField = null, $objectField = null)
+	function __construct(\Parm\DataAccessObject $object, $localField = null, $objectField = null)
 	{
 		if($localField == null)
 		{
