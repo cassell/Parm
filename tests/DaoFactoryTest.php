@@ -19,6 +19,74 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('1776', count($allZipcodes));
 	}
 	
+	// return all objects
+	function testFirstObject()
+	{
+		$stein = new Parm\Dao\PeopleDaoObject();
+		$stein->setFirstName("Gertrude");
+		$stein->setLastName("Stein");
+		$stein->setCreateDate(time());
+		$stein->setCreateDatetime(time());
+		$stein->setZipcodeId(72);
+		$stein->setArchived(0);
+		$stein->save();
+		
+		$steinId = $stein->getId();
+		
+		$f = new Parm\Dao\PeopleDaoFactory();
+		$f->addBinding(new \Parm\Binding\EqualsBinding("people_id", $steinId));
+		$steinClone = $f->getFirstObject();
+		$this->assertEquals($stein->toJSON(), $steinClone->toJSON());
+	}
+	
+	function testWhereEquals()
+	{
+		$perry = new Parm\Dao\PeopleDaoObject();
+		$perry->setFirstName("Edward");
+		$perry->setLastName("Perry");
+		$perry->setCreateDate(time());
+		$perry->setCreateDatetime(time());
+		$perry->setZipcodeId(500);
+		$perry->setArchived(0);
+		$perry->save();
+		
+		$perryId = $perry->getId();
+		
+		$f = new Parm\Dao\PeopleDaoFactory();
+		$f->whereEquals("people_id", $perryId);
+		$perryClone = $f->getFirstObject();
+		$this->assertEquals($perry->toJSON(), $perryClone->toJSON());
+	}
+	
+	function testDelete()
+	{
+		$hoffa = new Parm\Dao\PeopleDaoObject();
+		$hoffa->setFirstName("Jimmy");
+		$hoffa->setLastName("Hoffa");
+		$hoffa->setCreateDate(time());
+		$hoffa->setCreateDatetime(time());
+		$hoffa->setZipcodeId(1687);
+		$hoffa->setArchived(0);
+		$hoffa->save();
+		
+		$hoffaId = $hoffa->getId();
+		
+		$f = new Parm\Dao\PeopleDaoFactory();
+		$f->whereEquals("people_id", $hoffaId);
+		$oldCount = $f->count();
+		
+		$f->delete();
+		
+		$this->assertEquals(1, $oldCount);
+		
+		$f = new Parm\Dao\PeopleDaoFactory();
+		$f->whereEquals("people_id", $hoffaId);
+		$newCount = $f->count();
+		
+		$this->assertEquals(0, $newCount);
+		
+	}
+	
 //	
 //	// generate the select clause from $this->fields
 //	function getSelectClause()
