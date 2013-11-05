@@ -59,12 +59,6 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		return $f->findId($id);
 	}
 	
-	public function __clone() {
-		
-		$this[static::getIdField()] = null;
-		$this->clearModifiedColumns();
-    }
-	
 	/**
      * Save the object to the database.
 	 * @return object
