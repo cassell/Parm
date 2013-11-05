@@ -140,6 +140,19 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		return $this->getId() == null;
 	}
 	
+	
+	/**
+     * Clone the object as a new object. This will cause the save() to save a new row to the database.
+	 * @return DataAccessObject
+     */
+	public function duplicateAsNewObject(){
+		
+		$new = clone $this;
+		$new[static::getIdField()] = null;
+		$new->clearModifiedColumns();
+		return $new;
+    }
+
 
 	/**
      * Convert to JSON ready array. Camel case fields and the primary key is always mapped to 'id'
