@@ -4,13 +4,13 @@ namespace Parm\Generator;
 
 class DatabaseGenerator
 {
-	const DestinationDirectoryFolderPermissions = 0777;
-	const GenereatedCodeFilePermissions = 0777;
+	const DESTINATION_DIRECTORY_FOLDER_PERMISSIONS = 0777;
+	const GENERATED_CODE_FILE_PERMISSIONS = 0777;
 	
 	var $database;
 	var $databaseNode;
 	var $destinationDirectory;
-	var $generatedNamespace = "\\Parm\\Dao\\";
+	var $generatedNamespace = "\\Parm\\Dao\\"; // default
 	
 	var $arrayOfInvalidColumnNames = array("");
 
@@ -97,7 +97,7 @@ class DatabaseGenerator
 			}
 			try
 			{
-				chmod($this->destinationDirectory,self::DestinationDirectoryFolderPermissions);
+				chmod($this->destinationDirectory,self::DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
 			}
 			catch(\Exception $e)
 			{
@@ -256,7 +256,7 @@ class DatabaseGenerator
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,
 						'namespace' => $this->generatedNamespace,
-						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : 'xxxxxxx',
+						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : '',
 						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
 						'namespaceLength' => strlen($this->generatedNamespace),
 						'columns' => $columns,
@@ -277,7 +277,7 @@ class DatabaseGenerator
 		{
 			try
 			{
-				@chmod($fileName,self::GenereatedCodeFilePermissions);
+				@chmod($fileName,self::GENERATED_CODE_FILE_PERMISSIONS);
 			}
 			catch(\Exception $e)
 			{
