@@ -135,8 +135,10 @@ class DatabaseGenerator
 				
 			}
 			
+			echo $this->generatedNamespace;
+			
 			$globalNamespaceData['namespace'] = $this->generatedNamespace;
-			$globalNamespaceData['autoloaderNamespace'] = ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : '';
+			$globalNamespaceData['autoloaderNamespace'] = $this->generatedNamespace; //($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? str_replace("\\","\\\\",$this->generatedNamespace) . '\\\\' : '';
 			$globalNamespaceData['namespaceLength'] = strlen($this->generatedNamespace) + 1;
 			
 			// global namespace file
@@ -256,7 +258,7 @@ class DatabaseGenerator
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,
 						'namespace' => $this->generatedNamespace,
-						'autoloaderNamespace' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? $this->generatedNamespace . '\\\\' : '',
+						'autoloaderNamespace' => $this->generatedNamespace,
 						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
 						'namespaceLength' => strlen($this->generatedNamespace),
 						'columns' => $columns,

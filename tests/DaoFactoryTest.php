@@ -6,7 +6,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 {
 	function testFindId()
 	{
-		$f = new Parm\Dao\ZipcodesDaoFactory();
+		$f = new ParmTests\Dao\ZipcodesDaoFactory();
 		$sharon = $f->findId(1445);
 		$this->assertEquals('16146', $sharon->getZipcode());
 	}
@@ -14,7 +14,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	// return all objects
 	function testFindAll()
 	{
-		$f = new Parm\Dao\ZipcodesDaoFactory();
+		$f = new ParmTests\Dao\ZipcodesDaoFactory();
 		$allZipcodes = $f->findAll();
 		$this->assertEquals('1776', count($allZipcodes));
 	}
@@ -22,7 +22,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	// return all objects
 	function testFirstObject()
 	{
-		$stein = new Parm\Dao\PeopleDaoObject();
+		$stein = new ParmTests\Dao\PeopleDaoObject();
 		$stein->setFirstName("Gertrude");
 		$stein->setLastName("Stein");
 		$stein->setCreateDate(time());
@@ -33,7 +33,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		
 		$steinId = $stein->getId();
 		
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$f->addBinding(new \Parm\Binding\EqualsBinding("people_id", $steinId));
 		$steinClone = $f->getFirstObject();
 		$this->assertEquals($stein->toJSON(), $steinClone->toJSON());
@@ -41,7 +41,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	
 	function testWhereEquals()
 	{
-		$perry = new Parm\Dao\PeopleDaoObject();
+		$perry = new ParmTests\Dao\PeopleDaoObject();
 		$perry->setFirstName("Edward");
 		$perry->setLastName("Perry");
 		$perry->setCreateDate(time());
@@ -52,7 +52,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		
 		$perryId = $perry->getId();
 		
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$f->whereEquals("people_id", $perryId);
 		$perryClone = $f->getFirstObject();
 		$this->assertEquals($perry->toJSON(), $perryClone->toJSON());
@@ -60,7 +60,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	
 	function testDelete()
 	{
-		$hoffa = new Parm\Dao\PeopleDaoObject();
+		$hoffa = new ParmTests\Dao\PeopleDaoObject();
 		$hoffa->setFirstName("Jimmy");
 		$hoffa->setLastName("Hoffa");
 		$hoffa->setCreateDate(time());
@@ -71,7 +71,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		
 		$hoffaId = $hoffa->getId();
 		
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$f->whereEquals("people_id", $hoffaId);
 		$oldCount = $f->count();
 		
@@ -79,7 +79,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertEquals(1, $oldCount);
 		
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$f->whereEquals("people_id", $hoffaId);
 		$newCount = $f->count();
 		

@@ -6,38 +6,38 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 {
 	function testFindId()
 	{
-		$sharon = Parm\Dao\ZipcodesDaoObject::findId(1445);
+		$sharon = ParmTests\Dao\ZipcodesDaoObject::findId(1445);
 		$this->assertEquals('16146', $sharon->getZipcode());
 	}
 	
 	function testCreateClone()
 	{
-		$sharon = Parm\Dao\ZipcodesDaoObject::findId(1445);
+		$sharon = ParmTests\Dao\ZipcodesDaoObject::findId(1445);
 		$sharonClone = clone $sharon;
 		$this->assertEquals($sharon->getZipcode(),$sharonClone->getZipcode());
 	}
 	
 	function testGetDatabaseName()
 	{
-		$new = new Parm\Dao\ZipcodesDaoObject();
-		$this->assertEquals('parm_tests', $new->getDatabaseName());
+		$new = new ParmTests\Dao\ZipcodesDaoObject();
+		$this->assertEquals('parm_namespaced_tests', $new->getDatabaseName());
 	}
 
 	function testGetTableName()
 	{
-		$new = new Parm\Dao\ZipcodesDaoObject();
+		$new = new ParmTests\Dao\ZipcodesDaoObject();
 		$this->assertEquals('zipcodes', $new->getTableName());
 	}
 
 	function testGetIdField()
 	{
-		$new = new Parm\Dao\ZipcodesDaoObject();
+		$new = new ParmTests\Dao\ZipcodesDaoObject();
 		$this->assertEquals('zipcode_id', $new->getIdField());
 	}
 	
 	function testInsertNewObject()
 	{
-		$new = new Parm\Dao\PeopleDaoObject();
+		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Núñez"); // spanish
 		$new->setLastName("κόσμε"); // greek
 		$new->setCreateDate(time());
@@ -46,7 +46,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$new->setArchived(0);
 		$new->save();
 		
-		$test = Parm\Dao\PeopleDaoObject::findId($new->getId());
+		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 		
 		if($test != null)
 		{
@@ -62,7 +62,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	
 	function testUTF8Saving()
 	{
-		$new = new Parm\Dao\PeopleDaoObject();
+		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Coach");
 		$new->setLastName("Parmo");
 		$new->setCreateDate(time());
@@ -71,7 +71,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$new->setArchived(0);
 		$new->save();
 		
-		$test = Parm\Dao\PeopleDaoObject::findId($new->getId());
+		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 		
 		if($test != null)
 		{
@@ -86,7 +86,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	
 	function testJSONNewObject()
 	{
-		$new = new Parm\Dao\PeopleDaoObject();
+		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("James");
 		$new->setLastName("Buchanan");
 		$new->setZipcodeId(555);
@@ -98,13 +98,13 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	
 	function testJSON()
 	{
-		$buchananBirthplace = Parm\Dao\ZipcodesDaoObject::findId(555);
+		$buchananBirthplace = ParmTests\Dao\ZipcodesDaoObject::findId(555);
 		$this->assertEquals('a:9:{s:9:"zipcodeId";s:3:"555";s:7:"zipcode";s:5:"17224";s:5:"state";s:2:"PA";s:9:"longitude";s:16:"-77.906230000000";s:8:"latitude";s:15:"39.957564000000";s:8:"archived";s:1:"0";s:4:"city";s:11:"Fort Loudon";s:9:"stateName";s:12:"Pennsylvania";s:2:"id";s:3:"555";}', serialize($buchananBirthplace->toJSON()));
 	}
 	
 	function testJSONString()
 	{
-		$buchananBirthplace = Parm\Dao\ZipcodesDaoObject::findId(555);
+		$buchananBirthplace = ParmTests\Dao\ZipcodesDaoObject::findId(555);
 		$this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":"555"}',$buchananBirthplace->toJSONString());
 	}
 

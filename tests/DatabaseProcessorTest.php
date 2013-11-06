@@ -7,7 +7,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testDatabaseConfiguration()
 	{
-		$node = $GLOBALS[PARM_CONFIG_GLOBAL]['parm_tests']->getMaster();
+		$node = $GLOBALS[PARM_CONFIG_GLOBAL]['parm_namespaced_tests']->getMaster();
 		if(!($node instanceof \Parm\DatabaseNode))
 		{
 			$this->fail();
@@ -16,14 +16,14 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testPassingStringToConstructor()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL('select * from people');
 		$result = $dp->getArray();
 	}
 	
 	public function testPassingNodeToConstructor()
 	{
-		$dp = new Parm\DatabaseProcessor(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
+		$dp = new Parm\DatabaseProcessor(new Parm\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
 		$dp->setSQL('select * from people');
 		$result = $dp->getArray();
 	}
@@ -31,7 +31,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	public function testPassingDatabaseToConstructor()
 	{
 		$db = new Parm\Database();
-		$db->setMaster(new Parm\DatabaseNode($GLOBALS['db_name'],$GLOBALS['db_host'],$GLOBALS['db_username'],$GLOBALS['db_password']));
+		$db->setMaster(new Parm\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
 		$dp = new Parm\DatabaseProcessor($db);
 		$dp->setSQL('select * from people');
 		$result = $dp->getArray();
@@ -39,7 +39,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testProcess()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes where city = 'Erie'");
 		
 		$count = 0;
@@ -55,7 +55,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testUnbufferedProcess()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes");
 		
 		$sum = 0;
@@ -73,7 +73,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	{
 		//Scranton
 		
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes where city = 'Scranton'");
 		
 		$array = $dp->getArray();
@@ -85,7 +85,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetArrayReturnsEmptyArray()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes where city = 'Pittsburgh'");
 		
 		$array = $dp->getArray();
@@ -96,7 +96,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetJSON()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes where city = 'State College'");
 		$jsonObjects = $dp->getJSON();
 		
@@ -108,7 +108,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetFirstField()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select zipcode from zipcodes where city = 'Scranton' order by zipcode asc");
 		
 		$this->assertEquals("18503",$dp->getFirstField("zipcode"));
@@ -116,7 +116,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testOutputJSONString()
 	{
-		$dp = new Parm\DatabaseProcessor('parm_tests');
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("SELECT * FROM `zipcodes` WHERE `city` LIKE '%Freedom%';");
 		
 		ob_start();

@@ -6,7 +6,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 {
 	function testAndConditionalEmpty()
 	{
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\AndConditional();
 		$this->assertEquals('', $cond->getSQL($f));
@@ -15,7 +15,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 	
 	function testAndConditionalStringsAndBindings()
 	{
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\AndConditional();
 		
@@ -30,7 +30,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 	
 	function testOrCondtionalEmpty()
 	{
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\OrConditional();
 		$this->assertEquals('', $cond->getSQL($f));
@@ -38,7 +38,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 	
 	function testOrConditionalStringsAndBindings()
 	{
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\OrConditional();
 		$cond->addBinding("zipcode_id = 0");
@@ -50,7 +50,7 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 	
 	function testNestedConditionals()
 	{
-		$f = new Parm\Dao\PeopleDaoFactory();
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		
 		$cond = new \Parm\Binding\Conditional\AndConditional();
 		$cond->addBinding("zipcode_id = 0");

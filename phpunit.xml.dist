@@ -7,11 +7,16 @@
         </testsuite>
     </testsuites>
 	<php>
-        <var name="db_host" value="localhost" />
-        <var name="db_username" value="travis" />
-        <var name="db_password" value="" />
-        <var name="db_name" value="parm_tests" />
-        <var name="db_port" value="3306"/>
+		<var name="db_namespaced_host" value="localhost" />
+        <var name="db_namespaced_username" value="travis" />
+        <var name="db_namespaced_password" value="" />
+        <var name="db_namespaced_name" value="parm_namespaced_tests" />
+        <var name="db_namespaced_port" value=""/>
+		<var name="db_global_host" value="localhost" />
+        <var name="db_global_username" value="travis" />
+        <var name="db_global_password" value="" />
+        <var name="db_global_name" value="parm_global_tests" />
+        <var name="db_global_port" value=""/>
     </php>
     <filter>
         <whitelist>
