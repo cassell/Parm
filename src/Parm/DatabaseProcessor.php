@@ -4,7 +4,6 @@ namespace Parm;
 
 class DatabaseProcessor
 {
-	var $connection;
 	var $databaseNode;
 	
 	protected $sql = null;
