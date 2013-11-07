@@ -130,7 +130,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	{
 		if($this->conditional->hasChildBindings())
 		{
-			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the find method. Use getObjects, getArray, etc. For the find() method you must pass the entire join, where, group, and order by clauses");
+			throw new \Parm\Exception\ErrorException("Bindings have been added to the factory but are not respected by the find method. Use getObjects, getArray, etc. For the find() method you must pass the entire join, where, group, and order by clauses as a string");
 		}
 		
 		$this->setSQL($this->getSelectClause() . " " . $this->getFromClause() . " " . $clause);
