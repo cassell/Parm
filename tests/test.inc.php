@@ -1,6 +1,6 @@
 <?php
 
-error_reporting(E_ALL | E_STRICT);
+error_reporting(E_NOTICE);
 
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 

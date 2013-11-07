@@ -50,6 +50,19 @@ abstract class Conditional extends \Parm\Binding\SQLString
 	{
 		return $this->bind($conditional);
 	}
+	
+	/**
+     * Add a conditional to the list of conditionals that will be joined together to make a SQL string
+	 * 
+	 * @param Conditional $conditional
+	 * @return Conditional Returns itself for chaining
+     */
+	public function hasChildBindings()
+	{
+		return ($this->items != null && count($this->items) > 0);
+	}
+	
+	
 
 	/**
      * Return the SQL String
@@ -59,7 +72,7 @@ abstract class Conditional extends \Parm\Binding\SQLString
      */
 	public function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
-		if($this->items != null && count($this->items) > 0)
+		if($this->hasChildBindings())
 		{
 			$sql = array();
 
@@ -85,5 +98,6 @@ abstract class Conditional extends \Parm\Binding\SQLString
 			$this->items[] = $item;
 		}
 	}
+	
 	
 }
