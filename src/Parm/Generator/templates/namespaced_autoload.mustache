@@ -2,10 +2,18 @@
 
 spl_autoload_register(function($class) {
 	
-	if((strpos($class, "DaoFactory") !== false || strpos($class, "DaoObject") !== false) && strpos($class, "{{autoloaderNamespace}}") !== false)
+	$classes = array();
+	
+	{{#tables}}
+	$classes[] = '{{escapedNamespace}}{{className}}DaoObject';
+	$classes[] = '{{escapedNamespace}}{{className}}DaoFactory';
+	{{/tables}}
+	
+	if(in_array($class, $classes))
 	{
 		require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . substr($class, {{namespaceLength}}) . '.php';
 	}
+	
 });
 
 ?>

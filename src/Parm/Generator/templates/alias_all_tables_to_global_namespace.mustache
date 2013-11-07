@@ -10,8 +10,8 @@
 
  
 {{#tables}}
-class_alias('{{globalAliasNamespace}}{{className}}DaoObject', '{{className}}DaoObject');
-class_alias('{{globalAliasNamespace}}{{className}}DaoFactory', '{{className}}DaoFactory');
+class_alias('{{escapedNamespace}}{{className}}DaoObject', '{{className}}DaoObject');
+class_alias('{{escapedNamespace}}{{className}}DaoFactory', '{{className}}DaoFactory');
 {{/tables}}
 
 ?>

@@ -136,10 +136,8 @@ class DatabaseGenerator
 			}
 			
 			$globalNamespaceData['namespace'] = $this->generatedNamespace;
-			$globalNamespaceData['globalAliasNamespace'] = $this->generatedNamespace != "" ? (str_replace("\\", "\\\\", $this->generatedNamespace) . "\\\\") : '';
-			
-			//$globalNamespaceData['autoloaderNamespace'] = $this->generatedNamespace; //($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? str_replace("\\","\\\\",$this->generatedNamespace) . '\\\\' : '';
-			//$globalNamespaceData['namespaceLength'] = strlen($this->generatedNamespace) + 1;
+			$globalNamespaceData['escapedNamespace'] = $this->generatedNamespace != "" ? (str_replace("\\", "\\\\", $this->generatedNamespace) . "\\\\") : '';
+			$globalNamespaceData['namespaceLength'] = strlen($this->generatedNamespace) + 1;
 			
 			// global namespace file
 			if($this->generatedNamespace != "\\" && $this->generatedNamespace != "")
