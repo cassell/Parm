@@ -32,6 +32,7 @@ class_alias('Parm\Binding\EqualsBinding', 'EqualsBinding');
 class_alias('Parm\Binding\FalseBooleanBinding', 'FalseBooleanBinding');
 class_alias('Parm\Binding\ForeignKeyObjectBinding', 'ForeignKeyObjectBinding');
 class_alias('Parm\Binding\InBinding', 'InBinding');
+class_alias('Parm\Binding\NotInBinding', 'NotInBinding');
 class_alias('Parm\Binding\NotEqualsBinding', 'NotEqualsBinding');
 class_alias('Parm\Binding\TrueBooleanBinding', 'TrueBooleanBinding');
 
