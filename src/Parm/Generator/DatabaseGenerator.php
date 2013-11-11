@@ -217,10 +217,10 @@ class DatabaseGenerator
 					$columns[$key]['notPrimaryKey'] = 1;
 				}
 				
-				$fieldsPack[] = "'" . $column['Field'] . "'";
-				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
 				$columns[$key]['AllCaps'] = strtoupper($column['Field']);
+				
+				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
 				
 				
 				// column type
@@ -266,15 +266,13 @@ class DatabaseGenerator
 					throw new \Parm\Exception\ErrorException("Column type (" . $column['Type'] . ") not found for column " . $column['Field']);
 				}
 				
-				print_r($columns[$key]);
-				
 				if($column['Default'] == null)
 				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => null";
+					$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => null";
 				}
 				else
 				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => '" . str_replace("'","\'",$column['Default']) . "'";
+					$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => '" . str_replace("'","\'",$column['Default']) . "'";
 				}
 				
 				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")

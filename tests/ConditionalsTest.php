@@ -65,7 +65,6 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 		
 		$this->assertEquals("(zipcode_id = 0 AND archived = 1 AND (people_id > '1' OR people_id is NULL))", $cond->getSQL($f));
 		
-		
 	}
 	
 	

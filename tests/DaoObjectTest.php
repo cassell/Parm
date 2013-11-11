@@ -35,16 +35,50 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('zipcode_id', $new->getIdField());
 	}
 	
+	function testSetStringValue()
+	{
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setFirstName("String");
+		
+		$this->assertEquals('String', $new->getFirstName());
+	}
+	
+	function testSetDateValueString()
+	{
+		$time = time();
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDate('2012-03-04');
+		$this->assertEquals('2012-03-04', $new->getCreateDate());
+	}
+	
+	function testSetDateValueTimestamp()
+	{
+		$time = time();
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDate(time());
+		$this->assertEquals(date("Y-m-d"), $new->getCreateDate());
+	}
+	
+	
+	/*
 	function testInsertNewObject()
 	{
+		echo "here";
+		
 		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Núñez"); // spanish
 		$new->setLastName("κόσμε"); // greek
 		$new->setCreateDate(time());
-		$new->setCreateDatetime(time());
-		$new->setZipcodeId(1529);
-		$new->setArchived(0);
-		$new->save();
+//		$new->setCreateDatetime(time());
+//		$new->setZipcodeId(1529);
+//		$new->setArchived(0);
+//		$new->save();
+		
+		echo "two";
+		exit;
 		
 		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 		
@@ -108,7 +142,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":"555"}',$buchananBirthplace->toJSONString());
 	}
 
-	
+	*/
 	
 	
 }

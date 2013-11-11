@@ -22,7 +22,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 
 	public static function getIdField()
 	{
-		return self::{{idFieldNameAllCaps}};
+		return self::{{idFieldNameAllCaps}}_COLUMN;
 	}
 
 	static function getFactory(Parm\DatabaseNode $databaseNode = null)
@@ -39,14 +39,40 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 {{#typeDatetime}}
 	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val); }
 	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format); }
-	final function get{{FieldCase}}DateTimeObject() { return new \DateTime($this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN)); }
+	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeDatetime}}
+{{#typeDate}}
+	final function set{{FieldCase}}($val) { $this->setDateFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}($format = null) { return $this->getDateFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN); }
+	
+{{/typeDate}}
 {{#typeInt}}
-	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,(int)$val); }
-	final function get{{FieldCase}}(){ return (int)$this->getFieldValue(self::{{AllCaps}}_COLUMN); }
+	final function set{{FieldCase}}($val) { $this->setIntFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getIntFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeInt}}
+{{#typeBoolean}}
+	final function set{{FieldCase}}($val) { $this->setBooleanFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getBooleanFieldValue(self::{{AllCaps}}_COLUMN); }
+	
+{{/typeBoolean}}
+{{#typeNumber}}
+	final function set{{FieldCase}}($val) { $this->setNumericalFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getNumericalFieldValue(self::{{AllCaps}}_COLUMN); }
+	
+{{/typeNumber}}
+{{#typeString}}
+	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
+	
+{{/typeString}}
+{{#typeLong}}
+	final function set{{FieldCase}}($val) { $this->setLongFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getLongFieldValue(self::{{AllCaps}}_COLUMN); }
+	
+{{/typeLong}}
 {{/columns}}
 	final function getDefaultRow()
 	{
