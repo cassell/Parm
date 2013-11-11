@@ -288,8 +288,13 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
 	function setSelectFields($arrayOfFields)
 	{
-		if(func_num_args() == 1 && is_array($arrayOfFields))
+		if(func_num_args() == 1)
 		{
+			if($arrayOfFields == null || !is_array($arrayOfFields))
+			{
+				throw new \Parm\Exception\ErrorException("setSelectFields must be passed an array or strings as parameters");
+			}
+			
 			// empty the fields array
 			$this->fields = array();
 
