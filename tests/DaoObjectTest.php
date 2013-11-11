@@ -92,7 +92,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$new->setZipcodeId(555);
 		$new->setArchived(0);
 		
-		$this->assertEquals('a:10:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";i:0;s:12:"testDataBlob";N;s:16:"testDataLongtext";N;s:10:"createDate";N;s:14:"createDatetime";N;s:2:"id";N;}', serialize($new->toJSON()));
+		$this->assertEquals('a:9:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";i:0;s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:2:"id";N;}', serialize($new->toJSON()));
 		
 	}
 	

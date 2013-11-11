@@ -220,15 +220,53 @@ class DatabaseGenerator
 				$fieldsPack[] = "'" . $column['Field'] . "'";
 				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
+				$columns[$key]['AllCaps'] = strtoupper($column['Field']);
 				
-				if($column['Type'] == "datetime" || $column['Type'] == "date")
+				
+				// column type
+				$columns[$key]['typeDate'] = 0;
+				$columns[$key]['typeDatetime'] = 0;
+				$columns[$key]['typeBoolean'] = 0;
+				$columns[$key]['typeInt'] = 0;
+				$columns[$key]['typeNumber'] = 0;
+				$columns[$key]['typeString'] = 0;
+				$columns[$key]['typeLong'] = 0;
+				
+				if($column['Type'] == "date")
 				{
-					$columns[$key]['dateTimeField'] = 1;
+					$columns[$key]['typeDate'] = 1;
+				}
+				else if($column['Type'] == "datetime" || $column['Type'] == "timestamp")
+				{
+					$columns[$key]['typeDatetime'] = 1;
+				}
+				else if($column['Type'] == "tinyint(1)")
+				{
+					$columns[$key]['typeBoolean'] = 1;
+				}
+				else if(preg_match("/int\(/", $column['Type']))
+				{
+					$columns[$key]['typeInt'] = 1;
+				}
+				else if(preg_match("/decimal\(/", $column['Type']) || preg_match("/float\(/", $column['Type']) || preg_match("/double(/", $column['Type']) || preg_match("/real(/", $column['Type']))
+				{
+					$columns[$key]['typeNumeric'] = 1;
+				}
+				else if(preg_match("/char\(/", $column['Type']))
+				{
+					$columns[$key]['typeString'] = 1;
+				}
+				else if($column['Type'] == "blob" || $column['Type'] == "longtext"  )
+				{
+					$columns[$key]['typeLong'] = 1;
 				}
 				else
 				{
-					$columns[$key]['dateTimeField'] = 0;
+					echo "Column type (" . $column['Type'] . ") not found for column " . $column['Field'];
+					throw new \Parm\Exception\ErrorException("Column type (" . $column['Type'] . ") not found for column " . $column['Field']);
 				}
+				
+				
 				
 				if($column['Default'] == null)
 				{

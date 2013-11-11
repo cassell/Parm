@@ -5,8 +5,7 @@ CREATE TABLE `people` (
   `last_name` varchar(50) DEFAULT NULL,
   `zipcode_id` int(11) DEFAULT NULL,
   `archived` tinyint(1) DEFAULT '0',
-  `test_data_blob` blob,
-  `test_data_longtext` int(11) DEFAULT NULL,
+  `test_data_blob` longtext,
   `create_date` date DEFAULT NULL,
   `create_datetime` datetime DEFAULT NULL,
   PRIMARY KEY (`people_id`)
@@ -21,6 +20,7 @@ CREATE TABLE `zipcodes` (
   `archived` tinyint(1) DEFAULT '0',
   `city` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
   `state_name` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `create_timestamp` timestamp NULL DEFAULT NULL,
   PRIMARY KEY (`zipcode_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
