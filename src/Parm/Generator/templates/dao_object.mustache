@@ -6,6 +6,10 @@
 
 class {{className}}DaoObject extends \Parm\DataAccessObject
 {
+	{{#columns}}
+	const {{AllCaps}}_COLUMN = '{{Field}}';
+	{{/columns}}
+	
 	static function getDatabaseName()
 	{
 		return '{{databaseName}}';
@@ -18,7 +22,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 
 	public static function getIdField()
 	{
-		return '{{idFieldName}}';
+		return self::{{idFieldNameAllCaps}};
 	}
 
 	static function getFactory(Parm\DatabaseNode $databaseNode = null)
@@ -32,17 +36,17 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 	}
 	
 {{#columns}}
-{{#dateTimeField}}
-	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue('{{Field}}',$val); }
-	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue('{{Field}}',$format); }
-	final function get{{FieldCase}}DateTimeObject() { return new \DateTime($this->getDatetimeFieldValue('{{Field}}')); }
+{{#typeDatetime}}
+	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+	final function get{{FieldCase}}DateTimeObject() { return new \DateTime($this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN)); }
 	
-{{/dateTimeField}}
-{{^dateTimeField}}
-	final function set{{FieldCase}}($val) { $this->setFieldValue('{{Field}}',$val); }
-	final function get{{FieldCase}}(){ return $this->getFieldValue('{{Field}}'); }
+{{/typeDatetime}}
+{{#typeInt}}
+	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,(int)$val); }
+	final function get{{FieldCase}}(){ return (int)$this->getFieldValue(self::{{AllCaps}}_COLUMN); }
 	
-{{/dateTimeField}}
+{{/typeInt}}
 {{/columns}}
 	final function getDefaultRow()
 	{

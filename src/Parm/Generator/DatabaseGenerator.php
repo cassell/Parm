@@ -252,13 +252,13 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeNumeric'] = 1;
 				}
-				else if(preg_match("/char\(/", $column['Type']))
+				else if(preg_match("/char\(/", $column['Type']) || preg_match("/text/", $column['Type']))
 				{
 					$columns[$key]['typeString'] = 1;
 				}
-				else if($column['Type'] == "blob" || $column['Type'] == "longtext"  )
+				else if($column['Type'] == "blob")
 				{
-					$columns[$key]['typeLong'] = 1;
+					$columns[$key]['typeBlob'] = 1;
 				}
 				else
 				{
@@ -266,7 +266,7 @@ class DatabaseGenerator
 					throw new \Parm\Exception\ErrorException("Column type (" . $column['Type'] . ") not found for column " . $column['Field']);
 				}
 				
-				
+				print_r($columns[$key]);
 				
 				if($column['Default'] == null)
 				{
@@ -293,6 +293,7 @@ class DatabaseGenerator
 						'className' => $className,
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,
+						'idFieldNameAllCaps' => strtoupper($idFieldName),
 						'namespace' => $this->generatedNamespace,
 						'autoloaderNamespace' => $this->generatedNamespace,
 						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
