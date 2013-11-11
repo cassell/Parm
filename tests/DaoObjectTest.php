@@ -62,23 +62,56 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(date("Y-m-d"), $new->getCreateDate());
 	}
 	
+	function testSetDateValueDateTime()
+	{
+		$time = new \DateTime();
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDate($time);
+		$this->assertEquals($time->format("Y-m-d"), $new->getCreateDate());
+	}
 	
-	/*
+	function testgetDateValueDateTimeObject()
+	{
+		$time = new \DateTime();
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDate($time);
+		
+		$newTime = $new->getCreateDateDateTimeObject();
+		
+		$this->assertEquals($time->format("Y-m-d"), $newTime->format("Y-m-d"));
+	}
+	
+	function testSetDateValueNull()
+	{
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDate(null);
+		$this->assertEquals(null, $new->getCreateDate());
+	}
+	
+	function testSetDatetimeValueTimestamp()
+	{
+		$time = time();
+		
+		$new = new ParmTests\Dao\PeopleDaoObject();
+		$new->setCreateDatetime($time);
+		
+		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime());
+		
+	}
+	
+	
 	function testInsertNewObject()
 	{
-		echo "here";
-		
 		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Núñez"); // spanish
 		$new->setLastName("κόσμε"); // greek
 		$new->setCreateDate(time());
-//		$new->setCreateDatetime(time());
-//		$new->setZipcodeId(1529);
-//		$new->setArchived(0);
-//		$new->save();
-		
-		echo "two";
-		exit;
+		$new->setCreateDatetime(time());
+		$new->setZipcodeId(1529);
+		$new->setArchived(0);
+		$new->save();
 		
 		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 		
@@ -93,6 +126,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		}
 		
 	}
+	/*
 	
 	function testUTF8Saving()
 	{

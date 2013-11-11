@@ -58,7 +58,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		
 		foreach ($this->__modifiedColumns as $field => $j)
 		{
-			if ($field != $this->getIdField() && in_array($field, self::getFields()))
+			if ($field != $this->getIdField() && in_array($field, static::getFields()))
 			{
 				if ($this[$field] !== null)
 				{
@@ -69,7 +69,10 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 					$sql[] = $this->getTableName() . "." . $field . ' = NULL';
 				}
 			}
+			
 		}
+		
+		
 		
 		
 		if ($this->isNewObject())
@@ -230,6 +233,48 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	{
 		return $this->getFieldValue($columnName);
 	}
+	
+	protected function getDatetimeObjectFromField($columnName,$format)
+	{
+		$val = $this->getFieldValue($columnName);
+		if($val != null && $format != null)
+		{
+			return \DateTime::createFromFormat($format, $val);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	protected function setDatetimeFieldValue($columnName, $mixed)
+	{
+		if($mixed == null)
+		{
+			return $this->setFieldValue($columnName, NULL);
+		}
+		else if($mixed instanceof \DateTime)
+		{
+			return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));		
+		}
+		else if(is_int($mixed))
+		{
+			$date = new \DateTime();
+			$date->setTimestamp($mixed);
+			return $this->setFieldValue($columnName, $date->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));		
+		}
+		else
+		{
+			return $this->setFieldValue($columnName, $mixed);
+		}
+	}
+	
+	protected function getDatetimeFieldValue($columnName)
+	{
+		return $this->getFieldValue($columnName);
+	}
+	
+	
 	
 	protected function setBooleanFieldValue($columnName, $val)
 	{

@@ -39,13 +39,13 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 {{#typeDatetime}}
 	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val); }
 	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format); }
-	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN); }
+	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDatetimeStorageFormat()); }
 	
 {{/typeDatetime}}
 {{#typeDate}}
 	final function set{{FieldCase}}($val) { $this->setDateFieldValue(self::{{AllCaps}}_COLUMN,$val); }
 	final function get{{FieldCase}}($format = null) { return $this->getDateFieldValue(self::{{AllCaps}}_COLUMN,$format); }
-	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN); }
+	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDateStorageFormat()); }
 	
 {{/typeDate}}
 {{#typeInt}}
