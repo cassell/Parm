@@ -209,11 +209,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	
 	protected function setDateFieldValue($columnName, $mixed)
 	{
-		if($mixed == null)
-		{
-			return $this->setFieldValue($columnName, NULL);
-		}
-		else if($mixed instanceof \DateTime)
+		if($mixed instanceof \DateTime)
 		{
 			return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDateStorageFormat()));		
 		}
@@ -249,11 +245,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	
 	protected function setDatetimeFieldValue($columnName, $mixed)
 	{
-		if($mixed == null)
-		{
-			return $this->setFieldValue($columnName, NULL);
-		}
-		else if($mixed instanceof \DateTime)
+		if($mixed instanceof \DateTime)
 		{
 			return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));		
 		}
@@ -304,94 +296,27 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	
 	protected function setNumericalFieldValue($columnName, $val)
 	{
-		echo "setNumericalFieldValue";
-		throw new Exception("setNumericalFieldValue");
+		if($val == null)
+		{
+			return $this->setFieldValue($columnName, NULL);
+		}
+		else
+		{
+			return $this->setFieldValue($columnName,(float)$val);
+		}
 	}
 	
 	protected function getNumericalFieldValue($columnName)
 	{
-		echo "getNumericalFieldValue";
-		throw new Exception("getNumericalFieldValue");
+		$val = $this->getFieldValue($columnName);
+		if($val == null)
+		{
+			return null;
+		}
+		else
+		{
+			return (float)$val;
+		}
 	}
-	
-	protected function setLongFieldValue($columnName, $mixed)
-	{
-		echo "setLongFieldValue";
-		throw new Exception("setLongFieldValue");
-	}
-	
-	protected function getLongFieldValue($columnName)
-	{
-		echo "getLongFieldValue";
-		throw new Exception("getLongFieldValue");
-	}
-	
-//
-//	/**
-//     * Used by the generated classes
-//     */
-//	protected function setDatetimeFieldValue($fieldName, $val)
-//	{
-//		throw new Exception("setDatetimeFieldValue");
-//		
-//		if ((string)$val != "")
-//		{
-//			if (is_integer($val))
-//			{
-//				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
-//			}
-//			else
-//			{
-//				
-//				
-//				$this->setFieldValue($fieldName, $val);
-//			}
-//		}
-//		else
-//		{
-//			$this->setFieldValue($fieldName, NULL);
-//		}
-//	}
-//	
-//	/**
-//     * Used by the generated classes
-//     */
-//	protected function setDateFieldValue($fieldName, $val)
-//	{
-//		throw new Exception("setDateFieldValue");
-//		
-//		if ($val != "" && $val != '')
-//		{
-//			if (is_integer($val))
-//			{
-//				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
-//			}
-//			else
-//			{
-//				
-//				
-//				$this->setFieldValue($fieldName, $val);
-//			}
-//		}
-//		else
-//		{
-//			$this->setFieldValue($fieldName, NULL);
-//		}
-//	}
-//
-//	/**
-//     * Used by the generated classes
-//     */
-//	protected function getDatetimeFieldValue($fieldName, $format = null)
-//	{
-//		if ($format == null)
-//		{
-//			return $this->getFieldValue($fieldName);
-//		}
-//		else
-//		{
-//			return ($this->getFieldValue($fieldName) ? date($format, strtotime($this->getFieldValue($fieldName))) : null);
-//		}
-//	}
 	
 }

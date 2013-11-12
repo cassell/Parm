@@ -58,19 +58,19 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 	final function get{{FieldCase}}(){ return $this->getBooleanFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeBoolean}}
-{{#typeNumber}}
+{{#typeNumeric}}
 	final function set{{FieldCase}}($val) { $this->setNumericalFieldValue(self::{{AllCaps}}_COLUMN,$val); }
 	final function get{{FieldCase}}(){ return $this->getNumericalFieldValue(self::{{AllCaps}}_COLUMN); }
 	
-{{/typeNumber}}
+{{/typeNumeric}}
 {{#typeString}}
 	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
 	final function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeString}}
 {{#typeLong}}
-	final function set{{FieldCase}}($val) { $this->setLongFieldValue(self::{{AllCaps}}_COLUMN,$val); }
-	final function get{{FieldCase}}(){ return $this->getLongFieldValue(self::{{AllCaps}}_COLUMN); }
+	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	final function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeLong}}
 {{/columns}}

@@ -228,9 +228,8 @@ class DatabaseGenerator
 				$columns[$key]['typeDatetime'] = 0;
 				$columns[$key]['typeBoolean'] = 0;
 				$columns[$key]['typeInt'] = 0;
-				$columns[$key]['typeNumber'] = 0;
+				$columns[$key]['typeNumeric'] = 0;
 				$columns[$key]['typeString'] = 0;
-				$columns[$key]['typeLong'] = 0;
 				
 				if($column['Type'] == "date")
 				{
@@ -252,13 +251,9 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeNumeric'] = 1;
 				}
-				else if(preg_match("/char\(/", $column['Type']) || preg_match("/text/", $column['Type']))
+				else if(preg_match("/char\(/", $column['Type']) || preg_match("/text/", $column['Type']) || preg_match("/blob/", $column['Type']))
 				{
 					$columns[$key]['typeString'] = 1;
-				}
-				else if($column['Type'] == "blob")
-				{
-					$columns[$key]['typeBlob'] = 1;
 				}
 				else
 				{
