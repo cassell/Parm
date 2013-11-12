@@ -110,6 +110,10 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 			$f = static::getFactory();
 			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
 		}
+		else
+		{
+			throw new \Parm\Exception\RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
+		}
 	}
 
 	/**

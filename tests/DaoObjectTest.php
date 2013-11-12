@@ -126,6 +126,31 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		
 	}
 	
+	function testDeleteNewObjectFailed()
+	{
+		$exceptionCaught = false;
+		try
+		{
+			$new = new ParmTests\Dao\PeopleDaoObject();
+			$new->setFirstName("Coach");
+			$new->setLastName("Parmo");
+			$new->setCreateDate(time());
+			$new->setCreateDatetime(time());
+			$new->setZipcodeId(1529);
+			$new->setArchived(0);
+			$new->delete();
+		}
+		catch(Parm\Exception\RecordNotFoundException $e)
+		{
+			$exceptionCaught = true;
+		}
+		
+		$this->assertTrue($exceptionCaught);
+		
+		
+		
+	}
+	
 	function testUTF8Saving()
 	{
 		$new = new ParmTests\Dao\PeopleDaoObject();
