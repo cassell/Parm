@@ -8,30 +8,51 @@
 
 class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 {
+	/**
+	 * Get the "logical" table name associated. The configuration can point to a different database name.
+	 * @return string
+     */
 	static function getDatabaseName()
 	{
 		return '{{databaseName}}';
 	}
 
-	static function getTableName()
+	/**
+	 * Get the table name associated with this object
+	 * @return string
+     */
+	public static function getTableName()
 	{
 		return '{{tableName}}';
 	}
 
-	static function getIdField()
+	/**
+	 * Get the column name of the primary key field
+	 * @return string The primary key column name
+     */
+	public static function getIdField()
 	{
-		return '{{idFieldName}}';
+		return self::{{idFieldNameAllCaps}}_COLUMN;
 	}
 
+	/**
+	 * Get the list of columns in {{tableName}} from logical database "{{databaseName}}"
+	 * @return Array Array of field names
+     */
+	public static function getFields()
+	{
+		return array({{fieldList}});
+	}
+	
+	/**
+	 * Load an object associated with this factory
+	 * @return {{{className}}DaoObject An object built from a row out of the database table
+     */
 	protected function loadDataObject(Array $row)
 	{
 		return new {{className}}DaoObject($row);
 	}
 
-	static function getFields()
-	{
-		return array({{fieldList}});
-	}
 	
 {{{bindingsPack}}}
 }
