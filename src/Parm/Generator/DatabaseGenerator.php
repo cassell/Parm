@@ -238,7 +238,7 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeInt'] = 1;
 				}
-				else if(preg_match("/decimal\(/", $column['Type']) || preg_match("/float\(/", $column['Type']) || preg_match("/double(/", $column['Type']) || preg_match("/real(/", $column['Type']))
+				else if(preg_match("/decimal\(/", $column['Type']) || preg_match("/float\(/", $column['Type']) || preg_match("/double\(/", $column['Type']) || preg_match("/real\(/", $column['Type']))
 				{
 					$columns[$key]['typeNumeric'] = 1;
 				}

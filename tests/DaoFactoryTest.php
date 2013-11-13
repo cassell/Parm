@@ -14,7 +14,8 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	function testFind()
 	{
 		$f = new ParmTests\Dao\ZipcodesDaoFactory();
-		$sharon = reset($f->find("where zipcode_id = 1445"));
+		$objects = $f->find("where zipcode_id = 1445");
+		$sharon = reset($objects);
 		$this->assertEquals('16146', $sharon->getZipcode());
 	}
 	
