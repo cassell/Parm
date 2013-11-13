@@ -51,7 +51,6 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('setDestinationDirectory($directory) must be a string');
 		}
-		
 	}
 	
 	/**
@@ -68,7 +67,6 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('setGeneratedNamespace($namespaceString) must be a string');
 		}
-		
 	}
 	
 	/**
@@ -88,8 +86,7 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('Destination directory required');
 		}
-		
-		if(!file_exists($this->destinationDirectory))
+		else if(!file_exists($this->destinationDirectory))
 		{
 			if(!@mkdir($this->destinationDirectory))
 			{
@@ -151,15 +148,11 @@ class DatabaseGenerator
 			{
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'),$globalNamespaceData));
 			}
-			
-			
-			
 		}
 		else
 		{
 			throw new \Parm\Exception\ErrorException("No tables in database.");
 		}
-		
 	}
 	
 	
@@ -183,7 +176,6 @@ class DatabaseGenerator
 	
 	private function getTemplatingDataFromTableName($tableName)
 	{
-		
 		$idFieldName = '';
 		$defaultValuePack = array();
 		$fieldsPack = array();
@@ -207,21 +199,13 @@ class DatabaseGenerator
 				
 				if($column['Key'] == "PRI")
 				{
-					$columns[$key]['primaryKey'] = 1;
-					$columns[$key]['notPrimaryKey'] = 0;
 					$idFieldName = $column['Field'];
-				}
-				else
-				{
-					$columns[$key]['primaryKey'] = 0;
-					$columns[$key]['notPrimaryKey'] = 1;
 				}
 				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
 				$columns[$key]['AllCaps'] = strtoupper($column['Field']);
 				
 				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
-				
 				
 				// column type
 				$columns[$key]['typeDate'] = 0;
@@ -239,9 +223,16 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeDatetime'] = 1;
 				}
-				else if($column['Type'] == "tinyint(1)")
+				else if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
 				{
 					$columns[$key]['typeBoolean'] = 1;
+					
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
+					$bindingsPack[] = "\n";
+					
 				}
 				else if(preg_match("/int\(/", $column['Type']))
 				{
@@ -257,27 +248,12 @@ class DatabaseGenerator
 				}
 				else
 				{
-					echo "Column type (" . $column['Type'] . ") not found for column " . $column['Field'];
+					echo "\nColumn type (" . $column['Type'] . ") not found for column " . $column['Field'] . "\n";
 					throw new \Parm\Exception\ErrorException("Column type (" . $column['Type'] . ") not found for column " . $column['Field']);
 				}
 				
-				if($column['Default'] == null)
-				{
-					$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => null";
-				}
-				else
-				{
-					$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => '" . str_replace("'","\'",$column['Default']) . "'";
-				}
+				$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'","\'",$column['Default']) . "'");
 				
-				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
-				{
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
-					$bindingsPack[] = "\n";
-				}
 			}
 		}
 		

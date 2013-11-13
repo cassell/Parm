@@ -9,13 +9,13 @@ class InBinding extends SQLString
 	 * The field/column to filter on
      * @var string
      */
-	public $field;
+	private $field;
 	
 	/**
 	 * The array to filter the field/column on
      * @var array
      */
-	public $array;
+	private $array;
 	
 	/**
      * Filter rows by an array of values

@@ -25,12 +25,12 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 		return self::{{idFieldNameAllCaps}}_COLUMN;
 	}
 
-	static function getFactory(Parm\DatabaseNode $databaseNode = null)
+	public static function getFactory(Parm\DatabaseNode $databaseNode = null)
 	{
 		return new {{className}}DaoFactory($databaseNode);
 	}
 	
-	static function getFields()
+	public static function getFields()
 	{
 		return array({{fieldList}});
 	}

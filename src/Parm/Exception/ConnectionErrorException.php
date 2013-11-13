@@ -4,8 +4,6 @@ namespace Parm\Exception;
 
 class ConnectionErrorException extends ErrorException
 {
-	var $connection;
-	
 	const MYSQL_ER_DBACCESS_DENIED_ERROR = 1044;
 	const MYSQL_ER_ACCESS_DENIED_ERROR = 1045;
 	
