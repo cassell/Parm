@@ -37,42 +37,104 @@ class {{className}}DaoObject extends \Parm\DataAccessObject
 	
 {{#columns}}
 {{#typeDatetime}}
+	/**
+     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|DateTime|int|timestamp $val
+     */
 	final function set{{FieldCase}}($val) { $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @param string $format optional Defaults to MySQL formatted Datetime YYYY-MM-DD HH:MM:SS
+	 * @return string
+     */
 	final function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}" as a DateTime object
+	 * @return DateTime
+     */
 	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDatetimeStorageFormat()); }
 	
 {{/typeDatetime}}
 {{#typeDate}}
+	/**
+	 * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|DateTime|int|timestamp|null $val
+	 * @return string|null MySQL formatted Datetime YYYY-MM-DD
+     */
 	final function set{{FieldCase}}($val) { $this->setDateFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @param string|null $format optional Defaults to MySQL formatted Date YYYY-MM-DD
+	 * @return string|null
+     */
 	final function get{{FieldCase}}($format = null) { return $this->getDateFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}" as a DateTime object
+	 * @return DateTime|null
+     */
 	final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDateStorageFormat()); }
 	
 {{/typeDate}}
 {{#typeInt}}
+	/**
+     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|int|null $val
+     */
 	final function set{{FieldCase}}($val) { $this->setIntFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @return int|null
+     */
 	final function get{{FieldCase}}(){ return $this->getIntFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeInt}}
 {{#typeBoolean}}
+	/**
+     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|int|bool|null $val
+     */
 	final function set{{FieldCase}}($val) { $this->setBooleanFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+	 * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @return bool|null
+     */
 	final function get{{FieldCase}}(){ return $this->getBooleanFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeBoolean}}
 {{#typeNumeric}}
+	/**
+     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|int|null $val
+     */
 	final function set{{FieldCase}}($val) { $this->setNumericalFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @return float|null
+     */
 	final function get{{FieldCase}}(){ return $this->getNumericalFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeNumeric}}
 {{#typeString}}
+	/**
+     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+	 * @param string|null $val
+     */
 	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+	
+	/**
+     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+	 * @return string|null
+     */
 	final function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
 	
 {{/typeString}}
-{{#typeLong}}
-	final function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
-	final function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
-	
-{{/typeLong}}
 {{/columns}}
 	final function getDefaultRow()
 	{
