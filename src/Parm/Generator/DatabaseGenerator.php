@@ -242,14 +242,9 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeNumeric'] = 1;
 				}
-				else if(preg_match("/char\(/", $column['Type']) || preg_match("/text/", $column['Type']) || preg_match("/blob/", $column['Type']))
-				{
-					$columns[$key]['typeString'] = 1;
-				}
 				else
 				{
-					echo "\nColumn type (" . $column['Type'] . ") not found for column " . $column['Field'] . "\n";
-					throw new \Parm\Exception\ErrorException("Column type (" . $column['Type'] . ") not found for column " . $column['Field']);
+					$columns[$key]['typeString'] = 1;
 				}
 				
 				$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'","\'",$column['Default']) . "'");
