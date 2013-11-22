@@ -51,7 +51,6 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('setDestinationDirectory($directory) must be a string');
 		}
-		
 	}
 	
 	/**
@@ -68,7 +67,6 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('setGeneratedNamespace($namespaceString) must be a string');
 		}
-		
 	}
 	
 	/**
@@ -88,8 +86,7 @@ class DatabaseGenerator
 		{
 			throw new \Parm\Exception\ErrorException('Destination directory required');
 		}
-		
-		if(!file_exists($this->destinationDirectory))
+		else if(!file_exists($this->destinationDirectory))
 		{
 			if(!@mkdir($this->destinationDirectory))
 			{
@@ -151,15 +148,11 @@ class DatabaseGenerator
 			{
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'),$globalNamespaceData));
 			}
-			
-			
-			
 		}
 		else
 		{
 			throw new \Parm\Exception\ErrorException("No tables in database.");
 		}
-		
 	}
 	
 	
@@ -183,7 +176,6 @@ class DatabaseGenerator
 	
 	private function getTemplatingDataFromTableName($tableName)
 	{
-		
 		$idFieldName = '';
 		$defaultValuePack = array();
 		$fieldsPack = array();
@@ -207,46 +199,56 @@ class DatabaseGenerator
 				
 				if($column['Key'] == "PRI")
 				{
-					$columns[$key]['primaryKey'] = 1;
-					$columns[$key]['notPrimaryKey'] = 0;
 					$idFieldName = $column['Field'];
 				}
-				else
-				{
-					$columns[$key]['primaryKey'] = 0;
-					$columns[$key]['notPrimaryKey'] = 1;
-				}
-				
-				$fieldsPack[] = "'" . $column['Field'] . "'";
 				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
+				$columns[$key]['AllCaps'] = strtoupper($column['Field']);
 				
-				if($column['Type'] == "datetime" || $column['Type'] == "date")
-				{
-					$columns[$key]['dateTimeField'] = 1;
-				}
-				else
-				{
-					$columns[$key]['dateTimeField'] = 0;
-				}
+				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
 				
-				if($column['Default'] == null)
-				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => null";
-				}
-				else
-				{
-					$defaultValuePack[] = "'" . $column['Field'] . "' => '" . str_replace("'","\'",$column['Default']) . "'";
-				}
+				// column type
+				$columns[$key]['typeDate'] = 0;
+				$columns[$key]['typeDatetime'] = 0;
+				$columns[$key]['typeBoolean'] = 0;
+				$columns[$key]['typeInt'] = 0;
+				$columns[$key]['typeNumeric'] = 0;
+				$columns[$key]['typeString'] = 0;
 				
-				if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
+				if($column['Type'] == "date")
 				{
+					$columns[$key]['typeDate'] = 1;
+				}
+				else if($column['Type'] == "datetime" || $column['Type'] == "timestamp")
+				{
+					$columns[$key]['typeDatetime'] = 1;
+				}
+				else if($column['Type'] == "tinyint(1)" || $column['Type'] == "int(1)")
+				{
+					$columns[$key]['typeBoolean'] = 1;
+					
 					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
 					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
 					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
 					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
 					$bindingsPack[] = "\n";
+					
 				}
+				else if(preg_match("/int\(/", $column['Type']))
+				{
+					$columns[$key]['typeInt'] = 1;
+				}
+				else if(preg_match("/decimal/", $column['Type']) || preg_match("/float/", $column['Type']) || preg_match("/double/", $column['Type']) || preg_match("/real/", $column['Type']))
+				{
+					$columns[$key]['typeNumeric'] = 1;
+				}
+				else
+				{
+					$columns[$key]['typeString'] = 1;
+				}
+				
+				$defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'","\'",$column['Default']) . "'");
+				
 			}
 		}
 		
@@ -255,6 +257,7 @@ class DatabaseGenerator
 						'className' => $className,
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,
+						'idFieldNameAllCaps' => strtoupper($idFieldName),
 						'namespace' => $this->generatedNamespace,
 						'autoloaderNamespace' => $this->generatedNamespace,
 						'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',

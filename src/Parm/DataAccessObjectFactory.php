@@ -288,21 +288,28 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
 	function setSelectFields($arrayOfFields)
 	{
-		if(func_num_args() == 1 && is_array($arrayOfFields))
+		if($arrayOfFields == null)
 		{
-			// empty the fields array
-			$this->fields = array();
-
-			if(static::getIdField() != null)
+			throw new Exception\ErrorException('setSelectFields($arrayOfFields) $arrayOfFields can\'t be null.');
+		}
+		else if(func_num_args() == 1 && is_array($arrayOfFields))
+		{
+			if(count($arrayOfFields) > 0)
 			{
-				$this->addSelectField(static::getIdField());
-			}
+				// empty the fields array
+				$this->fields = array();
 
-			foreach($arrayOfFields as $field)
-			{
-				if($field != static::getIdField())
+				if(static::getIdField() != null)
 				{
-					$this->addSelectField($field);
+					$this->addSelectField(static::getIdField());
+				}
+
+				foreach($arrayOfFields as $field)
+				{
+					if($field != static::getIdField())
+					{
+						$this->addSelectField($field);
+					}
 				}
 			}
 		}

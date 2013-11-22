@@ -24,19 +24,6 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		}
 	}
 	
-	protected function getFieldValue($fieldName)
-	{
-		if (array_key_exists($fieldName, $this))
-		{
-			return $this[$fieldName];
-		}
-		else
-		{
-			throw new \Parm\Exception\GetFieldValueException($fieldName . ' not initilized for get method in ' . get_class($this));
-		}
-	}
-	
-	
 	protected function addModifiedColumn($column)
 	{
 		$this->__modifiedColumns[$column] = 1;
@@ -71,7 +58,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		
 		foreach ($this->__modifiedColumns as $field => $j)
 		{
-			if ($field != $this->getIdField())
+			if ($field != $this->getIdField() && in_array($field, static::getFields()))
 			{
 				if ($this[$field] !== null)
 				{
@@ -82,7 +69,10 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 					$sql[] = $this->getTableName() . "." . $field . ' = NULL';
 				}
 			}
+			
 		}
+		
+		
 		
 		
 		if ($this->isNewObject())
@@ -119,6 +109,10 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		{
 			$f = static::getFactory();
 			$f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
+		}
+		else
+		{
+			throw new \Parm\Exception\RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
 		}
 	}
 
@@ -168,76 +162,164 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	/**
      * Used by the generated classes
      */
-	protected function setFieldValue($fieldName, $val)
+	
+	protected function getFieldValue($columnName)
 	{
-		if(strcmp($this[$fieldName], $val) !== 0)
+		if (array_key_exists($columnName, $this))
 		{
-			$this->addModifiedColumn($fieldName);
-		}
-		$this[$fieldName] = $val;
-	}
-
-	/**
-     * Used by the generated classes
-     */
-	protected function setDatetimeFieldValue($fieldName, $val)
-	{
-		
-		if ((string)$val != "")
-		{
-			if (is_integer($val))
-			{
-				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
-			}
-			else
-			{
-				
-				
-				$this->setFieldValue($fieldName, $val);
-			}
+			return $this[$columnName];
 		}
 		else
 		{
-			$this->setFieldValue($fieldName, NULL);
+			throw new \Parm\Exception\GetFieldValueException($columnName . ' not initilized for get method in ' . get_class($this));
 		}
 	}
 	
-	/**
-     * Used by the generated classes
-     */
-	protected function setDateFieldValue($fieldName, $val)
+	protected function setFieldValue($columnName, $val)
 	{
-		if ($val != "" && $val != '')
+		if($val == NULL || strcmp($this[$columnName], $val) !== 0)
 		{
-			if (is_integer($val))
-			{
-				$this->setFieldValue($fieldName, date($this->getFactory()->databaseNode->getDateTimeStorageFormat(), $val));
-			}
-			else
-			{
-				
-				
-				$this->setFieldValue($fieldName, $val);
-			}
+			$this->addModifiedColumn($columnName);
+			$this[$columnName] = $val;
+		}
+		
+		return $this;
+	}
+	
+	protected function setIntFieldValue($columnName, $val)
+	{
+		if($val == null)
+		{
+			return $this->setFieldValue($columnName, NULL);
 		}
 		else
 		{
-			$this->setFieldValue($fieldName, NULL);
+			return $this->setFieldValue($columnName,(int)$val);
 		}
 	}
-
-	/**
-     * Used by the generated classes
-     */
-	protected function getDatetimeFieldValue($fieldName, $format = null)
+	
+	protected function getIntFieldValue($columnName)
 	{
-		if ($format == null)
+		$val = $this->getFieldValue($columnName);
+		if($val == null)
 		{
-			return $this->getFieldValue($fieldName);
+			return null;
 		}
 		else
 		{
-			return ($this->getFieldValue($fieldName) ? date($format, strtotime($this->getFieldValue($fieldName))) : null);
+			return (int)$val;
+		}
+	}
+	
+	protected function setDateFieldValue($columnName, $mixed)
+	{
+		if($mixed instanceof \DateTime)
+		{
+			return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDateStorageFormat()));		
+		}
+		else if(is_int($mixed))
+		{
+			$date = new \DateTime();
+			$date->setTimestamp($mixed);
+			return $this->setFieldValue($columnName, $date->format($this->getFactory()->databaseNode->getDateStorageFormat()));		
+		}
+		else
+		{
+			return $this->setFieldValue($columnName, $mixed);
+		}
+	}
+	
+	protected function getDateFieldValue($columnName)
+	{
+		return $this->getFieldValue($columnName);
+	}
+	
+	protected function getDatetimeObjectFromField($columnName,$format)
+	{
+		$val = $this->getFieldValue($columnName);
+		if($val != null && $format != null)
+		{
+			return \DateTime::createFromFormat($format, $val);
+		}
+		else
+		{
+			return null;
+		}
+	}
+	
+	protected function setDatetimeFieldValue($columnName, $mixed)
+	{
+		if($mixed instanceof \DateTime)
+		{
+			return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));		
+		}
+		else if(is_int($mixed))
+		{
+			$date = new \DateTime();
+			$date->setTimestamp($mixed);
+			return $this->setFieldValue($columnName, $date->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));		
+		}
+		else
+		{
+			return $this->setFieldValue($columnName, $mixed);
+		}
+	}
+	
+	protected function getDatetimeFieldValue($columnName)
+	{
+		return $this->getFieldValue($columnName);
+	}
+	
+	
+	
+	protected function setBooleanFieldValue($columnName, $val)
+	{
+		if($val == null)
+		{
+			return $this->setFieldValue($columnName, NULL);
+		}
+		else
+		{
+			return $this->setFieldValue($columnName,(bool)$val);
+		}
+	}
+	
+	protected function getBooleanFieldValue($columnName)
+	{
+		$val = $this->getFieldValue($columnName);
+		if($val == null)
+		{
+			return null;
+		}
+		else
+		{
+			return (bool)$val;
+		}
+	}
+	
+	
+	protected function setNumericalFieldValue($columnName, $val)
+	{
+		if($val == null)
+		{
+			return $this->setFieldValue($columnName, NULL);
+		}
+		else
+		{
+			return $this->setFieldValue($columnName,(float)$val);
+		}
+	}
+	
+	protected function getNumericalFieldValue($columnName)
+	{
+		$val = $this->getFieldValue($columnName);
+		if($val == null)
+		{
+			return null;
+		}
+		else
+		{
+			return (float)$val;
 		}
 	}
 	

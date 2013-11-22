@@ -9,13 +9,13 @@ class NotInBinding extends SQLString
 	 * The field/column to filter on
      * @var string
      */
-	public $field;
+	private $field;
 	
 	/**
 	 * The array to filter the field/column on
      * @var array
      */
-	public $array;
+	private $array;
 
 	/**
      * Filter rows by an array of values but exclude the values in the array
@@ -24,7 +24,6 @@ class NotInBinding extends SQLString
      */
 	function __construct($field, $array)
 	{
-		parent::__construct();
 		$this->field = $field;
 		$this->array = $array;
 	}
@@ -35,11 +34,18 @@ class NotInBinding extends SQLString
 		{
 			return $factory->escapeString($this->field) . " != " . $factory->escapeString(reset($this->array));
 		}
-		else if(count($this->array > 1))
+		else if(count($this->array) > 1)
 		{
 			foreach($this->array as $key => $item)
 			{
-				$this->array[$key] = $factory->escapeString($item);
+				if(is_numeric($item))
+				{
+					$this->array[$key] = (int) $item;
+				}
+				else
+				{
+					$this->array[$key] = "'" . $factory->escapeString($item) . "'";
+				}
 			}
 
 			return $factory->escapeString($this->field) . " NOT IN (" . implode(",", $this->array) . ")";

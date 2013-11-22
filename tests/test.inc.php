@@ -2,6 +2,11 @@
 
 error_reporting(E_NOTICE);
 
+set_error_handler(function($number, $message, $file, $line)
+{
+	print_r(array( 'type' => $number, 'message' => $message, 'file' => $file, 'line' => $line ));
+});
+
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 if(!defined('PARM_CONFIG_GLOBAL'))

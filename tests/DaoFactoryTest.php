@@ -14,7 +14,8 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	function testFind()
 	{
 		$f = new ParmTests\Dao\ZipcodesDaoFactory();
-		$sharon = reset($f->find("where zipcode_id = 1445"));
+		$objects = $f->find("where zipcode_id = 1445");
+		$sharon = reset($objects);
 		$this->assertEquals('16146', $sharon->getZipcode());
 	}
 	
@@ -44,43 +45,43 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	}
 	
 	// return all objects
-//	function testFirstObject()
-//	{
-//		$stein = new ParmTests\Dao\PeopleDaoObject();
-//		$stein->setFirstName("Gertrude");
-//		$stein->setLastName("Stein");
-//		$stein->setCreateDate(time());
-//		$stein->setCreateDatetime(time());
-//		$stein->setZipcodeId(72);
-//		$stein->setArchived(0);
-//		$stein->save();
-//		
-//		$steinId = $stein->getId();
-//		
-//		$f = new ParmTests\Dao\PeopleDaoFactory();
-//		$f->addBinding(new \Parm\Binding\EqualsBinding("people_id", $steinId));
-//		$steinClone = $f->getFirstObject();
-//		$this->assertEquals($stein->toJSON(), $steinClone->toJSON());
-//	}
-//	
-//	function testWhereEquals()
-//	{
-//		$perry = new ParmTests\Dao\PeopleDaoObject();
-//		$perry->setFirstName("Edward");
-//		$perry->setLastName("Perry");
-//		$perry->setCreateDate(time());
-//		$perry->setCreateDatetime(time());
-//		$perry->setZipcodeId(500);
-//		$perry->setArchived(0);
-//		$perry->save();
-//		
-//		$perryId = $perry->getId();
-//		
-//		$f = new ParmTests\Dao\PeopleDaoFactory();
-//		$f->whereEquals("people_id", $perryId);
-//		$perryClone = $f->getFirstObject();
-//		$this->assertEquals($perry->toJSON(), $perryClone->toJSON());
-//	}
+	function testFirstObject()
+	{
+		$stein = new ParmTests\Dao\PeopleDaoObject();
+		$stein->setFirstName("Gertrude");
+		$stein->setLastName("Stein");
+		$stein->setCreateDate(time());
+		$stein->setCreateDatetime(time());
+		$stein->setZipcodeId(72);
+		$stein->setArchived(0);
+		$stein->save();
+		
+		$steinId = $stein->getId();
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$f->addBinding(new \Parm\Binding\EqualsBinding("people_id", $steinId));
+		$steinClone = $f->getFirstObject();
+		$this->assertEquals($stein->toJSON(), $steinClone->toJSON());
+	}
+
+	function testWhereEquals()
+	{
+		$perry = new ParmTests\Dao\PeopleDaoObject();
+		$perry->setFirstName("Edward");
+		$perry->setLastName("Perry");
+		$perry->setCreateDate(time());
+		$perry->setCreateDatetime(time());
+		$perry->setZipcodeId(500);
+		$perry->setArchived(0);
+		$perry->save();
+		
+		$perryId = $perry->getId();
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$f->whereEquals("people_id", $perryId);
+		$perryClone = $f->getFirstObject();
+		$this->assertEquals($perry->toJSON(), $perryClone->toJSON());
+	}
 	
 	function testDelete()
 	{
@@ -111,245 +112,49 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		
 	}
 	
-//	
-//	// generate the select clause from $this->fields
-//	function getSelectClause()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		
-//		\Enhance\Assert::areIdentical('s:129:"SELECT zipcodes.zipcode_id,zipcodes.zipcode,zipcodes.state,zipcodes.longitude,zipcodes.latitude,zipcodes.city,zipcodes.state_name";',serialize($f->getSelectClause()));
-//	}
-//	
-//	function setSelectFields()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->setSelectFields(array("zipcode","state"));
-//		\Enhance\Assert::areIdentical('s:58:"SELECT zipcodes.zipcode_id,zipcodes.zipcode,zipcodes.state";',serialize($f->getSelectClause()));
-//		
-//		$f = new ZipcodesDaoFactory();
-//		$f->setSelectFields(array("zipcodes.longitude","zipcodes.latitude"));
-//		\Enhance\Assert::areIdentical('s:63:"SELECT zipcodes.zipcode_id,zipcodes.longitude,zipcodes.latitude";',serialize($f->getSelectClause()));
-//		
-//	}
-//	
-//	function addSelectField()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->setSelectFields(array("zipcode"));
-//		$f->addSelectField("state");
-//		
-//		\Enhance\Assert::areIdentical('s:58:"SELECT zipcodes.zipcode_id,zipcodes.zipcode,zipcodes.state";',serialize($f->getSelectClause()));
-//	}
-//	
-//    
-//    function getFromClause()
-//    {
-//		$f = new ZipcodesDaoFactory();
-//		\Enhance\Assert::areIdentical('FROM zipcodes',$f->getFromClause());
-//    }
-//	
-//	private static function clearPeopleTestData()
-//	{
-//		$dp = new DatabaseProcessor('sqlicious_test');
-//		$dp->update("TRUNCATE TABLE `people`;");
-//	}
-//	
-//	private static function insertPeopleTestData()
-//	{
-//		self::clearPeopleTestData();
-//		
-//		$dp = new DatabaseProcessor('sqlicious_test');
-//		
-//		$dp->update("INSERT INTO `people` (`people_id`, `first_name`, `last_name`, `zipcode_id`, `archived`, `create_date`, `create_datetime`)
-//VALUES
-//	(1, 'Barack', 'Obama', 4505, 0, now(), now()),
-//	(2, 'George', 'Bush', 4505, 0, now(), now()),
-//	(3, 'Bill', 'Clinton', 4505, 0, now(), now());
-//");
-//
-//	}
-//	
-//	
-//	// joins
-//	function join()
-//	{
-//		self::insertPeopleTestData();
-//		
-//		$f = new PeopleDaoFactory();
-//		
-//		$f->join("join zipcodes on zipcodes.zipcode_id = people.zipcode_id");
-//		$f->addBinding(new EqualsBinding("zipcodes.state", "DC"));
-//
-//		\Enhance\Assert::areIdentical(3,$f->count());
-//		
-//		self::clearPeopleTestData();
-//		
-//	}
-//	
-//	
-//	// group by
-//	function groupBy()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->groupBy("state");
-//		$f->addBinding(new EqualsBinding("zipcodes.state", "DC"));
-//		
-//		\Enhance\Assert::areIdentical(28,$f->count());
-//		
-//	}
-//	
-//	// order by
-//	function orderBy()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->orderBy("zipcode","desc");
-//		$f->addBinding(new EqualsBinding("zipcodes.state", "VA"));
-//		$f->addBinding(new EqualsBinding("city", "Herndon"));
-//		
-//		$herndon = $f->getFirstObject();
-//		
-//		\Enhance\Assert::areIdentical('20171',$herndon->getZipcode());
-//		
-//	}
-//	
-//	public function equalsBinding()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->addBinding(new EqualsBinding('state', 'PA'));
-//		
-//		\Enhance\Assert::areIdentical($f->count(), 1776);
-//	}
-//	
-//	public function containsBinding()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->addBinding(new ContainsBinding('state_name', 'New'));
-//		
-//		\Enhance\Assert::areIdentical($f->count(), 2877);
-//	}
-//	
-//	public function getFirstObject()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->addBinding(new EqualsBinding('zipcode', '20170'));
-//		
-//		$herndon = $f->getFirstObject();
-//		
-//		\Enhance\Assert::areIdentical(get_class($herndon), "ZipcodesDaoObject");
-//		\Enhance\Assert::areIdentical($herndon->getCity(), "Herndon");
-//		\Enhance\Assert::areIdentical($herndon->getStateName(), "Virginia");
-//	}
+	function testSelectClause()
+	{
+		$f =  new ParmTests\Dao\PeopleDaoFactory();
+		$this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.zipcode_id,people.archived,people.test_data_blob,people.create_date,people.create_datetime,people.create_timestamp", $f->getSelectClause());
+	}
 	
+	function testSetSelectFields()
+	{
+		$f =  new ParmTests\Dao\PeopleDaoFactory();
+		$f->setSelectFields("first_name","last_name");
+		$this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
+	}
 	
-//	function orderByAsc()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
+	function testSingleSelectFields()
+	{
+		$f =  new ParmTests\Dao\PeopleDaoFactory();
+		$f->setSelectFields("last_name");
+		$this->assertEquals("SELECT people.people_id,people.last_name", $f->getSelectClause());
+	}
 	
-	// limits
-//	function limit()
-//	{
-//		$f = new ZipcodesDaoFactory();
-//		$f->orderBy("zipcode");
-//		$f->addBinding(new EqualsBinding("zipcodes.state", "VA"));
-//		$f->limit(10,5);
-//		print_r($f->getFirstObject());
-//		
-//		$herndon = $f->getFirstObject();
-//		
-//		\Enhance\Assert::areIdentical('20171',$herndon->getZipcode());
-//		
-//		
-//		\Enhance\Assert::inconclusive();
-//	}
+	function testAddSelectField()
+	{
+		$f =  new ParmTests\Dao\PeopleDaoFactory();
+		$f->setSelectFields(array("first_name"));
+		$f->addSelectField("last_name");
+		$this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
+	}
 	
-//	function delete()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-	
-//	function count()
-//	{
-//       $f = new ZipcodesDaoFactory();
-//	   \Enhance\Assert::areIdentical($f->count(), 33178);
-//	   
-//	   
-//	   $f = new ZipcodesDaoFactory();
-//	   $f->addBinding("state LIKE 'PA'");
-//	   \Enhance\Assert::areIdentical($f->count(), 1776);
-//	}
+	function testSetSelectFieldNullThrowsException()
+	{
+		$exceptionCaught = false;
+		try
+		{
+			$f =  new ParmTests\Dao\PeopleDaoFactory();
+			$f->setSelectFields(null);
+		}
+		catch(\Parm\Exception\ErrorException $e)
+		{
+			$exceptionCaught = true;
+		}
 		
-//    function sum()
-//    {
-//         \Enhance\Assert::inconclusive();
-//    }
-//    
-//	function paging()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//    
-//    public function truncateTable()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//    /* below are functions that are slowly being phased out */
-//    // used to do custom queries, uses the same get select clause that the query() method 
-//	function find()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//    
-//    function deleteWhere()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	// find the first object matching the clause
-//	function findFirst()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function findDistinctField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function findField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function findFirstField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function getCount()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function getMaxField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//	function getSumField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-//	
-//    // deprecate old naming convetion
-//	function orderByField()
-//	{
-//		\Enhance\Assert::inconclusive();
-//	}
-
-
-
+		$this->assertTrue($exceptionCaught);
+	}
 	
 }
 

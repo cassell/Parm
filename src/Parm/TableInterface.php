@@ -4,9 +4,9 @@ namespace Parm;
 
 interface TableInterface
 {
-	static function getTableName();
-	static function getIdField();
-	static function getFields();
-	static function getDatabaseName();
+	public static function getTableName();
+	public static function getIdField();
+	public static function getFields();
+	public static function getDatabaseName();
 }
 
