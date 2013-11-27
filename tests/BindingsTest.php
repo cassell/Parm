@@ -97,9 +97,6 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$binding = new Parm\Binding\InBinding("zipcode_id",array(null,"",''));
 		$this->assertEquals("zipcode_id IN ('','','')", $binding->getSQL($f));
 		
-//		$f = new ParmTests\Dao\PeopleDaoFactory();
-//		$binding = new Parm\Binding\InBinding("zipcode_id",null);
-//		$this->assertEquals("zipcode_id IN ('','','')", $binding->getSQL($f));
 	}
 	
 	function testNotInBinding()
@@ -111,10 +108,6 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$binding = new Parm\Binding\NotInBinding("zipcode_id",array(null,"",''));
 		$this->assertEquals("zipcode_id NOT IN ('','','')", $binding->getSQL($f));
-		
-//		$f = new ParmTests\Dao\PeopleDaoFactory();
-//		$binding = new Parm\Binding\NotInBinding("zipcode_id",null);
-//		$this->assertEquals("zipcode_id NOT IN ('','','')", $binding->getSQL($f));
 	}
 	
 	function testDateBinding()
@@ -131,6 +124,28 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$time = new \DateTime();
 		$binding = new Parm\Binding\DateBinding("create_date",'<',$time);
 		$this->assertEquals("create_date < '" . date('Y-m-d',$time->getTimestamp()) . "'", $binding->getSQL($f));
+	}
+	
+	function testDatetimeBinding()
+	{
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'<','2013-12-31 11:59:59');
+		$this->assertEquals("create_date < '2013-12-31 11:59:59'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'<','1123581321');
+		$this->assertEquals("create_date < '2005-08-09 05:55:21'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$time = new \DateTime();
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'<',$time);
+		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s',$time->getTimestamp()) . "'", $binding->getSQL($f));
+		
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'<',time());
+		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s') . "'", $binding->getSQL($f));
+		
 	}
 	
 	
