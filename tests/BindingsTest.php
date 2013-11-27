@@ -105,7 +105,6 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 	function testNotInBinding()
 	{
 		$f = new ParmTests\Dao\PeopleDaoFactory();
-		
 		$binding = new Parm\Binding\NotInBinding("zipcode_id",array(1,2,3,4));
 		$this->assertEquals("zipcode_id NOT IN (1,2,3,4)", $binding->getSQL($f));
 		
@@ -116,6 +115,22 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 //		$f = new ParmTests\Dao\PeopleDaoFactory();
 //		$binding = new Parm\Binding\NotInBinding("zipcode_id",null);
 //		$this->assertEquals("zipcode_id NOT IN ('','','')", $binding->getSQL($f));
+	}
+	
+	function testDateBinding()
+	{
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DateBinding("create_date",'<','2013-12-31');
+		$this->assertEquals("create_date < '2013-12-31'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DateBinding("create_date",'<','1123581321');
+		$this->assertEquals("create_date < '2005-08-09'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$time = new \DateTime();
+		$binding = new Parm\Binding\DateBinding("create_date",'<',$time);
+		$this->assertEquals("create_date < '" . date('Y-m-d',$time->getTimestamp()) . "'", $binding->getSQL($f));
 	}
 	
 	

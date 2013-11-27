@@ -35,5 +35,6 @@ class_alias('Parm\Binding\InBinding', 'InBinding');
 class_alias('Parm\Binding\NotInBinding', 'NotInBinding');
 class_alias('Parm\Binding\NotEqualsBinding', 'NotEqualsBinding');
 class_alias('Parm\Binding\TrueBooleanBinding', 'TrueBooleanBinding');
+class_alias('Parm\Binding\DateBinding', 'DateBinding');
 
 ?>
