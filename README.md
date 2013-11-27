@@ -54,7 +54,7 @@ https://packagist.org/packages/parm/parm
 
 When the generator runs it will create two files for each table (an object and a factory), an auto loader (autoload.php), and (if generating into a namespace) a class namespace alias file.
 (Global namespacing is also available for the Parm base classes using the use_global_namespace.php include file.)
-[Imgur](http://i.imgur.com/GyDiYO4.png)
+[Folder structure](http://i.imgur.com/GyDiYO4.png)
 
 
 ## Extending Models
