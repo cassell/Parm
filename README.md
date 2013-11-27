@@ -31,7 +31,7 @@ It generates models based on your schema and its powerful closure based query pr
 
 	$user = User::findId(17); // find record with primary key 17
 	$user->setFirstName("John"); // set the first name
-	$user->save(); // save to the database (UPDATE user SET first_name = 'John' WHERE user_id = '1';)
+	$user->save(); // save to the database
 
 ## Setup and Generation
 
@@ -42,16 +42,17 @@ It generates models based on your schema and its powerful closure based query pr
 ### Example Generator Configuration
 
 	$generator = new Parm\Generator\DatabaseGenerator($GLOBALS[PARM_CONFIG_GLOBAL]['database-name']);
-	$generator->setDestinationDirectory('/web/includes/dao/namespaced');
+	$generator->setDestinationDirectory('/web/includes/dao');
 	$generator->setGeneratedNamespace("Project\\Dao");
 	$generator->generate();
 
-When the generator runs it will create two files for each table (an object and a factory), an auto loader (autoload.php), and (if generating into a namespace) an alias file
-Global namespacing is also available for the Parm base classes using the use_global_namespace.php include file.
+When the generator runs it will create two files for each table (an object and a factory), an auto loader (autoload.php), and (if generating into a namespace) a class namespace alias file.
+(Global namespacing is also available for the Parm base classes using the use_global_namespace.php include file.)
 
 
 ## Extending Models
 You can easily extend the models to encapsulate business logic. The examples below use these extended objects for brevity.
+
 	class User extends Project\Dao\UserDaoObject
 	{
 		static function getFactory(\Parm\DatabaseNode $databaseNode = null)
@@ -78,8 +79,6 @@ You can easily extend the models to encapsulate business logic. The examples bel
 ## CRUD
 
 ### Creating
-Creating a new record
-	
 	$user = new User();
 	$user->setFirstName('Ada');
 	$user->setLastName('Lovelace');
@@ -88,7 +87,7 @@ Creating a new record
 	echo $user->getId() // will print the new primary key
 	
 ### Reading
-Finding an object with id 17.
+#### Finding an object with id 17.
 
 	// shorthand
 	$user = User::findId(17);
@@ -97,18 +96,18 @@ Finding an object with id 17.
 	$f = new UserFactory();
 	$user = $f->findId(17);
 
-Finding all objects form a table (returns an Array)
+#### Finding all objects form a table (returns an Array)
 
 	$f = new UserFactory();
 	$users = $f->getObjects();
 	
-Limit the query to the first 20 rows
+#### Limit the query to the first 20 rows
 	
 	$f = new UserFactory();
 	$f->setLimit(20);
 	$users = $f->getObjects();
 
-Querying for objects filtered by a column (the following there statements are all equivalent)
+Querying for objects filtered by a column (the following four statements are all equivalent)
 	
 	$f = new UserFactory();
 	$f->whereEquals("archived","0");
@@ -117,6 +116,10 @@ Querying for objects filtered by a column (the following there statements are al
 	$f = new UserFactory();
 	$f->whereEquals(User::ARCHIVED_COLUMN,"0");
 
+	$f = new UserFactory();
+	$f->addBinding(new new Parm\Binding\EqualsBinding(User::ARCHIVED_COLUMN,"0"));
+
+	// if use_global_namespace.php is included
 	$f = new UserFactory();
 	$f->addBinding(new EqualsBinding(User::ARCHIVED_COLUMN,"0"));
 	
