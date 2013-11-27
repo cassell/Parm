@@ -35,7 +35,13 @@ It generates models based on your schema and its powerful closure based query pr
 
 ## Setup and Generation
 
+### Composer (Packagist)
+https://packagist.org/packages/parm/parm
+
+	"parm/parm": "1.*"
+
 ### Example Database Configuration
+
 	$GLOBALS[PARM_CONFIG_GLOBAL]['database-name'] = new Parm\Database();
 	$GLOBALS[PARM_CONFIG_GLOBAL]['database-name']->setMaster(new Parm\DatabaseNode('database-name','database-host','database-username','database-password'));
 
@@ -87,7 +93,7 @@ You can easily extend the models to encapsulate business logic. The examples bel
 	echo $user->getId() // will print the new primary key
 	
 ### Reading
-#### Finding an object with id 17.
+Finding an object with id 17.
 
 	// shorthand
 	$user = User::findId(17);
@@ -96,12 +102,12 @@ You can easily extend the models to encapsulate business logic. The examples bel
 	$f = new UserFactory();
 	$user = $f->findId(17);
 
-#### Finding all objects form a table (returns an Array)
+Finding all objects form a table (returns an Array)
 
 	$f = new UserFactory();
 	$users = $f->getObjects();
 	
-#### Limit the query to the first 20 rows
+Limit the query to the first 20 rows
 	
 	$f = new UserFactory();
 	$f->setLimit(20);
@@ -158,11 +164,12 @@ Date based searches
 	$f->addBinding(new Parm\Binding\DateBinding("create_date",'<',new \DateTime()));
 	
 ### Updating
-Updating a record. (Updates are minimal and only update the fields that change)
+Updates are minimal and create an UPDATE statement only for the fields that change. If the first name is changing this example will generate "UPDATE user SET first_name = 'John' WHERE user_id = 17;"
 	
 	$user = User::findId(17);
-	$user->setFirstName("John"); // this will only cause a minimal update statement only changing the first name if it is different than what was just retrieved from the database
+	$user->setFirstName("John");
 	$user->save();
+
 
 ### Deleting
 Deleting a single record.
@@ -172,13 +179,13 @@ Deleting a single record.
 
 Deleting multiple records.
 
-	// delete archived users
+	// delete all archived users
 	$f = new UserFactory();
 	$f->addBinding(new EqualsBinding("archived","1"));
 	$f->delete();
 	
 
-### Functions: Counting, Summing, etc	
+### Functions (Counting, Summing, etc)
 Running a count query
 	
 	$f = new UserFactory();
@@ -186,6 +193,7 @@ Running a count query
 	$count = $f->count(); // count of all not archived users
 
 Running a sum query
+
 	$f = new UserFactory();
 	$total = $f->sum("salary"); // count of all not archived users
 
@@ -194,24 +202,10 @@ Running a sum query
 
 	$user->toJSON() // a json ready Array()
 
-	$user->toJSONString() // { 'id' : 1, 'firstName' : 'John', 'lastName' : 'Doe', ... } 
+	$user->toJSONString() // a json string { 'id' : 1, 'firstName' : 'John', 'lastName' : 'Doe', ... } 
 
-## Performance
-Limiting the fields that are pulled back from the database. You can still use objects
-	
-	$f = new UserFactory();
-	$f->setSelectFields("first_name","last_name","email");
-	$users = $f->getObjects();
-	
-Getting a JSON ready array
-	
-	$f = new UserFactory();
-	$f->setSelectFields("first_name","last_name","email");
-	$userJSON = $f->getJSON(); // returns an an array of PHP objects that can be easily encoded to  [ { 'id' : 1, 'firstName' : 'John', 'lastName' : 'Doe', 'email' : 'doe@example.com'}, ... ]
-	
 
-Closures
-============
+## Closures
 Process each row queried with a closure(anonymous function). Iterate over very large datasets without hitting memory constraints use unbufferedProcess()
 	
 	$f = new UserFactory();
@@ -224,31 +218,7 @@ Process each row queried with a closure(anonymous function). Iterate over very l
 		}
 	});
 
-Getting count of Rows before process
-	
-	$f = new UserFactory();
-	$result = $f->getMysqlResult();
-	$countOfUsers = $f->getNumberOfRowsFromResult($result);
-	$f->process(function($user)
-	{
-		if(!validate_email($user->getEmail()))
-		{
-			$user->setEmail('');
-			$user->save();
-		}
-	});
-	$f->freeResult();
-
-Output directly to JSON from a Factory
-============
-	
-	$f = new UserFactory();
-	$f->outputJSONString();
-
-Memory Safe Closures
-============
-	
-Unbuffered Processing of large datasets	(will potentially lock the table while processing)
+Unbuffered Processing of large datasets for Memory Safe Closures (will potentially lock the table while processing)
 	
 	$f = new UserFactory(); // imagine a table with millions of rows
 	$f->unbufferedProcess(function($user)
@@ -259,10 +229,8 @@ Unbuffered Processing of large datasets	(will potentially lock the table while p
 			$user->save();
 		}
 	});
-	
-Data Processors
-=============
 
+##  Data Processors
 Data processors are great for processing the results from an entirely custom SELECT query with closures.
 
 Buffered Queries for Speed	
@@ -285,9 +253,30 @@ Unbuffered for Large Datasets
 		echo $row['first_name'];
 	});
 
+## Performance
+Limiting the fields that are pulled back from the database. You can still use objects
 	
-Other flexibile queries
-============
+	$f = new UserFactory();
+	$f->setSelectFields("first_name","last_name","email");
+	$users = $f->getObjects();
+	
+Getting a JSON ready array
+	
+	$f = new UserFactory();
+	$f->setSelectFields("first_name","last_name","email");
+	$userJSON = $f->getJSON(); // returns an an array of PHP objects that can be easily encoded to  [ { 'id' : 1, 'firstName' : 'John', 'lastName' : 'Doe', 'email' : 'doe@example.com'}, ... ]
+	
+
+
+## Other Neat Features
+
+### Output directly to JSON from a Factory
+	
+	$f = new UserFactory();
+	$f->outputJSONString();
+
+	
+### Flexibile Queries
 	
 Find method for writing a custom where clause (returns objects)
 	
@@ -295,28 +284,13 @@ Find method for writing a custom where clause (returns objects)
 	$users = $f->findObjectWhere("where archived != 1 and email like '%@example.com'");
 	
 	
-Converting Timezones
-=============
+### Converting Timezones
+> Note: Requires time zones installed in mysql database
 
-	// Note requires time zones installed in mysql database
-	// usage: ($dateTime,$sourceTimezone,$destTimezone). $dateTime may be string or time(), returns a timestamp
 	$dp = new DatabaseProcessor('database');
 	$centralTime = $dp->convertTimezone('2012-02-23 04:10PM', 'US/Eastern',  'US/Central');
 
 
-Composer (Packagist)
-=============
-https://packagist.org/packages/parm/parm
-
-Setup
-=============
-
-1. Download the source code (or use composer)
-2. Use the example configuration
-3. Make sure the generator has write access to the folders you specify in your config
-4. Generate the DAO using the web UI or command line
-
-Requirements
-=============
+# Requirements
 * PHP 5.3 or greater
 * MySQL
