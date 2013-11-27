@@ -295,53 +295,53 @@ class DatabaseProcessor
 	}
 	
 	/**
-	 * Convert a datetime from one timezone to another. Use the "US/Eastern" format
+	 * Convert a datetime from one timezone to another using the MySQL database as the timezone source. Use the "US/Eastern" format or "Europe/London" formats
 	 * 
-	 * @param timestamp|string $dateTime The datetime in the source timezone
+	 * @param timestamp|string|DateTime $dateTime The datetime in the source timezone
 	 * @param string $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
 	 * @param string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
-	 * @return mysql result
+	 * @return \DateTime
      */
-	/*
 	function convertTimezone($dateTime,$sourceTimezone,$destTimezone)
 	{
-		if(!is_integer($dateTime))
+		if($dateTime === NULL)
 		{
-			if(strtotime($dateTime) !== false)
+			return NULL;
+		}
+		else if($dateTime instanceof \DateTime)
+		{
+			$dateTimeObject = $dateTime;
+		}
+		else if(is_numeric($dateTime))
+		{
+			$dateTimeObject = new \DateTime();
+			$dateTimeObject->setTimestamp($dateTime);
+		}
+		else
+		{
+			$dateTimeObject = new \DateTime($dateTime);
+		}
+		
+		$this->setSQL("SELECT CONVERT_TZ('" . $dateTimeObject->format($this->databaseNode->getDatetimeStorageFormat()) . "','" . $this->escapeString($sourceTimezone) . "','" . $this->escapeString($destTimezone) . "') as convertTimezone;");
+		
+		$result = $this->getSingleColumnArray("convertTimezone");
+		if(is_array($result))
+		{
+			$val = $result[0];
+			if($val != "")
 			{
-				return $this->convertTimezone(strtotime($dateTime),$sourceTimezone,$destTimezone);
+				return new \DateTime(reset($result));
+			}
+			else
+			{
+				throw new TimezoneConversionException("Timezone conversion failed. Possible invalid timezone.");
 			}
 		}
 		else
 		{
-			$this->createPersistentConnectionToMySQLDatabase();
-			
-			$sql = "SELECT CONVERT_TZ('" . date(SQLICIOUS_MYSQL_DATETIME_FORMAT,$dateTime) . "','" . $this->escapeString($sourceTimezone) . "','" . $this->escapeString($destTimezone) . "');";
-			
-			try 
-			{
-				$conn = $this->databaseNode->getConnection();
-				
-				$result = $conn->query($sql);
-				
-				$destDateTime = reset($result->fetch_row());
-				
-				if($destDateTime != null)
-				{
-					return $destDateTime;
-				}
-				else
-				{
-					throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql));
-				}
-			}
-			catch(ErrorException $e)
-			{
-				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor SQL Error. convertTimezone Failed: " . htmlentities($sql) . '. Reason given ' . $e);
-			}
+			throw new TimezoneConversionException("Timezone conversion failed");
 		}
 	}
-	*/
 	
 	/**
 	 * Free a mysqli_result
