@@ -1,4 +1,5 @@
 CREATE TABLE `Country` (
+  `CountryId` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Code` char(3) NOT NULL DEFAULT '',
   `Name` char(52) NOT NULL DEFAULT '',
   `Region` char(26) NOT NULL DEFAULT '',
@@ -8,7 +9,7 @@ CREATE TABLE `Country` (
   `LifeExpectancy` float(3,1) DEFAULT NULL,
   `GNP` float(10,2) DEFAULT NULL,
   `LocalName` char(45) NOT NULL DEFAULT '',
-  PRIMARY KEY (`Code`)
+  PRIMARY KEY (`CountryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
 INSERT INTO `Country` (`Code`, `Name`, `Region`, `SurfaceArea`, `IndepYear`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)

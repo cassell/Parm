@@ -188,6 +188,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		
 	}
 	
+	
 	function testJSON()
 	{
 		$buchananBirthplace = ParmTests\Dao\ZipcodesDaoObject::findId(555);
@@ -200,6 +201,17 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":"555"}',$buchananBirthplace->toJSONString());
 	}
 
+	function globalNamespaceSave()
+	{
+		$obj = new CityDaoObject();
+		$obj->setCountryCode('USA');
+		$obj->setName('Corry');
+		$obj->setDistrict('Pennsylvania');
+		$obj->setPopulation(6605);
+		$obj->save();
+		
+	}
+	
 	
 	
 }
