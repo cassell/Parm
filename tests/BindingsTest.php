@@ -121,6 +121,10 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("create_date < '2005-08-09'", $binding->getSQL($f));
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DateBinding("create_date",'<',1123581321);
+		$this->assertEquals("create_date < '2005-08-09'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$time = new \DateTime();
 		$binding = new Parm\Binding\DateBinding("create_date",'<',$time);
 		$this->assertEquals("create_date < '" . date('Y-m-d',$time->getTimestamp()) . "'", $binding->getSQL($f));
@@ -134,7 +138,11 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$binding = new Parm\Binding\DatetimeBinding("create_date",'<','1123581321');
-		$this->assertEquals("create_date < '2005-08-09 05:55:21'", $binding->getSQL($f));
+		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s',1123581321) . "'", $binding->getSQL($f));
+		
+		$f = new ParmTests\Dao\PeopleDaoFactory();
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'<',1123581321);
+		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s',1123581321) . "'", $binding->getSQL($f));
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$time = new \DateTime();
