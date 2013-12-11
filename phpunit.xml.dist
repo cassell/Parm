@@ -15,7 +15,7 @@
 		<var name="db_global_host" value="localhost" />
         <var name="db_global_username" value="travis" />
         <var name="db_global_password" value="" />
-        <var name="db_global_name" value="parm_global_tests" />
+        <var name="db_global_name" value="parm-global-tests" />
         <var name="db_global_port" value=""/>
 		<var name="mysql_timezones_loaded" value="0"/>
     </php>
