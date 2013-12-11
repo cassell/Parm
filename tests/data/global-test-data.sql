@@ -3,8 +3,8 @@ CREATE TABLE `Country` (
   `Code` char(3) NOT NULL DEFAULT '',
   `Name` char(52) NOT NULL DEFAULT '',
   `Region` char(26) NOT NULL DEFAULT '',
-  `SurfaceArea` float(10,2) NOT NULL DEFAULT '0.00',
-  `IndepYear` smallint(6) DEFAULT NULL,
+  `Surface-Area` float(10,2) NOT NULL DEFAULT '0.00',
+  `Indep_Year` smallint(6) DEFAULT NULL,
   `Population` int(11) NOT NULL DEFAULT '0',
   `LifeExpectancy` float(3,1) DEFAULT NULL,
   `GNP` float(10,2) DEFAULT NULL,
@@ -12,7 +12,7 @@ CREATE TABLE `Country` (
   PRIMARY KEY (`CountryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `Country` (`Code`, `Name`, `Region`, `SurfaceArea`, `IndepYear`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)
+INSERT INTO `Country` (`Code`, `Name`, `Region`, `Surface-Area`, `Indep_Year`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)
 VALUES
 	('ABW','Aruba','Caribbean',193.00,NULL,103000,78.4,828.00,'Aruba'),
 	('AFG','Afghanistan','Southern and Central Asia',652090.00,1919,22720000,45.9,5976.00,'Afganistan/Afqanestan'),
@@ -255,16 +255,15 @@ VALUES
 	('ZWE','Zimbabwe','Eastern Africa',390757.00,1980,11669000,37.8,5951.00,'Zimbabwe');
 
 CREATE TABLE `City` (
-  `CityId` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `City-Id` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Name` char(35) NOT NULL DEFAULT '',
-  `CountryCode` char(3) NOT NULL DEFAULT '',
+  `Country-Code` char(3) NOT NULL DEFAULT '',
   `District` char(20) NOT NULL DEFAULT '',
   `Population` int(11) NOT NULL DEFAULT '0',
-  PRIMARY KEY (`CityId`),
-  KEY `CountryCode` (`CountryCode`)
+  PRIMARY KEY (`City-Id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
-INSERT INTO `City` (`CityId`, `Name`, `CountryCode`, `District`, `Population`)
+INSERT INTO `City` (`City-Id`, `Name`, `Country-Code`, `District`, `Population`)
 VALUES
 	(1,'New York','USA','New York',8008278),
 	(2,'Los Angeles','USA','California',3694820),
