@@ -158,7 +158,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 	
 	function testSelectDashedColumns()
 	{
-		$f = new CountryDaoFactory();
+		$f = new CountryNationDaoFactory();
 		$countries = $f->getObjects();
 		
 		$this->assertEquals(239,count($countries));
