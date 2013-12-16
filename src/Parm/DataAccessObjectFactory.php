@@ -276,7 +276,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
 	function getFromClause()
 	{
-		return 'FROM ' . static::getTableName();
+		if(strpos(static::getTableName(), "-") !== false)
+		{
+			return 'FROM `' . static::getTableName() . '`';
+		}
+		else
+		{
+			return 'FROM ' . static::getTableName();
+		}
+		
 	}
 
 	/**
@@ -329,13 +337,25 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
 	function addSelectField($field)
 	{
+		if(strpos($field, "-") !== false)
+		{
+			$field =  "`".$field."`";
+		}
+		
 		if(strpos($field, ".") !== false)
 		{
 			$this->fields[] = $field;
 		}
 		else
 		{
-			$this->fields[] = static::getTableName() . "." . $field;
+			if(strpos(static::getTableName(), "-") !== false)
+			{
+				$this->fields[] = "`".static::getTableName() . "`." . $field;
+			}
+			else
+			{
+				$this->fields[] = static::getTableName() . "." . $field;
+			}
 		}
 		
 		return $this;
