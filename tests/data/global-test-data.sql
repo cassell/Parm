@@ -1,4 +1,4 @@
-CREATE TABLE `Country` (
+CREATE TABLE `Country-Nation` (
   `CountryId` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Code` char(3) NOT NULL DEFAULT '',
   `Name` char(52) NOT NULL DEFAULT '',
@@ -12,7 +12,7 @@ CREATE TABLE `Country` (
   PRIMARY KEY (`CountryId`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1;
 
-INSERT INTO `Country` (`Code`, `Name`, `Region`, `Surface-Area`, `Indep_Year`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)
+INSERT INTO `Country-Nation` (`Code`, `Name`, `Region`, `Surface-Area`, `Indep_Year`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)
 VALUES
 	('ABW','Aruba','Caribbean',193.00,NULL,103000,78.4,828.00,'Aruba'),
 	('AFG','Afghanistan','Southern and Central Asia',652090.00,1919,22720000,45.9,5976.00,'Afganistan/Afqanestan'),
