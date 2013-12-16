@@ -13,8 +13,8 @@ class AAAGeneratorTest extends PHPUnit_Framework_TestCase
 		
 		$this->assertFileExists(dirname(__FILE__).'/dao/global/CityDaoObject.php');
 		$this->assertFileExists(dirname(__FILE__).'/dao/global/CityDaoFactory.php');
-		$this->assertFileExists(dirname(__FILE__).'/dao/global/CountryDaoObject.php');
-		$this->assertFileExists(dirname(__FILE__).'/dao/global/CountryDaoFactory.php');
+		$this->assertFileExists(dirname(__FILE__).'/dao/global/CountryNationDaoObject.php');
+		$this->assertFileExists(dirname(__FILE__).'/dao/global/CountryNationDaoFactory.php');
 	}
 }
 ?>
