@@ -184,7 +184,7 @@ class DatabaseGenerator
 		$className = ucfirst(\Parm\DataArray::columnToCamelCase($tableName));
 		
 		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
-		$dp->setSQL("SHOW COLUMNS FROM " . $dp->escapeString($this->databaseNode->serverDatabaseName) . "." . $dp->escapeString($tableName));
+		$dp->setSQL("SHOW COLUMNS FROM `" . $dp->escapeString($this->databaseNode->serverDatabaseName) . "`.`" . $dp->escapeString($tableName) . "`");
 		$columns = $dp->getArray();
 		
 		// id field
@@ -203,7 +203,7 @@ class DatabaseGenerator
 				}
 				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
-				$columns[$key]['AllCaps'] = strtoupper($column['Field']);
+				$columns[$key]['AllCaps'] = strtoupper(str_replace("-", "_", $column['Field']));
 				
 				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
 				
