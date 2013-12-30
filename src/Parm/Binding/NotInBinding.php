@@ -40,7 +40,7 @@ class NotInBinding extends SQLString
 			{
 				if(is_numeric($item))
 				{
-					$this->array[$key] = (int) $item;
+					$this->array[$key] = $item;
 				}
 				else
 				{
