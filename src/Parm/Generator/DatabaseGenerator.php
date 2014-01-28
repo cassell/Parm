@@ -155,9 +155,11 @@ class DatabaseGenerator
 		}
 	}
 	
-	
-	/* Private Functions */
-	private function getTableNames()
+	/**
+	 * Return the list of tables in a database
+     * @return Array An array of table names
+     */
+	public function getTableNames()
 	{
 		$databaseName = $this->databaseNode->serverDatabaseName;
 		
@@ -174,7 +176,11 @@ class DatabaseGenerator
 		return $tableNames;
 	}
 	
-	private function getTemplatingDataFromTableName($tableName)
+	/**
+	 * Return data and templating information about a table.
+     * @return Array Data for the Table
+     */
+	public function getTemplatingDataFromTableName($tableName)
 	{
 		$idFieldName = '';
 		$defaultValuePack = array();
