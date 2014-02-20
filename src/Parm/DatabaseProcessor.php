@@ -22,20 +22,18 @@ class DatabaseProcessor
 		{
 			$this->databaseNode = $mixed->getMaster();
 		}
-		else if(is_string($mixed) && defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
+		else if(is_string($mixed))
 		{
-			if($GLOBALS[PARM_CONFIG_GLOBAL][$mixed] instanceof Database)
+			$this->databaseNode = ParmConfig::getDatabaseMaster($mixed);
+
+			if($this->databaseNode == null || !($this->databaseNode instanceof DatabaseNode))
 			{
-				$this->databaseNode = $GLOBALS[PARM_CONFIG_GLOBAL][$mixed]->getMaster();
-			}
-			else
-			{
-				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in PARM_CONFIG_GLOBAL configuration.");
+				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in \\Parm\\ParmConfig configuration.");
 			}
 		}
 		else
 		{
-			throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or PARM_CONFIG_GLOBAL must be defined for Parm to work.");
+			throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or \\Parm\\ParmConfig must be used for Parm to work.");
 		}
 		
 	}

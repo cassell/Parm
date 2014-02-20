@@ -42,12 +42,12 @@ https://packagist.org/packages/parm/parm
 
 ### Example Database Configuration
 
-	$GLOBALS[PARM_CONFIG_GLOBAL]['database-name'] = new Parm\Database();
-	$GLOBALS[PARM_CONFIG_GLOBAL]['database-name']->setMaster(new Parm\DatabaseNode('database-name','database-host','database-username','database-password'));
+	\Parm\ParmConfig::addDatabase('database-name',new Parm\DatabaseNode('database-name-on-server','database-host','database-username','database-password'));
+
 
 ### Example Generator Configuration
 
-	$generator = new Parm\Generator\DatabaseGenerator($GLOBALS[PARM_CONFIG_GLOBAL]['database-name']);
+	$generator = new Parm\Generator\DatabaseGenerator(Parm\ParmConfig::getDatabase('database-name'));
 	$generator->setDestinationDirectory('/web/includes/dao');
 	$generator->setGeneratedNamespace("Project\\Dao");
 	$generator->generate();

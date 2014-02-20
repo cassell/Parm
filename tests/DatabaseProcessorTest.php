@@ -5,9 +5,9 @@ require dirname(__FILE__) . '/test.inc.php';
 class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 {
 	
-	public function testDatabaseConfiguration()
+	public function testParmConfig()
 	{
-		$node = $GLOBALS[PARM_CONFIG_GLOBAL]['parm_namespaced_tests']->getMaster();
+		$node = \Parm\ParmConfig::getDatabase('parm_namespaced_tests')->getMaster();
 		if(!($node instanceof \Parm\DatabaseNode))
 		{
 			$this->fail();
