@@ -22,4 +22,9 @@ class ParmConfig
 		return static::$databases[$name]->getMaster();
 	}
 
+	static function __getFirstDatabaseMaster()
+	{
+		return static::getDatabaseMaster(reset(array_keys(static::$databases)));
+	}
+
 }

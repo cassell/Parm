@@ -439,15 +439,15 @@ class DatabaseProcessor
      */
 	public static function mysql_real_escape_string($string)
 	{
-		if(defined('PARM_CONFIG_GLOBAL') && array_key_exists(PARM_CONFIG_GLOBAL, $GLOBALS))
+		$firstAvailableDatabaseMaster = ParmConfig::__getFirstDatabaseMaster();
+
+		if($firstAvailableDatabaseMaster == null || !($firstAvailableDatabaseMaster instanceof DatabaseNode))
 		{
-			$dp = new DatabaseProcessor(reset(array_keys($GLOBALS[PARM_CONFIG_GLOBAL])));
-			return $dp->escapeString($string);
+			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires ParmConfig");
 		}
-		else
-		{
-			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires PARM_CONFIG_GLOBAL");
-		}
+
+		$dp = new DatabaseProcessor(ParmConfig::__getFirstDatabaseMaster($string));
+		return $dp->escapeString($string);
 	}
 	
 	private function __multiQuery()
@@ -460,7 +460,7 @@ class DatabaseProcessor
 		{
 			if($conn->errno != 0)
 			{
-				throw new \Parm\Exception\ErrorException("SQLicious DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
+				throw new \Parm\Exception\ErrorException("Parm DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
 			}
 			
 			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
