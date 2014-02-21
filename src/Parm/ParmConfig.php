@@ -4,7 +4,7 @@ namespace Parm;
 
 class ParmConfig
 {
-	public static $databases = [];
+	public static $databases = Array();
 
 	static function addDatabase($name, DatabaseNode $masterNode)
 	{
