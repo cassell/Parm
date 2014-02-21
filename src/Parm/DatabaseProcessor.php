@@ -155,7 +155,7 @@ class DatabaseProcessor
 	/**
 	 * Loop through the rows of a query and process with a closure
 	 * 
-	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
+	 * @param callable $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
 	public function process($closure)
@@ -187,7 +187,7 @@ class DatabaseProcessor
 	 * You can use this on millions of rows without memory problems
 	 * Does lock the table to writes on some databases
 	 * 
-	 * @param function $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
+	 * @param callable $closure Closure to process the rows of the database retrieved with, the closure is passed a DataArray or DataAccessObject
 	 * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
 	public function unbufferedProcess($closure)
