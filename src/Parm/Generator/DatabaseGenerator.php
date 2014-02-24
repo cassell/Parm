@@ -206,6 +206,11 @@ class DatabaseGenerator
 				if($column['Key'] == "PRI")
 				{
 					$idFieldName = $column['Field'];
+					$column['isPrimaryKey'] = true;
+				}
+				else
+				{
+					$column['isPrimaryKey'] = false;
 				}
 				
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
