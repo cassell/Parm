@@ -4,16 +4,14 @@ namespace Parm\Generator;
 
 class DatabaseGenerator
 {
-	const DESTINATION_DIRECTORY_FOLDER_PERMISSIONS = 0777;
-	const GENERATED_CODE_FILE_PERMISSIONS = 0777;
+	public static $DESTINATION_DIRECTORY_FOLDER_PERMISSIONS = 0777;
+	public static $GENERATED_CODE_FILE_PERMISSIONS = 0777;
 	
 	var $database;
 	var $databaseNode;
 	var $destinationDirectory;
 	var $generatedNamespace = "\\Parm\\Dao\\"; // default
 	
-	var $arrayOfInvalidColumnNames = array("");
-
 	function __construct($database)
 	{
 		$this->setDatabase($database);
@@ -94,7 +92,7 @@ class DatabaseGenerator
 			}
 			try
 			{
-				chmod($this->destinationDirectory,self::DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
+				chmod($this->destinationDirectory,self::$DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
 			}
 			catch(\Exception $e)
 			{
@@ -198,9 +196,9 @@ class DatabaseGenerator
 		{
 			foreach($columns as $key => $column)
 			{
-				if(in_array($column['Field'],$this->arrayOfInvalidColumnNames))
+				if($column['Field'] == "id")
 				{
-					throw new \Parm\Exception\ErrorException($column['Field'] . ' is an invalid column name for the Parm\DatabaseGenerator. It causes collisions with internal functions.');
+					throw new \Parm\Exception\ErrorException('"id" is an invalid column name for the Parm\DatabaseGenerator. It causes collisions with the function getId().');
 				}
 				
 				if($column['Key'] == "PRI")
@@ -291,7 +289,7 @@ class DatabaseGenerator
 		{
 			try
 			{
-				@chmod($fileName,self::GENERATED_CODE_FILE_PERMISSIONS);
+				@chmod($fileName,self::$GENERATED_CODE_FILE_PERMISSIONS);
 			}
 			catch(\Exception $e)
 			{
