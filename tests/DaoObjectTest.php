@@ -125,6 +125,28 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		}
 		
 	}
+
+	function testInsertNewObjectByArray()
+	{
+		$new = new ParmTests\Dao\PeopleDaoObject(array(
+			"first_name" => "Mister",
+			"last_name" => "Muenster",
+			"archived" => "0",
+			));
+		$new->save();
+
+		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+
+		if($test != null)
+		{
+			$this->assertEquals($new->getLastName(),$test->getLastName());
+		}
+		else
+		{
+			$this->fail();
+		}
+
+	}
 	
 	function testDeleteNewObjectFailed()
 	{

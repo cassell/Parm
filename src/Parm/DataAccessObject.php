@@ -12,15 +12,27 @@ abstract class DataAccessObject extends DataArray implements TableInterface
      */
 	function __construct(Array $row = null)
 	{
-		if($row != null)
+		if($row == null)
 		{
-			parent::__construct($row);
+			$row = static::getDefaultRow();
 		}
-		else
+
+		if(!array_key_exists(static::getIdField(),$row))
 		{
-			parent::__construct(static::getDefaultRow());
-			$this->addModifiedColumn(static::getIdField());
-			$this[static::getIdField()] = null;
+			$row[static::getIdField()] = null;
+		}
+
+		parent::__construct($row);
+
+		if($this->isNewObject())
+		{
+			foreach(array_keys($row) as $field)
+			{
+				if(in_array($field,static::getFields()))
+				{
+					$this->addModifiedColumn($field);
+				}
+			}
 		}
 	}
 	
@@ -55,7 +67,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 		$f = static::getFactory();
 		
 		$sql = array();
-		
+
 		foreach ($this->__modifiedColumns as $field => $j)
 		{
 			if ($field != $this->getIdField() && in_array($field, static::getFields()))
@@ -69,12 +81,8 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 					$sql[] = $this->getTableName() . "." . $field . ' = NULL';
 				}
 			}
-			
 		}
-		
-		
-		
-		
+
 		if ($this->isNewObject())
 		{
 			if (count($sql) > 0)
