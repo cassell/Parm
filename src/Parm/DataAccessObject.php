@@ -10,7 +10,7 @@ abstract class DataAccessObject extends DataArray implements TableInterface
 	 * Constructor
      * @param array $row Array of data
      */
-	function __construct(Array $row = null)
+	function __construct(array $row = null)
 	{
 		if($row == null)
 		{

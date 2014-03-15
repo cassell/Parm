@@ -4,10 +4,9 @@ namespace Parm;
 
 class DatabaseProcessor
 {
-	var $databaseNode;
-	
+	public $databaseNode;
 	protected $sql = null;
-	
+
 	/**
 	 * @param Database|DatabaseNode|string $mixed The database to connect to
      */
@@ -218,22 +217,6 @@ class DatabaseProcessor
 	public function getNumberOfRowsFromResult($result)
 	{
 		return (int)$result->num_rows;
-	}
-	
-	/**
-	 * Execute the query stored by setSQL()
-	 * 
-	 * @return mysql result
-     */
-	private function query()
-	{
-		if(count(func_get_args()) > 0)
-		{
-			throw new \Parm\Exception\ErrorException("DatabaseProcessor query does not accept any parameters");
-		}
-		
-		$result = $this->getMySQLResult($this->getSQL());
-		return $result;
 	}
 	
 	/**
