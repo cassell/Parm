@@ -232,7 +232,24 @@ class DatabaseProcessor
 	
 	public function executeMultiQuery()
 	{
-		return $this->__multiQuery();
+		$conn = $this->databaseNode->getConnection();
+
+		$conn->multi_query($this->getSQL());
+
+		do
+		{
+			if($conn->errno != 0)
+			{
+				throw new \Parm\Exception\ErrorException("Parm DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
+			}
+
+			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
+			{
+				break;
+			}
+
+		} while (true);
+
 	}
 	
 	
@@ -431,28 +448,6 @@ class DatabaseProcessor
 
 		$dp = new DatabaseProcessor($firstAvailableDatabaseMaster);
 		return $dp->escapeString($string);
-	}
-	
-	private function __multiQuery()
-	{
-		$conn = $this->databaseNode->getConnection();
-		
-		$conn->multi_query($this->getSQL());
-		
-		do
-		{
-			if($conn->errno != 0)
-			{
-				throw new \Parm\Exception\ErrorException("Parm DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
-			}
-			
-			if(!$conn->more_results() || (!$conn->next_result() && $conn->error == null))
-			{
-				break;
-			}
-			
-		} while (true);
-		
 	}
 	
 }
