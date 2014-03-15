@@ -341,7 +341,7 @@ class DatabaseProcessor
 			}
 			catch(ErrorException $e)
 			{
-				// Do nothing. (My eyes! The goggles do nothing!)
+				// Do nothing
 			}
 		}
 	}
@@ -429,7 +429,7 @@ class DatabaseProcessor
 			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires ParmConfig");
 		}
 
-		$dp = new DatabaseProcessor(ParmConfig::__getFirstDatabaseMaster($string));
+		$dp = new DatabaseProcessor($firstAvailableDatabaseMaster);
 		return $dp->escapeString($string);
 	}
 	
