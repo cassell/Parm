@@ -97,7 +97,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @return object|null The record from the database
 	 * @throws \Parm\Exception\RecordNotFoundException
      */
-	static function findIdOrFail($id)
+	function findIdOrFail($id)
 	{
 		$object = $this->findId($id);
 		
