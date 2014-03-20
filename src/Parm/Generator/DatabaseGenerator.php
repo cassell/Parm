@@ -185,7 +185,7 @@ class DatabaseGenerator
 		$fieldsPack = array();
 		$bindingsPack = array();
 		
-		$className = ucfirst(\Parm\DataArray::columnToCamelCase($tableName));
+		$className = ucfirst(\Parm\Row::columnToCamelCase($tableName));
 		
 		$dp = new \Parm\DatabaseProcessor($this->databaseNode);
 		$dp->setSQL("SHOW COLUMNS FROM `" . $dp->escapeString($this->databaseNode->serverDatabaseName) . "`.`" . $dp->escapeString($tableName) . "`");
@@ -211,7 +211,7 @@ class DatabaseGenerator
 					$columns[$key]['isPrimaryKey'] = false;
 				}
 				
-				$columns[$key]['FieldCase'] = ucfirst(\Parm\DataArray::columnToCamelCase($column['Field']));
+				$columns[$key]['FieldCase'] = ucfirst(\Parm\Row::columnToCamelCase($column['Field']));
 				$columns[$key]['AllCaps'] = strtoupper(str_replace("-", "_", $column['Field']));
 				
 				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
@@ -236,10 +236,10 @@ class DatabaseGenerator
 				{
 					$columns[$key]['typeBoolean'] = 1;
 					
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
-					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\DataArray::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\Row::columnToCamelCase($column['Field'])) . "TrueBinding(){ \$this->addBinding(new \Parm\Binding\TrueBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\Row::columnToCamelCase($column['Field'])) . "FalseBinding(){ \$this->addBinding(new \Parm\Binding\FalseBooleanBinding('" . $tableName . "." . $column['Field'] . "')); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\Row::columnToCamelCase($column['Field'])) . "NotTrueBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',1)); }";
+					$bindingsPack[] = "\tfinal function add" . ucfirst(\Parm\Row::columnToCamelCase($column['Field'])) . "NotFalseBinding(){ \$this->addBinding(new \Parm\Binding\NotEqualsBinding('" . $tableName . "." . $column['Field'] . "',0));  }";
 					$bindingsPack[] = "\n";
 					
 				}
@@ -262,7 +262,7 @@ class DatabaseGenerator
 		}
 		
 		return array(	'tableName' => $tableName,
-						'variableName' => \Parm\DataArray::columnToCamelCase($tableName),
+						'variableName' => \Parm\Row::columnToCamelCase($tableName),
 						'className' => $className,
 						'databaseName' => $this->databaseNode->serverDatabaseName,
 						'idFieldName' => $idFieldName,

@@ -71,8 +71,6 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testGetArray()
 	{
-		//Scranton
-		
 		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
 		$dp->setSQL("select * from zipcodes where city = 'Scranton'");
 		

@@ -55,6 +55,44 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
 		return $data;
 	}
+
+	/**
+	 * @param int $pageSize
+	 * @return Collection
+	 */
+//	function getCollection($pageSize = 1000)
+//	{
+//		return new Collection($this,$pageSize);
+//	}
+
+	/**
+	 * Loop through the rows a page at a time and process with a closure
+	 * @param int $pageSize
+	 * @param callable $function
+	 */
+	function pagedProcess($pageSize,$function)
+	{
+		if($pageSize < 1 || !is_int($pageSize))
+		{
+			throw new Exception\ErrorException("pageSize must be an integer greater than 0");
+		}
+
+		$round = 0;
+
+		$rowCount = $this->count();
+
+		$this->limit($pageSize,0);
+
+		while($round * $pageSize < $rowCount)
+		{
+			$this->limit($pageSize,$round * $pageSize);
+			$this->process($function);
+
+			$round++;
+		}
+
+	}
+
 	
 	/**
 	 * Return the first object from a getObjects

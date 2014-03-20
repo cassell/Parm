@@ -2,7 +2,7 @@
 
 namespace Parm;
 
-abstract class DataAccessObject extends DataArray implements TableInterface
+abstract class DataAccessObject extends Row implements TableInterface
 {
 	private $__modifiedColumns = array();
 

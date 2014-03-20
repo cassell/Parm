@@ -141,8 +141,8 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s',1123581321) . "'", $binding->getSQL($f));
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
-		$binding = new Parm\Binding\DatetimeBinding("create_date",'<',1123581321);
-		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s',1123581321) . "'", $binding->getSQL($f));
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'>',1123581321);
+		$this->assertEquals("create_date > '" . date('Y-m-d H:i:s',1123581321) . "'", $binding->getSQL($f));
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
 		$time = new \DateTime();
@@ -151,8 +151,8 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 		
 		
 		$f = new ParmTests\Dao\PeopleDaoFactory();
-		$binding = new Parm\Binding\DatetimeBinding("create_date",'<',time());
-		$this->assertEquals("create_date < '" . date('Y-m-d H:i:s') . "'", $binding->getSQL($f));
+		$binding = new Parm\Binding\DatetimeBinding("create_date",'>=',time());
+		$this->assertEquals("create_date >= '" . date('Y-m-d H:i:s') . "'", $binding->getSQL($f));
 		
 	}
 	

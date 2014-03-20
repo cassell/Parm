@@ -164,8 +164,46 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(239,count($countries));
 		
 	}
-	
+
+//	function testGetCollection()
+//	{
+//		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
+//		$this->assertInstanceOf("\\Parm\\Collection",$f->getCollection());
+//	}
+
+	function testWorkingWithBindings()
+	{
+		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
+		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+		$f->addBinding("latitude > 42.1");
+
+		$zipCodeTotal = 0;
+
+		foreach($f->getObjects() as $zipcode) {
+
+			$zipCodeTotal += (int)$zipcode->getZipcode();
+		}
+
+		$this->assertEquals(99028,$zipCodeTotal);
+
+	}
+
+	function testPageProcess()
+	{
+		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
+		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+		$f->addBinding("latitude > 42.1");
+
+		$zipCodeTotal = 0;
+
+		$f->pagedProcess(2,function($zipcode) use (&$zipCodeTotal){
+
+			$zipCodeTotal += (int)$zipcode->getZipcode();
+		});
+
+		$this->assertEquals(99028,$zipCodeTotal);
+
+	}
+
+
 }
-
-
-?>
