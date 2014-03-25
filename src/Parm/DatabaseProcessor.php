@@ -23,16 +23,16 @@ class DatabaseProcessor
 		}
 		else if(is_string($mixed))
 		{
-			$this->databaseNode = ParmConfig::getDatabaseMaster($mixed);
+			$this->databaseNode = Config::getDatabaseMaster($mixed);
 
 			if($this->databaseNode == null || !($this->databaseNode instanceof DatabaseNode))
 			{
-				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in \\Parm\\ParmConfig configuration.");
+				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in \\Parm\\Config configuration.");
 			}
 		}
 		else
 		{
-			throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or \\Parm\\ParmConfig must be used for Parm to work.");
+			throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or \\Parm\\Config must be used for Parm to work.");
 		}
 		
 	}
@@ -439,11 +439,11 @@ class DatabaseProcessor
      */
 	public static function mysql_real_escape_string($string)
 	{
-		$firstAvailableDatabaseMaster = ParmConfig::__getFirstDatabaseMaster();
+		$firstAvailableDatabaseMaster = Config::__getFirstDatabaseMaster();
 
 		if($firstAvailableDatabaseMaster == null || !($firstAvailableDatabaseMaster instanceof DatabaseNode))
 		{
-			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires ParmConfig");
+			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires \\Parm\\Config");
 		}
 
 		$dp = new DatabaseProcessor($firstAvailableDatabaseMaster);

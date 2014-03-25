@@ -38,7 +38,7 @@ class Row extends \ArrayObject
 	 */
 	function toJSONString()
 	{
-		return json_encode(self::utf8EncodeArray($this->toJSON()));
+		return json_encode($this->toJSON());
 	}
 
 	/**
@@ -59,28 +59,6 @@ class Row extends \ArrayObject
 				$result .= strtoupper(substr($segment, 0, 1)) . substr($segment, 1);
 		}
 		return $result;
-	}
-
-
-	/**
-	 * Encode the values of an array to UTF-8
-	 * @return array with UTF-8 Encoded values
-	 */
-	static protected function utf8EncodeArray(Array $array)
-	{
-		foreach ($array as $key => $value)
-		{
-			if (is_array($value))
-			{
-				$array[$key] = self::utf8EncodeArray($value);
-			}
-			else
-			{
-				$array[$key] = utf8_encode($value);
-			}
-		}
-
-		return $array;
 	}
 
 }

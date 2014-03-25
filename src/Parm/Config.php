@@ -2,7 +2,7 @@
 
 namespace Parm;
 
-class ParmConfig
+class Config
 {
 	public static $databases = Array();
 
