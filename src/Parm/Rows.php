@@ -8,47 +8,38 @@ class Rows implements \Iterator {
 	protected $result;
 
 	protected $position;
-	protected $currentKey;
-	protected $objects;
 
 	public function __construct(\Parm\DatabaseProcessor $processor) {
 
+		$this->processor = $processor;
 		$this->result = $processor->getMySQLResult($processor->getSQL());
 		$this->count = $processor->getNumberOfRowsFromResult($this->result);
 		$this->position = 0;
 	}
 
+	public function getCount()
+	{
+		return (int)$this->count;
+	}
+
 	function rewind() {
 
-		$this->factory->limit($this->pageSize,0);
-		$this->objects = $this->factory->getObjects();
 		$this->position = 0;
-		$this->currentKey = key($this->objects);
+		$this->result->data_seek(0);
 	}
 
 	function current() {
-		return $this->objects[$this->currentKey];
+
+		return $this->processor->loadDataObject($this->result->fetch_assoc());
 	}
 
 	function key() {
-		return $this->currentKey;
+		return $this->position;
 	}
 
 	function next() {
 
 		++$this->position;
-
-		if($this->position % $this->pageSize == 0 )
-		{
-			$this->factory->limit($this->pageSize,$this->position);
-			$this->objects = $this->factory->getObjects();
-		}
-		else
-		{
-			next($this->objects);
-		}
-
-		$this->currentKey = key($this->objects);
 	}
 
 	function valid()

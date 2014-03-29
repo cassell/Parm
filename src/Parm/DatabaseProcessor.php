@@ -146,11 +146,14 @@ class DatabaseProcessor
 	 * @param array $row The associative array of data
 	 * @return Row
      */
-	protected function loadDataObject(Array $row)
+	public function loadDataObject(Array $row)
 	{
 		return new Row($row);
 	}
 
+	/**
+	 * @return Rows
+	 */
 	public function query() {
 
 		return new Rows($this);

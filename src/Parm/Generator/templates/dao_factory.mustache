@@ -48,7 +48,7 @@ class {{className}}DaoFactory extends \Parm\DataAccessObjectFactory
 	 * Load an object associated with this factory
 	 * @return {{{className}}DaoObject An object built from a row out of the database table
      */
-	protected function loadDataObject(Array $row)
+	public function loadDataObject(Array $row)
 	{
 		return new {{className}}DaoObject($row);
 	}
