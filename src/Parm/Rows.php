@@ -44,6 +44,6 @@ class Rows implements \Iterator {
 
 	function valid()
 	{
-		return isset($this->objects[$this->currentKey]);
+		return $this->position < $this->count;
 	}
 }

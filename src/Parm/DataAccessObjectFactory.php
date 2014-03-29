@@ -41,19 +41,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	{
 		$data = array();
 
-		$this->process(function($obj) use (&$data)
+		$objects = $this->query();
+
+		foreach($objects as $object)
 		{
-			if($obj::getIdField() != null)
-			{
-				$data[$obj->getId()] = $obj;
-			}
-			else
-			{
-				$data[] = $obj;
-			}
-		});
+			$data[$object->getId()] = $object;
+		}
 
 		return $data;
+
 	}
 
 	/**
