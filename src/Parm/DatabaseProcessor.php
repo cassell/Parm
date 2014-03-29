@@ -27,7 +27,7 @@ class DatabaseProcessor
 
 			if($this->databaseNode == null || !($this->databaseNode instanceof DatabaseNode))
 			{
-				throw new \Parm\Exception\ErrorException("Unable to find database named " . htmlentities($mixed) . " in \\Parm\\Config configuration.");
+				throw new \Parm\Exception\ErrorException("Unable to find database named " . \htmlentities($mixed) . " in \\Parm\\Config configuration.");
 			}
 		}
 		else
@@ -150,6 +150,12 @@ class DatabaseProcessor
 	{
 		return new Row($row);
 	}
+
+	public function query() {
+
+		return new Rows($this);
+
+	}
 	
 	/**
 	 * Loop through the rows of a query and process with a closure
@@ -159,9 +165,7 @@ class DatabaseProcessor
      */
 	public function process($closure)
 	{
-		$conn = $this->databaseNode->getConnection();
-		
-		$result = $this->getMySQLResult($this->getSQL(),$conn);
+		$result = $this->getMySQLResult($this->getSQL());
 		
 		if($result != null)
 		{
@@ -211,7 +215,7 @@ class DatabaseProcessor
 	/**
 	 * Get the number of rows for a query from the MySQL database via the result
 	 * 
-	 * @param mysqli $result
+	 * @param \mysqli $result
 	 * @return integer The number of rows reported from the database
      */
 	public function getNumberOfRowsFromResult($result)

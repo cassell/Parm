@@ -9,8 +9,8 @@ set_error_handler(function($number, $message, $file, $line)
 
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
-\Parm\Config::addDatabase('parm_namespaced_tests',new Parm\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
-\Parm\Config::addDatabase('parm-global-tests',new Parm\DatabaseNode($GLOBALS['db_global_name'],$GLOBALS['db_global_host'],$GLOBALS['db_global_username'],$GLOBALS['db_global_password']));
+\Parm\Config::addDatabase('parm_namespaced_tests',new Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
+\Parm\Config::addDatabase('parm-global-tests',new Parm\Mysql\DatabaseNode($GLOBALS['db_global_name'],$GLOBALS['db_global_host'],$GLOBALS['db_global_username'],$GLOBALS['db_global_password']));
 
 if(!file_exists(dirname(__FILE__).'/dao'))
 {

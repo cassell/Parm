@@ -42,7 +42,7 @@ https://packagist.org/packages/parm/parm
 
 ### Example Database Configuration
 
-	\Parm\Config::addDatabase('database-name',new Parm\DatabaseNode('database-name-on-server','database-host','database-username','database-password'));
+	\Parm\Config::addDatabase('database-name',new Parm\Mysql\DatabaseNode('database-name-on-server','database-host','database-username','database-password'));
 
 
 ### Example Generator Configuration
@@ -61,7 +61,7 @@ You can easily extend the models to encapsulate business logic. The examples bel
 
 	class User extends Project\Dao\UserDaoObject
 	{
-		static function getFactory(\Parm\DatabaseNode $databaseNode = null)
+		static function getFactory(\Parm\MySql\DatabaseNode $databaseNode = null)
 		{
 			return new UserFactory($databaseNode);
 		}

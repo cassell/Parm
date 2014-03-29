@@ -23,7 +23,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	
 	public function testPassingNodeToConstructor()
 	{
-		$dp = new Parm\DatabaseProcessor(new \Parm\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
+		$dp = new Parm\DatabaseProcessor(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
 		$dp->setSQL('select * from people');
 		$result = $dp->getArray();
 	}
@@ -31,7 +31,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 	public function testPassingDatabaseToConstructor()
 	{
 		$db = new Parm\Database();
-		$db->setMaster(new \Parm\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
+		$db->setMaster(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
 		$dp = new Parm\DatabaseProcessor($db);
 		$dp->setSQL('select * from people');
 		$result = $dp->getArray();
