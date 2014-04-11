@@ -5,6 +5,8 @@ spl_autoload_register(function($class) {
 	$classes = array();
 	
 	{{#tables}}
+	$classes[] = '{{className}}Table';
+	$classes[] = '{{className}}TableFunctions';
 	$classes[] = '{{className}}DaoObject';
 	$classes[] = '{{className}}DaoFactory';
 	{{/tables}}

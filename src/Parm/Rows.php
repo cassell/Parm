@@ -6,7 +6,7 @@ class Rows implements \Iterator {
 
 	protected $processor;
 	protected $result;
-
+	protected $count;
 	protected $position;
 
 	public function __construct(\Parm\DatabaseProcessor $processor) {
@@ -46,4 +46,36 @@ class Rows implements \Iterator {
 	{
 		return $this->position < $this->count;
 	}
+
+	function freeResult()
+	{
+		$this->count = 0;
+		$this->position = 0;
+		$this->result->free();
+	}
+
+	function toArray()
+	{
+		$data = array();
+
+		foreach($this as $row)
+		{
+			$data[] = (array)$row;
+		}
+
+		return $data;
+
+	}
+
+	function toJson()
+	{
+		$data = array();
+
+		foreach($this as $row)
+		{
+			$data[] = $row->toJSON();
+		}
+		return $data;
+	}
+
 }

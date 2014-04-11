@@ -36,6 +36,23 @@ class DatabaseProcessor
 		}
 		
 	}
+
+	/**
+	 * @return Rows
+	 */
+	public function query() {
+
+		return $this->getRows();
+	}
+
+	/**
+	 * @return Rows
+	 */
+	public function getRows() {
+
+		return new Rows($this);
+	}
+
 	
 	/**
 	 * Get the rows as an associative array
@@ -44,12 +61,11 @@ class DatabaseProcessor
      */
 	public function getArray()
 	{
-		$data = array();
+		$rows = $this->getRows();
 
-		$this->process(function($obj) use (&$data)
-		{
-			$data[] = (array)$obj;
-		});
+		$data = $rows->toArray();
+
+		$rows->freeResult();
 
 		return $data;
 	}
@@ -61,14 +77,30 @@ class DatabaseProcessor
      */
 	public function getJSON()
 	{
-		$data = array();
+		$rows = $this->getRows();
 
-		$this->process(function($obj) use (&$data)
+		$json = $rows->toJson();
+
+		$rows->freeResult();
+
+		return $json;
+	}
+
+	/**
+	 * Get the first value from a single column from the database
+	 *
+	 * @param string $columnName The name of the column to select from
+	 * @return array
+	 */
+	public function getFirstField($columnName)
+	{
+		$a = $this->getArray();
+
+		if(is_array($a))
 		{
-			$data[] = $obj->toJSON();
-		});
-
-		return $data;
+			$a = reset($a);
+			return $a[$columnName];
+		}
 	}
 
 	
@@ -101,26 +133,8 @@ class DatabaseProcessor
 		return $data;
 	}
 	
-	
 	/**
-	 * Get the first value from a single column from the database
-	 * 
-	 * @param string $columnName The name of the column to select from
-	 * @return array
-     */
-	public function getFirstField($columnName)
-	{
-		$a = $this->getArray();
-		
-		if(is_array($a))
-		{
-			$a = reset($a);
-			return $a[$columnName];
-		}
-	}
-	
-	/**
-	 * Set the SQL to proccess
+	 * Set the SQL to process
 	 * 
 	 * @param string $sql
 	 * @return DatabaseProcessor
@@ -141,7 +155,7 @@ class DatabaseProcessor
 	}
 	
 	/**
-	 * Build a data object from the row data
+	 * Build a data object from the row data. This function is overridden in the factories.
 	 * 
 	 * @param array $row The associative array of data
 	 * @return Row
@@ -151,14 +165,7 @@ class DatabaseProcessor
 		return new Row($row);
 	}
 
-	/**
-	 * @return Rows
-	 */
-	public function query() {
 
-		return new Rows($this);
-
-	}
 	
 	/**
 	 * Loop through the rows of a query and process with a closure
@@ -168,23 +175,15 @@ class DatabaseProcessor
      */
 	public function process($closure)
 	{
-		$result = $this->getMySQLResult($this->getSQL());
-		
-		if($result != null)
+		$rows = $this->getRows();
+
+		foreach($rows as $row)
 		{
-			if($this->getNumberOfRowsFromResult($result) > 0)
-			{
-				$result->data_seek(0);
-				
-				while ($row = $result->fetch_assoc())
-				{
-					$closure($this->loadDataObject($row));
-				}
-			}
+			$closure($row);
 		}
-	
-		$this->freeResult($result);
-		
+
+		$rows->freeResult();
+
 		return $this;
 	}
 	
@@ -233,8 +232,7 @@ class DatabaseProcessor
      */
 	public function update($sql)
 	{
-		$result = $this->getMySQLResult($sql);
-		$this->freeResult($result);
+		$this->freeResult($this->getMySQLResult($sql));
 	}
 	
 	public function executeMultiQuery()
@@ -269,8 +267,8 @@ class DatabaseProcessor
 	public function getMySQLResult($sql)
 	{
 		$conn = $this->databaseNode->getConnection();
-		
-		try 
+
+		try
 		{
 			$result = $conn->query($sql);
 			if($conn->error != null)
@@ -450,7 +448,7 @@ class DatabaseProcessor
 
 		if($firstAvailableDatabaseMaster == null || !($firstAvailableDatabaseMaster instanceof DatabaseNode))
 		{
-			throw new \Parm\Exception\ErrorException("DatabaseProcess::mysql_real_escape_string requires \\Parm\\Config");
+			throw new \Parm\Exception\ErrorException("DatabaseProcessor::mysql_real_escape_string requires \\Parm\\Config");
 		}
 
 		$dp = new DatabaseProcessor($firstAvailableDatabaseMaster);

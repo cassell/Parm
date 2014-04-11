@@ -41,9 +41,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	{
 		$data = array();
 
-		$objects = $this->query();
-
-		foreach($objects as $object)
+		foreach($this->getCollection() as $object)
 		{
 			$data[$object->getId()] = $object;
 		}
@@ -53,13 +51,20 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	}
 
 	/**
-	 * @param int $pageSize
 	 * @return Collection
 	 */
-//	function getCollection($pageSize = 1000)
-//	{
-//		return new Collection($this,$pageSize);
-//	}
+	function query()
+	{
+		return $this->getCollection();
+	}
+
+	/**
+	 * @return Collection
+	 */
+	function getCollection()
+	{
+		return new Collection($this);
+	}
 
 	/**
 	 * Loop through the rows a page at a time and process with a closure
@@ -196,7 +201,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 	
 	/**
 	 * Adds a conditional to the default FactoryConditional which is an AND conditional
-	 * @param Parm\Binding\Conditional $conditional
+	 * @param \Parm\Binding\Conditional $conditional
      * @return DataAccessObjectFactory so that you can chain bindings and conditionals
      */
 	function addConditional(Binding\Conditional\Conditional $conditional)

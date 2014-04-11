@@ -123,10 +123,16 @@ class DatabaseGenerator
 				$globalNamespaceData["tables"][] = $data;
 				
 				$m = new \Mustache_Engine;
+
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'Table.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_interface.mustache'),$data));
+
+				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'TableFunctions.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_trait.mustache'),$data));
 				
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoObject.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.mustache'),$data));
 				
 				$this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.mustache'),$data));
+
+
 				
 			}
 			
@@ -214,7 +220,7 @@ class DatabaseGenerator
 				$columns[$key]['FieldCase'] = ucfirst(\Parm\Row::columnToCamelCase($column['Field']));
 				$columns[$key]['AllCaps'] = strtoupper(str_replace("-", "_", $column['Field']));
 				
-				$fieldsPack[] = $className . "DaoObject::" . $columns[$key]['AllCaps'] . "_COLUMN";
+				$fieldsPack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN";
 				
 				// column type
 				$columns[$key]['typeDate'] = 0;

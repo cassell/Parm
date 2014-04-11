@@ -2,7 +2,7 @@
 
 namespace Parm;
 
-class Collection implements \Iterator {
+class _tmp_Paged_Collection implements \Iterator {
 
 	protected $count;
 	protected $factory;

@@ -49,7 +49,7 @@ class Row extends \ArrayObject
 	{
 		$result = '';
 
-		$segments = explode("_", str_replace("-", "_", $columnName));
+		$segments = explode("_", str_replace(array("-"," "), "_", $columnName));
 		for ($i = 0; $i < count($segments); $i++)
 		{
 			$segment = $segments[$i];
