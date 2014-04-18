@@ -294,5 +294,5 @@ Find method for writing a custom where clause (returns objects)
 
 
 # Requirements
-* PHP 5.3 or greater
+* PHP 5.4 or greater
 * MySQL
