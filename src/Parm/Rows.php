@@ -2,13 +2,16 @@
 
 namespace Parm;
 
+use Parm\Exception\ErrorException;
+
 class Rows implements \Iterator {
 
 	protected $processor;
 	protected $result;
 	protected $count;
 	protected $position;
-	protected $cache;
+	protected $cache = array();
+	private $freed = false;
 
 	public function __construct(\Parm\DatabaseProcessor $processor) {
 
@@ -23,15 +26,30 @@ class Rows implements \Iterator {
 		return $this->count;
 	}
 
+	private function isCacheFull()
+	{
+		return (count($this->cache) == $this->count);
+	}
+
 	function rewind() {
 
 		$this->position = 0;
-		$this->result->data_seek(0);
+		if(!$this->isCacheFull())
+		{
+			$this->result->data_seek(0);
+		}
 	}
 
 	function current() {
 
-		return $this->cache[$this->position] = $this->processor->loadDataObject($this->result->fetch_assoc());
+		if(array_key_exists($this->position,$this->cache))
+		{
+			return $this->cache[$this->position];
+		}
+		else
+		{
+			return $this->cache[$this->position] = $this->processor->loadDataObject($this->result->fetch_assoc());
+		}
 	}
 
 	function key() {
@@ -51,30 +69,25 @@ class Rows implements \Iterator {
 		}
 		else
 		{
-			$this->result->free_result();
+			if($this->isCacheFull() && $this->freed == false)
+			{
+				$this->freeResult();
+			}
 			return false;
 		}
-//		return $this->position < $this->count;
 	}
 
 	function freeResult()
 	{
-		$this->count = 0;
-		$this->position = 0;
-		try{
-			if($this->result instanceof \mysqli_result)
-			{
-				$this->result->free_result();
-			}
-
-
-
-		}
-		catch(\Exception $e)
+		if($this->freed == false && $this->result instanceof \mysqli_result)
 		{
-			// do nothing
+			$this->result->free_result();
 		}
-
+		else
+		{
+			throw new ErrorException("Result already freed. Rows::freeResult called twice.");
+		}
+		$this->freed = true;
 	}
 
 	function toArray()

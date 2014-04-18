@@ -21,27 +21,49 @@ class RowsTest extends PHPUnit_Framework_TestCase
 
 	}
 
-//	function testIterateTwice()
-//	{
-//		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-//		$dp->setSQL("select * from zipcodes where city = 'Erie'");
-//
-//		$zipCodeTotal = 0;
-//
-//		$rows = $dp->getRows();
-//
-//		foreach($rows as $row)
-//		{
-//			$zipCodeTotal += (int)$row['zipcode'];
-//		}
-//
-//		foreach($rows as $row)
-//		{
-//			$zipCodeTotal += (int)$row['zipcode'];
-//		}
-//
-//		$this->assertEquals(148551 * 2,$zipCodeTotal);
-//
-//	}
+	function testIterateTwice()
+	{
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
+		$dp->setSQL("select * from zipcodes where city = 'Erie'");
+
+		$zipCodeTotal = 0;
+
+		$rows = $dp->getRows();
+
+		foreach($rows as $row)
+		{
+			$zipCodeTotal += (int)$row['zipcode'];
+		}
+
+		foreach($rows as $row)
+		{
+			$zipCodeTotal += (int)$row['zipcode'];
+		}
+
+		$this->assertEquals(148551 * 2,$zipCodeTotal);
+
+	}
+
+	function testIterateNTimes()
+	{
+		$dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
+		$dp->setSQL("select * from zipcodes where city = 'Erie'");
+
+		$zipCodeTotal = 0;
+
+		$rows = $dp->getRows();
+
+		for($i = 0; $i < 100; $i++)
+		{
+			foreach($rows as $row)
+			{
+				$zipCodeTotal += (int)$row['zipcode'];
+			}
+
+		}
+
+		$this->assertEquals(148551 * 100,$zipCodeTotal);
+
+	}
 
 }
