@@ -35,12 +35,18 @@ abstract class DataAccessObject extends Row implements TableInterface
 			}
 		}
 	}
-	
+
+	/**
+	 * @param string $column the name of the column
+	 */
 	protected function addModifiedColumn($column)
 	{
 		$this->__modifiedColumns[$column] = 1;
 	}
-	
+
+	/**
+	 * clear the list of modified columns so none are saved to the database
+	 */
 	protected function clearModifiedColumns()
 	{
 		$this->__modifiedColumns = array();
