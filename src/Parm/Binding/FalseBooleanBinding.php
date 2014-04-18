@@ -4,12 +4,12 @@ namespace Parm\Binding;
 
 class FalseBooleanBinding extends Binding
 {
-	/**
+    /**
      * Filter rows where the field/column is false
-	 * @param $field string
+     * @param $field string
      */
-	function __construct($field)
-	{
-		parent::__construct($field, '=', '0');
-	}
+    public function __construct($field)
+    {
+        parent::__construct($field, '=', '0');
+    }
 }

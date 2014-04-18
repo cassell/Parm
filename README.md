@@ -17,7 +17,7 @@ It generates models based on your schema and its powerful closure based query pr
 1. You can easily extend the Factories and Objects to encapsulate the logic of a model
 1. Process any SQL query (multiple tables and joins) using the same closure based process model. Easily output the results to an Array or JSON
 1. Handles all the CRUD (Creating, Reading, Updating, and Deleting)
-1. Handles all escaping of input values
+1. Handles all escaping of input values when using Bindings
 1. Will return the proper data type for the field (if it is a MySQL int(11) column an integer will be returned)
 1. Method chaining of filters, limits, etc
 1. Convert Timezones Using MySQL Timezone Tables (if loaded)

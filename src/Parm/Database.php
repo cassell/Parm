@@ -4,26 +4,26 @@ namespace Parm;
 
 class Database
 {
-	private $master;
+    private $master;
 
-	/**
+    /**
      * Set the master database node for the configuration
-	 * 
-	 * @param DatabaseNode $masterDatabaseNode
+     *
+     * @param DatabaseNode $masterDatabaseNode
      */
-	function setMaster(DatabaseNode $masterDatabaseNode)
-	{
-		$this->master = $masterDatabaseNode;
-	}
-	
-	/**
+    public function setMaster(DatabaseNode $masterDatabaseNode)
+    {
+        $this->master = $masterDatabaseNode;
+    }
+
+    /**
      * Get the master database node for the configuration
-	 * 
-	 * @return DatabaseNode|null The DatabaseNode that is the Master connection
+     *
+     * @return DatabaseNode|null The DatabaseNode that is the Master connection
      */
-	function getMaster()
-	{
-		return $this->master;
-	}
-	
+    public function getMaster()
+    {
+        return $this->master;
+    }
+
 }
