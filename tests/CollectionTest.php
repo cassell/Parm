@@ -13,6 +13,8 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 		$this->assertFalse(is_array($collection));
 
 		$this->assertTrue($collection instanceof \Iterator);
+		$this->assertTrue($collection instanceof \Parm\Rows);
+		$this->assertTrue($collection instanceof \Parm\Collection);
 
 	}
 
@@ -31,6 +33,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
 	}
 
+
+
+	/*
 	function testCollectionPageSize10()
 	{
 		$zipCodeTotal = 0;
@@ -100,8 +105,7 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals(111039,$zipCodeTotal);
 
 	}
-
-
+	*/
 
 
 

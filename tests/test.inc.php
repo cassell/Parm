@@ -31,5 +31,3 @@ if(!file_exists(dirname(__FILE__).'/dao'))
 
 require_once dirname(__FILE__).'/dao/namespaced/autoload.php';
 require_once dirname(__FILE__).'/dao/global/autoload.php';
-
-?>

@@ -2,6 +2,8 @@
 
 namespace Parm;
 
+use Parm\Exception\ErrorException;
+
 class DatabaseProcessor
 {
 	public $databaseNode;
@@ -65,8 +67,6 @@ class DatabaseProcessor
 
 		$data = $rows->toArray();
 
-		$rows->freeResult();
-
 		return $data;
 	}
 	
@@ -80,8 +80,6 @@ class DatabaseProcessor
 		$rows = $this->getRows();
 
 		$json = $rows->toJson();
-
-		$rows->freeResult();
 
 		return $json;
 	}
@@ -182,8 +180,6 @@ class DatabaseProcessor
 			$closure($row);
 		}
 
-		$rows->freeResult();
-
 		return $this;
 	}
 	
@@ -208,8 +204,6 @@ class DatabaseProcessor
 			$closure($this->loadDataObject($row));
 		}
 		
-		$this->freeResult($result);
-		
 		return $this;
 		
 	}
@@ -232,7 +226,14 @@ class DatabaseProcessor
      */
 	public function update($sql)
 	{
-		$this->freeResult($this->getMySQLResult($sql));
+		if($this->getMySQLResult($sql) === true)
+		{
+			return true;
+		}
+		else
+		{
+			throw new UpdateFailedException($sql);
+		}
 	}
 	
 	public function executeMultiQuery()
@@ -262,7 +263,7 @@ class DatabaseProcessor
 	 * Get a MySQL result from a SQL string
 	 * 
 	 * @param string $sql The SQL to execute
-	 * @return mysql result
+	 * @return \mysqli result
      */
 	public function getMySQLResult($sql)
 	{
@@ -349,23 +350,9 @@ class DatabaseProcessor
 	/**
 	 * Free a mysqli_result
      */
-	public function freeResult($result)
+	public function freeResult(\mysqli_result $result)
 	{
-		if($result != null)
-		{
-			try
-			{
-				if($result instanceof mysqli_result)
-				{
-					$result->free();
-				}
-				
-			}
-			catch(ErrorException $e)
-			{
-				// Do nothing
-			}
-		}
+		$result->free();
 	}
 	
 	/**

@@ -176,7 +176,7 @@ class DatabaseGenerator
 			
 			$tableNames[] = $row['Tables_in_'.$databaseName];
 		});
-		
+
 		return $tableNames;
 	}
 	

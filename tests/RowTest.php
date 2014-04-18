@@ -2,7 +2,7 @@
 
 require dirname(__FILE__) . '/test.inc.php';
 
-class DataArrayTest extends PHPUnit_Framework_TestCase
+class RowTest extends PHPUnit_Framework_TestCase
 {
 
 	function testCamelCase()
@@ -13,5 +13,3 @@ class DataArrayTest extends PHPUnit_Framework_TestCase
 		
 	}
 }
-
-?>
