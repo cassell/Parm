@@ -4,7 +4,7 @@
 
 PHP Active Record for MySQL -- PHP, AR, ORM, DAO, OMG!
 
-It generates models based on your schema and its powerful closure based query processing and ability to handle large datasets make it powerful and flexible.
+It generates models based on your schema and its powerful closure based query processing and ability to handle large data sets make it powerful and flexible.
 
 1. PSR-0 Compliant and works with Composer
 1. Handles all the CRUD (Creating, Reading, Updating, and Deleting)
@@ -208,7 +208,7 @@ Running a sum query
 
 
 ## Closures
-Process each row queried with a closure(anonymous function). Iterate over very large datasets without hitting memory constraints use unbufferedProcess()
+Process each row queried with a closure(anonymous function). Iterate over very large data sets without hitting memory constraints use unbufferedProcess()
 	
 	$f = new UserFactory();
 	$f->process(function($user)
@@ -220,7 +220,7 @@ Process each row queried with a closure(anonymous function). Iterate over very l
 		}
 	});
 
-Unbuffered Processing of large datasets for Memory Safe Closures (will potentially lock the table while processing)
+Unbuffered Processing of large data sets for Memory Safe Closures (will potentially lock the table while processing)
 	
 	$f = new UserFactory(); // imagine a table with millions of rows
 	$f->unbufferedProcess(function($user)
@@ -246,7 +246,7 @@ Buffered Queries for Speed
 		
 	});
 
-Unbuffered for Large Datasets
+Unbuffered for Large Data Sets
 
 	$p = new DatabaseProcessor('example');
 	$p->setSQL('select first_name, last_name from user');
@@ -278,7 +278,7 @@ Getting a JSON ready array
 	$f->outputJSONString();
 
 	
-### Flexibile Queries
+### Flexible Queries
 	
 Find method for writing a custom where clause (returns objects)
 	
