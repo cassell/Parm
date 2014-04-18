@@ -243,9 +243,6 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals("Delaware Township",$newDelaware['city']);
 
 		$newDelaware->delete();
-
-
 	}
-
 
 }
