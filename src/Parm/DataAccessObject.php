@@ -45,8 +45,8 @@ abstract class DataAccessObject extends Row implements TableInterface
 	{
 		$this->__modifiedColumns = array();
 	}
-	
-	
+
+
 	/**
 	 * Find an object by ID
      * @param integer $id ID of the row in the database
@@ -149,10 +149,9 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
 	public function duplicateAsNewObject(){
 		
-		$new = clone $this;
-		$new[static::getIdField()] = null;
-		$new->clearModifiedColumns();
-		return $new;
+		$data = (array)$this;
+		$data[static::getIdField()] = null;
+		return new static($data);
     }
 
 

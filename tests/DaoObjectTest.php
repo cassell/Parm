@@ -15,6 +15,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$sharon = ParmTests\Dao\ZipcodesDaoObject::findId(1445);
 		$sharonClone = clone $sharon;
 		$this->assertEquals($sharon->getZipcode(),$sharonClone->getZipcode());
+		$this->assertEquals($sharon->getId(),$sharonClone->getId());
 	}
 	
 	function testGetDatabaseName()
@@ -223,19 +224,28 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":"555"}',$buchananBirthplace->toJSONString());
 	}
 
-	function globalNamespaceSave()
+	function testDuplicateAsNewObject()
 	{
-		$obj = new CityDaoObject();
-		$obj->setCountryCode('USA');
-		$obj->setName('Corry');
-		$obj->setDistrict('Pennsylvania');
-		$obj->setPopulation(6605);
-		$obj->save();
-		
-	}
-	
-	
-	
-}
+		$fredonia = ParmTests\Dao\ZipcodesDaoObject::findId(565);
+		$delaware = $fredonia->duplicateAsNewObject();
+		$this->assertTrue($delaware->isNewObject());
+		$this->assertEquals($fredonia->getZipcode(),$delaware->getZipcode());
+		$this->assertEquals($fredonia['city'],$delaware['city']);
+		$delaware->setCity("Delaware Township");
+		$delaware->save();
 
-?>
+		$this->assertEquals(1777,$delaware->getId());
+
+		$newDelaware = ParmTests\Dao\ZipcodesDaoObject::findId($delaware->getId());
+
+		$this->assertEquals("16124",$newDelaware->getZipcode());
+		$this->assertEquals("PA",$newDelaware->getState());
+		$this->assertEquals("Delaware Township",$newDelaware['city']);
+
+		$newDelaware->delete();
+
+
+	}
+
+
+}
