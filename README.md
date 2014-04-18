@@ -6,21 +6,23 @@ PHP Active Record for MySQL -- PHP, AR, ORM, DAO, OMG!
 
 It generates models based on your schema and its powerful closure based query processing and ability to handle large datasets make it powerful and flexible.
 
-1. PSR-0 Compliant and works with Composer Autoloader
-1. Generates an autoloader for all of the generated classes/models
-1. Generated models can be namespaced or generated into the global namespace
+1. PSR-0 Compliant and works with Composer
+1. Handles all the CRUD (Creating, Reading, Updating, and Deleting)
 1. Easily output data as JSON for APIs
 1. Fast queries that can easily be limited to a subset of fields in a table ("select first_name, last_name from table" vs. "select * from table"). And you can still use objects when using a subset of the fields.
-1. SQL UPDATEs are minimal and only changed columns are sent to the database
+1. SQL UPDATEs are minimal and only the modified columns/fields are sent to the database
 1. Closure based query processing that lets you handle data efficiently and in a fully customizable manner
-1. Buffered queries for performance and Unbuffered queries for processing huge datasets while staying memory safe
-1. You can easily extend the Factories and Objects to encapsulate the logic of a model
+1. PagedCollection makes it very easy to page through a set of records one page at a time (Go through 1,000,000 records 1,000 at a time)
+1. Buffered queries for performance and unbuffered queries for processing huge data sets while staying memory safe
+1. Models can be generated into a namespace or generated into the global namespace
+1. Handles all escaping of input values when saving to the database
+1. Bindings automatically escape of query values
 1. Process any SQL query (multiple tables and joins) using the same closure based process model. Easily output the results to an Array or JSON
-1. Handles all the CRUD (Creating, Reading, Updating, and Deleting)
-1. Handles all escaping of input values when using Bindings
+1. You can easily extend the Factories and Objects to encapsulate the logic of a model (fat models)
 1. Will return the proper data type for the field (if it is a MySQL int(11) column an integer will be returned)
 1. Method chaining of filters, limits, etc
-1. Convert Timezones Using MySQL Timezone Tables (if loaded)
+1. Generates an autoloader for all of the generated classes/models if you don't generate them into a PSR autoloader directory
+1. Convert Timezones Using MySQL Timezone Tables (if time_zone tables are loaded)
 1. Generated Code is creating using Mustache Templates
 1. Full test suite using PHPUnit and Travis CI
 1. Fully documented and generated classes are generated with PHPDoc "DocBlock" comments to assist your IDE
@@ -38,7 +40,7 @@ It generates models based on your schema and its powerful closure based query pr
 ### Composer (Packagist)
 https://packagist.org/packages/parm/parm
 
-	"parm/parm": "1.*"
+	"parm/parm": "2.*"
 
 ### Example Database Configuration
 
@@ -102,22 +104,22 @@ Finding an object with id 17.
 	$f = new UserFactory();
 	$user = $f->findId(17);
 
-Finding all objects form a table (returns an Array)
+Finding all objects form a table (returns a Collection)
 
 	$f = new UserFactory();
-	$users = $f->getObjects();
+	$users = $f->query();
 	
 Limit the query to the first 20 rows
 	
 	$f = new UserFactory();
 	$f->setLimit(20);
-	$users = $f->getObjects();
+	$users = $f->query();
 
 Querying for objects filtered by a column (the following four statements are all equivalent)
 	
 	$f = new UserFactory();
 	$f->whereEquals("archived","0");
-	$users = $f->getObjects();
+	$users = $f->query();
 
 	$f = new UserFactory();
 	$f->whereEquals(User::ARCHIVED_COLUMN,"0");
@@ -258,7 +260,7 @@ Limiting the fields that are pulled back from the database. You can still use ob
 	
 	$f = new UserFactory();
 	$f->setSelectFields("first_name","last_name","email");
-	$users = $f->getObjects();
+	$users = $f->query();
 	
 Getting a JSON ready array
 	
