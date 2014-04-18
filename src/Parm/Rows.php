@@ -26,11 +26,6 @@ class Rows implements \Iterator {
 		return $this->count;
 	}
 
-	private function isCacheFull()
-	{
-		return (count($this->cache) == $this->count);
-	}
-
 	function rewind() {
 
 		$this->position = 0;
@@ -112,6 +107,11 @@ class Rows implements \Iterator {
 			$data[] = $row->toJSON();
 		}
 		return $data;
+	}
+
+	private function isCacheFull()
+	{
+		return (count($this->cache) == $this->count);
 	}
 
 }
