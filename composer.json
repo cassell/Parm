@@ -18,7 +18,7 @@
 		"mustache/mustache": "v2.3.1"
 	},
 	"require-dev" : {
-		"phpunit/phpunit" : "4.0.15"
+		"phpunit/phpunit" : "3.7.25"
 	},
 	"autoload": {
 		"psr-0": {"Parm\\": "src/"}
