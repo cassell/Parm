@@ -4,13 +4,10 @@ namespace Parm;
 
 class PagedCollection extends Collection {
 
-	protected $count;
 	protected $factory;
 	protected $pageSize;
-	protected $position;
 	protected $currentKey;
 	protected $nextKey;
-	protected $objects;
 
 	public function __construct(\Parm\DataAccessObjectFactory $factory, $pageSize = 1000) {
 
@@ -21,24 +18,19 @@ class PagedCollection extends Collection {
 
 		$this->factory = $factory;
 		$this->pageSize = $pageSize;
-		$this->count = $this->factory->count();
+		$this->count = (int)$this->factory->count();
 		$this->position = 0;
 	}
 
 	function rewind() {
 
 		$this->factory->limit($this->pageSize,0);
-		$this->objects = $this->factory->getObjects();
+		$this->result = $this->factory->getMySQLResult($this->factory->getSQL());
 		$this->position = 0;
-		$this->currentKey = key($this->objects);
 	}
 
 	function current() {
-		return $this->objects[$this->currentKey];
-	}
-
-	function key() {
-		return $this->currentKey;
+		return $this->factory->loadDataObject($this->result->fetch_assoc());
 	}
 
 	function next() {
@@ -48,18 +40,12 @@ class PagedCollection extends Collection {
 		if($this->position % $this->pageSize == 0 )
 		{
 			$this->factory->limit($this->pageSize,$this->position);
-			$this->objects = $this->factory->getObjects();
+			$this->result = $this->factory->getMySQLResult($this->factory->getSQL());
 		}
-		else
-		{
-			next($this->objects);
-		}
-
-		$this->currentKey = key($this->objects);
 	}
 
 	function valid()
 	{
-		return isset($this->objects[$this->currentKey]);
+		return ($this->position < $this->getCount());
 	}
 }
