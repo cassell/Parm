@@ -33,15 +33,18 @@ class NotInBinding extends SQLString
         if (count($this->array) == 1) {
             return $factory->escapeString($this->field) . " != " . $factory->escapeString(reset($this->array));
         } elseif (count($this->array) > 1) {
+
+            $escaped = array();
+
             foreach ($this->array as $key => $item) {
                 if (is_numeric($item)) {
-                    $this->array[$key] = $item;
+                    $escaped[] = $item;
                 } else {
-                    $this->array[$key] = "'" . $factory->escapeString($item) . "'";
+                    $escaped[] = "'" . $factory->escapeString($item) . "'";
                 }
             }
 
-            return $factory->escapeString($this->field) . " NOT IN (" . implode(",", $this->array) . ")";
+            return $factory->escapeString($this->field) . " NOT IN (" . implode(",", $escaped) . ")";
         } else {
             throw new \Parm\Exception\ErrorException("The array passed to the NotInBinding is empty");
         }
