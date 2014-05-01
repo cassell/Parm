@@ -209,9 +209,23 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
-    protected function getDateFieldValue($columnName)
+    protected function getDateFieldValue($columnName,$format = null)
     {
-        return $this->getFieldValue($columnName);
+		if($format != null)
+		{
+			// \Datetime::createFromFormat parses a date value format and sets the time of day to the current system time
+			// see http://php.net/manual/en/datetime.createfromformat.php for explanation
+			$dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDateStorageFormat(),$this->getFieldValue($columnName));
+
+			// setting the time to midnight as the expected value when pulling from a database
+			$dateTime->setTime(0,0,0);
+
+			return $dateTime->format($format);
+		}
+		else
+		{
+			return $this->getFieldValue($columnName);
+		}
     }
 
     protected function getDatetimeObjectFromField($columnName,$format)
@@ -238,9 +252,17 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
-    protected function getDatetimeFieldValue($columnName)
+    protected function getDatetimeFieldValue($columnName,$format = null)
     {
-        return $this->getFieldValue($columnName);
+		if($format != null)
+		{
+			$dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(),$this->getFieldValue($columnName));
+			return $dateTime->format($format);
+		}
+		else
+		{
+			return $this->getFieldValue($columnName);
+		}
     }
 
     protected function setBooleanFieldValue($columnName, $val)
