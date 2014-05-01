@@ -102,34 +102,34 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
     }
 
-	public function testGetDateFieldValue()
-	{
-		$time = time();
-
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setCreateDate($time);
-
-		$this->assertEquals(date("Y-m-d",$time), $new->getCreateDate());
-
-		$this->assertEquals(date("Y-m-d 00:00:00",$time), $new->getCreateDate("Y-m-d H:i:s"));
-		$this->assertNotEquals(date("Y-m-d H:i:s",$time), $new->getCreateDate("Y-m-d H:i:s"));
-
-		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDate("m/d/Y"));
-
-	}
-
-	public function testGetDatetimeFieldValue()
-	{
-		$time = time();
-
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setCreateDatetime($time);
-
-		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime());
-		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime("Y-m-d H:i:s"));
-		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDatetime("m/d/Y"));
-
-	}
+//	public function testGetDateFieldValue()
+//	{
+//		$time = time();
+//
+//		$new = new ParmTests\Dao\PeopleDaoObject();
+//		$new->setCreateDate($time);
+//
+//		$this->assertEquals(date("Y-m-d",$time), $new->getCreateDate());
+//
+//		$this->assertEquals(date("Y-m-d 00:00:00",$time), $new->getCreateDate("Y-m-d H:i:s"));
+//		$this->assertNotEquals(date("Y-m-d H:i:s",$time), $new->getCreateDate("Y-m-d H:i:s"));
+//
+//		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDate("m/d/Y"));
+//
+//	}
+//
+//	public function testGetDatetimeFieldValue()
+//	{
+//		$time = time();
+//
+//		$new = new ParmTests\Dao\PeopleDaoObject();
+//		$new->setCreateDatetime($time);
+//
+//		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime());
+//		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime("Y-m-d H:i:s"));
+//		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDatetime("m/d/Y"));
+//
+//	}
 
     public function testInsertNewObject()
     {
