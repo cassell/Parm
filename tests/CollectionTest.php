@@ -33,4 +33,18 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+	public function testCollectionCount()
+	{
+		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
+		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+		$this->assertEquals(9,$f->count());
+
+		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
+		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+		$collection = $f->getCollection();
+		$this->assertEquals(9,$collection->getCount());
+
+
+	}
+
 }
