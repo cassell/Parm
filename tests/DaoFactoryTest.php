@@ -112,7 +112,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
     public function testSelectClause()
     {
         $f =  new ParmTests\Dao\PeopleDaoFactory();
-        $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.zipcode_id,people.archived,people.test_data_blob,people.create_date,people.create_datetime,people.create_timestamp", $f->getSelectClause());
+        $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.zipcode_id,people.archived,people.verified,people.test_data_blob,people.create_date,people.create_datetime,people.create_timestamp", $f->getSelectClause());
     }
 
     public function testSetSelectFields()
