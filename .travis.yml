@@ -13,4 +13,4 @@ before_script:
   - sh -c "if [ '$DB' = 'mysql' ]; then mysql parm-global-tests < tests/data/global-test-data.sql; fi"
   - composer install --prefer-source --dev
 
-script: phpunit
+script: vendor/bin/phpunit
