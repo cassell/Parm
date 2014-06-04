@@ -163,6 +163,7 @@ class DatabaseGenerator
     public function getTemplatingDataFromTableName($tableName)
     {
         $idFieldName = '';
+		$idFieldInt = 0;
         $defaultValuePack = array();
         $fieldsPack = array();
         $bindingsPack = array();
@@ -183,6 +184,11 @@ class DatabaseGenerator
                 if ($column['Key'] == "PRI") {
                     $idFieldName = $column['Field'];
                     $columns[$key]['isPrimaryKey'] = true;
+
+					if (preg_match("/int\(/", $column['Type'])) {
+						$idFieldInt = 1;
+					}
+
                 } else {
                     $columns[$key]['isPrimaryKey'] = false;
                 }
@@ -230,6 +236,7 @@ class DatabaseGenerator
                         'variableName' => \Parm\Row::columnToCamelCase($tableName),
                         'className' => $className,
                         'databaseName' => $this->databaseNode->serverDatabaseName,
+						'idFieldIsInteger' => $idFieldInt,
                         'idFieldName' => $idFieldName,
                         'idFieldNameAllCaps' => strtoupper($idFieldName),
                         'namespace' => $this->generatedNamespace,

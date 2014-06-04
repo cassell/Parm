@@ -50,7 +50,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $stein->setCreateDate(time());
         $stein->setCreateDatetime(time());
         $stein->setZipcodeId(72);
-        $stein->setArchived(0);
+        $stein->setArchived(false);
         $stein->save();
 
         $steinId = $stein->getId();

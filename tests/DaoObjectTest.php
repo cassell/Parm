@@ -154,7 +154,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
     }
 
-	public function testInsertBooleanValuesNullNotAllowed()
+	public function testInsertBooleanValuesNullAllowed()
 	{
 		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Winnie");
@@ -205,7 +205,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 	}
 
 	/*
-	public function testInsertBooleanValuesNullAllowed()
+	public function testInsertBooleanValuesNullNotAllowed()
 	{
 		$new = new ParmTests\Dao\PeopleDaoObject();
 		$new->setFirstName("Winnie");
@@ -237,20 +237,6 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 			$this->fail();
 		}
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setVerified(null);
-		$new->save();
-
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
-
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getVerified(), null);
-		} else {
-			$this->fail();
-		}
 	}
 	*/
 

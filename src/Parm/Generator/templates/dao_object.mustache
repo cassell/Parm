@@ -10,6 +10,16 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
 {
 	use {{className}}TableFunctions;
 
+{{#idFieldIsInteger}}
+	/**
+     * Get the ID (Primary Key) of the object
+     * @return integer|null ID of the record in the database. null if a new record
+     */
+    public function getId()
+    {
+        return $this->getIntFieldValue($this->getIdField());
+	}
+{{/idFieldIsInteger}}
 {{#columns}}
 {{#typeDatetime}}
 	/**
