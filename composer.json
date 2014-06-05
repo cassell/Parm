@@ -21,6 +21,9 @@
 		"phpunit/phpunit" : "3.7.25"
 	},
 	"autoload": {
-		"psr-0": {"Parm\\": "src/"}
+		"psr-4": {"Parm\\": "src/"}
+	},
+	"support": {
+		"issues": "https://github.com/cassell/parm/issues"
 	}
 }
