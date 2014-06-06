@@ -204,7 +204,6 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
 	}
 
-	/*
 	public function testInsertBooleanValuesNullNotAllowed()
 	{
 		$new = new ParmTests\Dao\PeopleDaoObject();
@@ -238,7 +237,6 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		}
 
 	}
-	*/
 
     public function testInsertNewObjectByArray()
     {
@@ -309,7 +307,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new->setZipcodeId(555);
         $new->setArchived(0);
 
-        $this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";N;s:8:"verified";s:1:"0";s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
+		$this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";i:0;s:8:"verified";s:1:"0";s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
 
     }
 

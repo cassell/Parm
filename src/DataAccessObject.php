@@ -267,17 +267,17 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     protected function setBooleanFieldValue($columnName, $val)
     {
-        if ($val == null) {
+        if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName,(bool) $val);
+            return $this->setFieldValue($columnName,$val ? 1 : 0);
         }
     }
 
     protected function getBooleanFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
-        if ($val == null) {
+        if ($val === null) {
             return null;
         } else {
             return (bool) $val;
