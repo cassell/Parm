@@ -162,7 +162,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if (array_key_exists($columnName, $this)) {
             return $this[$columnName];
         } else {
-            throw new \Parm\Exception\GetFieldValueException($columnName . ' not initilized for get method in ' . get_class($this));
+            throw new \Parm\Exception\GetFieldValueException($columnName . ' not initialized for get method in ' . get_class($this));
         }
     }
 
@@ -178,7 +178,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     protected function setIntFieldValue($columnName, $val)
     {
-        if ($val == null) {
+        if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
             return $this->setFieldValue($columnName,(int) $val);
@@ -188,7 +188,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function getIntFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
-        if ($val == null) {
+        if ($val === null) {
             return null;
         } else {
             return (int) $val;
