@@ -6,7 +6,7 @@ PHP Active Record for MySQL -- PHP, AR, ORM, DAO, OMG!
 
 It generates models based on your schema and its powerful closure based query processing and ability to handle large data sets make it powerful and flexible.
 
-1. PSR-0 Compliant and works with Composer
+1. PSR-4 Compliant and works with Composer
 1. Handles all the CRUD (Creating, Reading, Updating, and Deleting)
 1. Easily output data as JSON for APIs
 1. Fast queries that can easily be limited to a subset of fields in a table ("select first_name, last_name from table" vs. "select * from table"). And you can still use objects when using a subset of the fields.
