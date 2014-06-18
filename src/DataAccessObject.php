@@ -168,7 +168,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     protected function setFieldValue($columnName, $val)
     {
-        if ($val == NULL || strcmp($this[$columnName], $val) !== 0) {
+        if ($val === NULL || strcmp($this[$columnName], $val) !== 0) {
             $this->addModifiedColumn($columnName);
             $this[$columnName] = $val;
         }
