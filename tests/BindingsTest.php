@@ -76,6 +76,9 @@ class BindingsTest extends PHPUnit_Framework_TestCase
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
 
+		$binding = new Parm\Binding\InBinding("zipcode_id",array(1));
+		$this->assertEquals("zipcode_id = 1", $binding->getSQL($f));
+
         $binding = new Parm\Binding\InBinding("zipcode_id",array(1,2,3,4));
         $this->assertEquals("zipcode_id IN (1,2,3,4)", $binding->getSQL($f));
 
@@ -100,10 +103,13 @@ class BindingsTest extends PHPUnit_Framework_TestCase
     public function testNotInBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
+
+		$binding = new Parm\Binding\NotInBinding("zipcode_id",array(1));
+		$this->assertEquals("zipcode_id != 1", $binding->getSQL($f));
+
         $binding = new Parm\Binding\NotInBinding("zipcode_id",array(1,2,3,4));
         $this->assertEquals("zipcode_id NOT IN (1,2,3,4)", $binding->getSQL($f));
 
-        $f = new ParmTests\Dao\PeopleDaoFactory();
         $binding = new Parm\Binding\NotInBinding("zipcode_id",array(null,"",''));
         $this->assertEquals("zipcode_id NOT IN ('','','')", $binding->getSQL($f));
     }

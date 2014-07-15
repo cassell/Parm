@@ -31,7 +31,7 @@ class InBinding extends SQLString
 	public function getSQL(\Parm\DataAccessObjectFactory $factory)
 	{
 		if (count($this->array) == 1) {
-			return $factory->escapeString($this->field) . " != " . $factory->escapeString(reset($this->array));
+			return $factory->escapeString($this->field) . " = " . $factory->escapeString(reset($this->array));
 		} elseif (count($this->array) > 1) {
 
 			$escaped = array();
