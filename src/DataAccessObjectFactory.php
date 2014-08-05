@@ -344,7 +344,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Add a column to the select clause. Useful when using join.
      * Usage: $f->addSelectField("company.company_name");
      * @param  string           $field The name of the column
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function addSelectField($field)
     {
@@ -368,7 +368,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Add a join to the select clause
      * @param  string           $clause The join clause
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function join($clause)
     {
@@ -380,7 +380,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Set and replace the entire join clause
      * @param  string           $val The join clause
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function setJoinClause($val)
     {
@@ -439,7 +439,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Set and replace the entire group yb clause
      * @param  string           $groupByClause The group by clause
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function setGroupByClause($groupByClause)
     {
@@ -462,7 +462,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Usage: $f->orderBy("last_name","asc");
      * @param  string           $field     The field to sort by
      * @param  string           $direction The direction to sort. asc or desc
-     * @return DataAccessObject
+     * @return DataAccessObjectFactory
      */
     public function orderBy($field, $direction = 'asc')
     {
@@ -472,15 +472,15 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
             $this->setOrderByClause($this->getOrderByClause() . ", ");
         }
 
-        $this->setOrderByClause($this->getOrderByClause() . $this->escapeString($field) . " " . $this->escapeString($direction));
+        $this->setOrderByClause($this->getOrderByClause() . "`".$this->escapeString($field)."` " . $this->escapeString($direction));
 
         return $this;
     }
 
     /**
-     * Set and eplace the entire order by clause
+     * Set and replace the entire order by clause
      * @param string The order by clause
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function setOrderByClause($val)
     {
@@ -538,7 +538,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Set and replace the entire limit clause
      * @param  string           $limitClause The limit clause
-     * @return DataAccessObject for chaining
+     * @return DataAccessObjectFactory for chaining
      */
     public function setLimitClause($limitClause)
     {
