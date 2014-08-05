@@ -395,4 +395,13 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
 	}
 
+	public function testIdPrimaryKeyJSON()
+	{
+		$f = new \ParmTests\Dao\PeopleZipcodesLinkDaoFactory();
+		$f->setSelectFields([\ParmTests\Dao\PeopleZipcodesLinkDaoFactory::PEOPLE_ID_COLUMN,\ParmTests\Dao\PeopleZipcodesLinkDaoFactory::ZIPCODES_ID_COLUMN]);
+		$test = $f->getFirstObject();
+		$this->assertEquals('a:3:{s:2:"id";i:1;s:8:"peopleId";s:2:"10";s:10:"zipcodesId";s:2:"66";}',serialize($test->toJson()));
+	}
+
+
 }
