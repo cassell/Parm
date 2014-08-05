@@ -113,7 +113,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * Get the ID (Primary Key) of the object
-     * @return integer|null ID of the record in the database. null if a new record
+     * @return mixed ID of the record in the database. null if a new record
      */
     public function getId()
     {

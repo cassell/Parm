@@ -177,15 +177,16 @@ class DatabaseGenerator
         // id field
         if ($columns != null && count($columns) > 0) {
             foreach ($columns as $key => $column) {
-                if ($column['Field'] == "id") {
-                    throw new \Parm\Exception\ErrorException('"id" is an invalid column name for the Parm\DatabaseGenerator. It causes collisions with the function getId().');
+
+				if ($column['Field'] == "id" && $column['Key'] != "PRI") {
+                    throw new \Parm\Exception\ErrorException('"id" is an invalid column name unless it is the primary key for the Parm\DatabaseGenerator. It causes a collision with the function getId() which always returns the primary key.');
                 }
 
                 if ($column['Key'] == "PRI") {
                     $idFieldName = $column['Field'];
                     $columns[$key]['isPrimaryKey'] = true;
 
-					if (preg_match("/int\(/", $column['Type'])) {
+					if($column['Field'] != "id" && preg_match("/int\(/", $column['Type'])) {
 						$idFieldInt = 1;
 					}
 

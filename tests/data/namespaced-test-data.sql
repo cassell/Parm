@@ -15,13 +15,13 @@ CREATE TABLE `people` (
 
 CREATE TABLE `zipcodes` (
   `zipcode_id` int(11) unsigned NOT NULL AUTO_INCREMENT,
-  `zipcode` varchar(20) CHARACTER SET latin1 DEFAULT NULL,
-  `state` varchar(3) CHARACTER SET latin1 DEFAULT NULL,
+  `zipcode` varchar(20) DEFAULT NULL,
+  `state` varchar(3) DEFAULT NULL,
   `longitude` decimal(18,12) DEFAULT NULL,
   `latitude` decimal(18,12) DEFAULT NULL,
   `archived` tinyint(1) DEFAULT '0',
-  `city` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
-  `state_name` varchar(255) CHARACTER SET latin1 DEFAULT NULL,
+  `city` varchar(255) DEFAULT NULL,
+  `state_name` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`zipcode_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -1804,3 +1804,10 @@ VALUES
 	(1775,'17985','PA',-76.204940000000,40.909697000000,0,'Zion Grove','Pennsylvania'),
 	(1776,'18092','PA',-75.519580000000,40.465994000000,0,'Zionsville','Pennsylvania');
 
+CREATE TABLE `people_zipcodes_link` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `people_id` int(11) DEFAULT NULL,
+  `zipcodes_id` int(11) DEFAULT NULL,
+  `create_date` datetime DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

@@ -344,4 +344,55 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $newDelaware->delete();
     }
 
+	public function testIdAsPrimaryKeySave()
+	{
+		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+		$new->setPeopleId(9);
+		$new->setZipcodesId(66);
+		$new->setCreateDate(time());
+		$new->save();
+
+		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId($new->getId());
+		$this->assertEquals($new, $test);
+
+	}
+
+	public function testIdAsPrimaryKeyUpdate()
+	{
+		$update = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
+		$update->setPeopleId(10);
+		$update->save();
+
+		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
+		$this->assertEquals($update->getPeopleId(), $test->getPeopleId());
+
+
+	}
+
+	public function testIdAsPrimaryKeyDelete()
+	{
+		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+		$new->setPeopleId(5);
+		$new->setZipcodesId(50);
+		$new->setCreateDate(time());
+		$new->save();
+
+		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
+		$this->assertEquals($new->getPeopleId(), $test->getPeopleId());
+
+		$new->delete();
+
+		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
+		$this->assertNull($test);
+
+		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+		$new->setPeopleId(3);
+		$new->setZipcodesId(30);
+		$new->setCreateDate(time());
+		$new->save();
+
+		$this->assertEquals(3, $new->getId());
+
+	}
+
 }
