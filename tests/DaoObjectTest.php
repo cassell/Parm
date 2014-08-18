@@ -403,5 +403,10 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 		$this->assertEquals('a:3:{s:2:"id";i:1;s:8:"peopleId";s:2:"10";s:10:"zipcodesId";s:2:"66";}',serialize($test->toJson()));
 	}
 
+	public function testGetDateFieldValueNull()
+	{
+		$nullDateObject = \ParmTests\Dao\PeopleDaoObject::findId(6);
+		$this->assertEquals("", $nullDateObject->getCreateDate('Y-m-d'));
+	}
 
 }

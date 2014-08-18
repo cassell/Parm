@@ -209,24 +209,27 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
-    protected function getDateFieldValue($columnName,$format = null)
-    {
-		if($format != null)
+	protected function getDateFieldValue($columnName,$format = null)
+	{
+		if($format != null && $this->getFieldValue($columnName) != null)
 		{
 			// \Datetime::createFromFormat parses a date value format and sets the time of day to the current system time
 			// see http://php.net/manual/en/datetime.createfromformat.php for explanation
 			$dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDateStorageFormat(),$this->getFieldValue($columnName));
 
-			// setting the time to midnight as the expected value when pulling from a database
-			$dateTime->setTime(0,0,0);
+			if($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
+			{
+				// setting the time to midnight as the expected value when pulling from a database
+				$dateTime->setTime(0,0,0);
 
-			return $dateTime->format($format);
+				return $dateTime->format($format);
+			}
 		}
 		else
 		{
 			return $this->getFieldValue($columnName);
 		}
-    }
+	}
 
     protected function getDatetimeObjectFromField($columnName,$format)
     {
