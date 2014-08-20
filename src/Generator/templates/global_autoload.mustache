@@ -1,21 +1,19 @@
 <?php
 
 spl_autoload_register(function($class) {
-	
-	$classes = array();
-	
-	{{#tables}}
-	$classes[] = '{{className}}Table';
-	$classes[] = '{{className}}TableFunctions';
-	$classes[] = '{{className}}DaoObject';
-	$classes[] = '{{className}}DaoFactory';
-	{{/tables}}
-	
-	if(in_array($class, $classes))
-	{
-		require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.php';
-	}
-	
-});
 
-?>
+    $classes = array();
+
+    {{#tables}}
+    $classes[] = '{{className}}Table';
+    $classes[] = '{{className}}TableFunctions';
+    $classes[] = '{{className}}DaoObject';
+    $classes[] = '{{className}}DaoFactory';
+    {{/tables}}
+
+    if(in_array($class, $classes))
+    {
+        require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . $class . '.php';
+    }
+
+});

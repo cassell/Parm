@@ -26,14 +26,26 @@ trait {{className}}TableFunctions
 		return '{{tableName}}';
 	}
 
-	/**
-	 * Get the column name of the primary key field
-	 * @return string The primary key column name
+{{#idFieldName}}
+    /**
+     * Get the column name of the primary key field
+     * @return string The primary key column name
      */
-	public static function getIdField()
-	{
-		return self::{{idFieldNameAllCaps}}_COLUMN;
-	}
+    public static function getIdField()
+    {
+        return {{className}}Table::{{idFieldNameAllCaps}}_COLUMN;
+    }
+{{/idFieldName}}
+{{^idFieldName}}
+    /**
+     * This table or view does not have a primary key
+     * @return string The primary key column name
+     */
+    public static function getIdField()
+    {
+        return null;
+    }
+{{/idFieldName}}
 
 	/**
 	 * Get the factory associated with this object
