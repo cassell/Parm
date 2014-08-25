@@ -199,4 +199,32 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     }
 
+	public function testOrderBy()
+	{
+		$f = new CountryNationDaoFactory();
+		$f->orderBy("Region","asc");
+		$this->assertEquals(CountryNationDaoObject::findId(12),$f->getFirstObject());
+
+		$f = new CountryNationDaoFactory();
+		$f->orderBy("Region");
+		$this->assertEquals(CountryNationDaoObject::findId(12),$f->getFirstObject());
+
+		$f = new CountryNationDaoFactory();
+		$f->orderBy("Region","desc");
+		$this->assertEquals(CountryNationDaoObject::findId(19),$f->getFirstObject());
+
+		$f = new CountryNationDaoFactory();
+		$f->orderBy("Region","asc");
+		$f->orderBy("Name","DESC");
+		$this->assertEquals(CountryNationDaoObject::findId(188),$f->getFirstObject());
+
+		$f = new CountryNationDaoFactory();
+		$f->orderBy("Region asc, Name desc");
+		$this->assertEquals(CountryNationDaoObject::findId(188),$f->getFirstObject());
+
+
+
+	}
+
+
 }

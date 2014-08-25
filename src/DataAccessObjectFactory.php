@@ -465,14 +465,14 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         return $this->groupByClause;
     }
 
-    /**
-     * Add to the order by clause
-     * Usage: $f->orderBy("last_name","asc");
-     * @param  string           $field     The field to sort by
-     * @param  string           $direction The direction to sort. asc or desc
-     * @return DataAccessObjectFactory
-     */
-    public function orderBy($field, $direction = 'asc')
+	/**
+	 * Usage: $f->orderBy("last_name","asc");
+	 * Alt Usage: $f->orderBy("last_name, first_name");
+	 * @param $fieldOrSort The field to sort on or the order by clause
+	 * @param string $direction
+	 * @return $this
+	 */
+	public function orderBy($fieldOrSort, $direction = 'asc')
     {
         if ($this->getOrderByClause() == "") {
             $this->setOrderByClause("ORDER BY ");
@@ -480,7 +480,16 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
             $this->setOrderByClause($this->getOrderByClause() . ", ");
         }
 
-        $this->setOrderByClause($this->getOrderByClause() . "`".$this->escapeString($field)."` " . $this->escapeString($direction));
+		if(!strpos($fieldOrSort," ") && !strpos($fieldOrSort,","))
+		{
+			$this->setOrderByClause($this->getOrderByClause() . "`".$this->escapeString($fieldOrSort)."` " . $this->escapeString($direction));
+		}
+		else
+		{
+			$this->setOrderByClause($this->getOrderByClause().$this->escapeString($fieldOrSort));
+		}
+
+
 
         return $this;
     }
