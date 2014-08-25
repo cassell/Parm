@@ -482,14 +482,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
 		if(!strpos($fieldOrSort," ") && !strpos($fieldOrSort,","))
 		{
-			$this->setOrderByClause($this->getOrderByClause() . "`".$this->escapeString($fieldOrSort)."` " . $this->escapeString($direction));
+			$this->setOrderByClause($this->getOrderByClause() .$this->escapeString($fieldOrSort) . " " . $this->escapeString($direction));
 		}
 		else
 		{
-			$this->setOrderByClause($this->getOrderByClause().$this->escapeString($fieldOrSort));
+			$this->setOrderByClause($this->getOrderByClause() . $this->escapeString($fieldOrSort));
 		}
-
-
 
         return $this;
     }
