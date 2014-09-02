@@ -227,10 +227,8 @@ abstract class DataAccessObject extends Row implements TableInterface
                 return $dateTime->format($format);
             }
         }
-        else
-        {
-            return $this->getFieldValue($columnName);
-        }
+
+		return $this->getFieldValue($columnName);
     }
 
     protected function getDatetimeObjectFromField($columnName,$format)
@@ -259,15 +257,17 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     protected function getDatetimeFieldValue($columnName,$format = null)
     {
-        if($format != null)
+		if($format != null && $this->getFieldValue($columnName) != null)
         {
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(),$this->getFieldValue($columnName));
-            return $dateTime->format($format);
+			$dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(),$this->getFieldValue($columnName));
+
+			if($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
+			{
+				return $dateTime->format($format);
+			}
         }
-        else
-        {
-            return $this->getFieldValue($columnName);
-        }
+
+        return $this->getFieldValue($columnName);
     }
 
     protected function setBooleanFieldValue($columnName, $val)
