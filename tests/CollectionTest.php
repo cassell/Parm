@@ -26,25 +26,25 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
         foreach (new \Parm\Collection($f) as $zipcode) {
 
-            $zipCodeTotal += (int) $zipcode->getZipcode();
+            $zipCodeTotal += (int)$zipcode->getZipcode();
         }
 
-        $this->assertEquals(29498849,$zipCodeTotal);
+        $this->assertEquals(29498849, $zipCodeTotal);
 
     }
 
-	public function testCollectionCount()
-	{
-		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
-		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
-		$this->assertEquals(9,$f->count());
+    public function testCollectionCount()
+    {
+        $f = new \ParmTests\Dao\ZipcodesDaoFactory();
+        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
+        $this->assertEquals(9, $f->count());
 
-		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
-		$f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
-		$collection = $f->getCollection();
-		$this->assertEquals(9,$collection->getCount());
+        $f = new \ParmTests\Dao\ZipcodesDaoFactory();
+        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
+        $collection = $f->getCollection();
+        $this->assertEquals(9, $collection->getCount());
 
 
-	}
+    }
 
 }

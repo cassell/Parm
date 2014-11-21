@@ -6,7 +6,7 @@ class MysqlDatabaseNodeTest extends PHPUnit_Framework_TestCase
 {
     public function testConnection()
     {
-        $node = new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']);
+        $node = new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'], $GLOBALS['db_namespaced_host'], $GLOBALS['db_namespaced_username'], $GLOBALS['db_namespaced_password']);
 
         if ($node instanceOf \Parm\DatabaseNode) {
             $connection = $node->getConnection();

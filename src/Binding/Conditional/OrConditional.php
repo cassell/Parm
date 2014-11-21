@@ -2,8 +2,8 @@
 namespace Parm\Binding\Conditional;
 
 /**
-* Conditional that will join clauses with OR
-*/
+ * Conditional that will join clauses with OR
+ */
 class OrConditional extends Conditional
 {
     /**

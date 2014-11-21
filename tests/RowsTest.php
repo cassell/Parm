@@ -13,10 +13,10 @@ class RowsTest extends PHPUnit_Framework_TestCase
         $zipCodeTotal = 0;
 
         foreach ($dp->getRows() as $row) {
-            $zipCodeTotal += (int) $row['zipcode'];
+            $zipCodeTotal += (int)$row['zipcode'];
         }
 
-        $this->assertEquals(148551,$zipCodeTotal);
+        $this->assertEquals(148551, $zipCodeTotal);
 
     }
 
@@ -30,14 +30,14 @@ class RowsTest extends PHPUnit_Framework_TestCase
         $rows = $dp->getRows();
 
         foreach ($rows as $row) {
-            $zipCodeTotal += (int) $row['zipcode'];
+            $zipCodeTotal += (int)$row['zipcode'];
         }
 
         foreach ($rows as $row) {
-            $zipCodeTotal += (int) $row['zipcode'];
+            $zipCodeTotal += (int)$row['zipcode'];
         }
 
-        $this->assertEquals(148551 * 2,$zipCodeTotal);
+        $this->assertEquals(148551 * 2, $zipCodeTotal);
 
     }
 
@@ -52,12 +52,12 @@ class RowsTest extends PHPUnit_Framework_TestCase
 
         for ($i = 0; $i < 100; $i++) {
             foreach ($rows as $row) {
-                $zipCodeTotal += (int) $row['zipcode'];
+                $zipCodeTotal += (int)$row['zipcode'];
             }
 
         }
 
-        $this->assertEquals(148551 * 100,$zipCodeTotal);
+        $this->assertEquals(148551 * 100, $zipCodeTotal);
 
     }
 

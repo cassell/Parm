@@ -81,13 +81,13 @@ class DatabaseGenerator
                 throw new \Parm\Exception\ErrorException('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
             }
             try {
-                chmod($this->destinationDirectory,self::$DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
+                chmod($this->destinationDirectory, self::$DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
             } catch (\Exception $e) {
                 throw new \Parm\Exception\ErrorException('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
             }
         }
 
-        $files = glob($this->destinationDirectory.'/*.php');
+        $files = glob($this->destinationDirectory . '/*.php');
 
         if ($files != null) {
             foreach ($files as $file) {
@@ -107,13 +107,13 @@ class DatabaseGenerator
 
                 $m = new \Mustache_Engine;
 
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'Table.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_interface.mustache'),$data));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/' . $data['className'] . 'Table.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_interface.mustache'), $data));
 
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'TableFunctions.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_trait.mustache'),$data));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/' . $data['className'] . 'TableFunctions.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/table_trait.mustache'), $data));
 
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoObject.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.mustache'),$data));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/' . $data['className'] . 'DaoObject.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_object.mustache'), $data));
 
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/' . $data['className'] . 'DaoFactory.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.mustache'),$data));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/' . $data['className'] . 'DaoFactory.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/dao_factory.mustache'), $data));
 
             }
 
@@ -123,12 +123,12 @@ class DatabaseGenerator
 
             // global namespace file
             if ($this->generatedNamespace != "\\" && $this->generatedNamespace != "") {
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/alias_all_tables_to_global_namespace.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'),$globalNamespaceData));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/alias_all_tables_to_global_namespace.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'), $globalNamespaceData));
 
                 //autoloader
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/namespaced_autoload.mustache'),$globalNamespaceData));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/autoload.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/namespaced_autoload.mustache'), $globalNamespaceData));
             } else {
-                $this->writeContentsToFile( rtrim($this->destinationDirectory,'/') . '/autoload.php' , $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'),$globalNamespaceData));
+                $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/autoload.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'), $globalNamespaceData));
             }
         } else {
             throw new \Parm\Exception\ErrorException("No tables in database.");
@@ -148,9 +148,9 @@ class DatabaseGenerator
 
         $tableNames = array();
 
-        $dp->process(function ($row) use (&$tableNames,$databaseName) {
+        $dp->process(function ($row) use (&$tableNames, $databaseName) {
 
-            $tableNames[] = $row['Tables_in_'.$databaseName];
+            $tableNames[] = $row['Tables_in_' . $databaseName];
         });
 
         return $tableNames;
@@ -163,7 +163,7 @@ class DatabaseGenerator
     public function getTemplatingDataFromTableName($tableName)
     {
         $idFieldName = '';
-		$idFieldInt = 0;
+        $idFieldInt = 0;
         $defaultValuePack = array();
         $fieldsPack = array();
         $bindingsPack = array();
@@ -178,7 +178,7 @@ class DatabaseGenerator
         if ($columns != null && count($columns) > 0) {
             foreach ($columns as $key => $column) {
 
-				if ($column['Field'] == "id" && $column['Key'] != "PRI") {
+                if ($column['Field'] == "id" && $column['Key'] != "PRI") {
                     throw new \Parm\Exception\ErrorException('"id" is an invalid column name unless it is the primary key for the Parm\DatabaseGenerator. It causes a collision with the function getId() which always returns the primary key.');
                 }
 
@@ -186,9 +186,9 @@ class DatabaseGenerator
                     $idFieldName = $column['Field'];
                     $columns[$key]['isPrimaryKey'] = true;
 
-					if($column['Field'] != "id" && preg_match("/int\(/", $column['Type'])) {
-						$idFieldInt = 1;
-					}
+                    if ($column['Field'] != "id" && preg_match("/int\(/", $column['Type'])) {
+                        $idFieldInt = 1;
+                    }
 
                 } else {
                     $columns[$key]['isPrimaryKey'] = false;
@@ -228,37 +228,37 @@ class DatabaseGenerator
                     $columns[$key]['typeString'] = 1;
                 }
 
-                $defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'","\'",$column['Default']) . "'");
+                $defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'", "\'", $column['Default']) . "'");
 
             }
         }
 
-        return array(	'tableName' => $tableName,
-                        'variableName' => \Parm\Row::columnToCamelCase($tableName),
-                        'className' => $className,
-                        'databaseName' => $this->databaseNode->serverDatabaseName,
-						'idFieldIsInteger' => $idFieldInt,
-                        'idFieldName' => $idFieldName,
-                        'idFieldNameAllCaps' => strtoupper($idFieldName),
-                        'namespace' => $this->generatedNamespace,
-                        'autoloaderNamespace' => $this->generatedNamespace,
-                        'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
-                        'namespaceLength' => strlen($this->generatedNamespace),
-                        'columns' => $columns,
-                        'defaultValuePack' => implode(", ", $defaultValuePack),
-                        'fieldList' => implode(", ", $fieldsPack),
-                        'bindingsPack' => implode("\n", $bindingsPack),
+        return array('tableName' => $tableName,
+            'variableName' => \Parm\Row::columnToCamelCase($tableName),
+            'className' => $className,
+            'databaseName' => $this->databaseNode->serverDatabaseName,
+            'idFieldIsInteger' => $idFieldInt,
+            'idFieldName' => $idFieldName,
+            'idFieldNameAllCaps' => strtoupper($idFieldName),
+            'namespace' => $this->generatedNamespace,
+            'autoloaderNamespace' => $this->generatedNamespace,
+            'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
+            'namespaceLength' => strlen($this->generatedNamespace),
+            'columns' => $columns,
+            'defaultValuePack' => implode(", ", $defaultValuePack),
+            'fieldList' => implode(", ", $fieldsPack),
+            'bindingsPack' => implode("\n", $bindingsPack),
         );
 
     }
 
-    private function writeContentsToFile($fileName,$contents)
+    private function writeContentsToFile($fileName, $contents)
     {
         if (file_exists($fileName) && !is_writable($fileName)) {
             throw new \Parm\Exception\ErrorException('File is unwritable: ' . $fileName);
-        } elseif (@file_put_contents($fileName,$contents) !== FALSE) {
+        } elseif (@file_put_contents($fileName, $contents) !== FALSE) {
             try {
-                @chmod($fileName,self::$GENERATED_CODE_FILE_PERMISSIONS);
+                @chmod($fileName, self::$GENERATED_CODE_FILE_PERMISSIONS);
             } catch (\Exception $e) {
                 throw new \Parm\Exception\ErrorException('Unable to make file "' . htmlentities($fileName) . '" read/write by all.');
             }

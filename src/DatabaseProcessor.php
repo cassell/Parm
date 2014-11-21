@@ -103,7 +103,7 @@ class DatabaseProcessor
 
         $conn = $this->databaseNode->getConnection();
 
-        $result = $this->getMySQLResult($this->getSQL(),$conn);
+        $result = $this->getMySQLResult($this->getSQL(), $conn);
 
         if ($result != null) {
             if ($this->getNumberOfRowsFromResult($result) > 0) {
@@ -121,7 +121,7 @@ class DatabaseProcessor
     /**
      * Set the SQL to process
      *
-     * @param  string            $sql
+     * @param  string $sql
      * @return DatabaseProcessor
      */
     public function setSQL($sql)
@@ -154,7 +154,7 @@ class DatabaseProcessor
     /**
      * Loop through the rows of a query and process with a closure
      *
-     * @param  callable          $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
+     * @param  callable $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
      * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
     public function process($closure)
@@ -173,7 +173,7 @@ class DatabaseProcessor
      * You can use this on millions of rows without memory problems
      * Does lock the table to writes on some databases
      *
-     * @param  callable          $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
+     * @param  callable $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
      * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
     public function unbufferedProcess($closure)
@@ -200,7 +200,7 @@ class DatabaseProcessor
      */
     public function getNumberOfRowsFromResult($result)
     {
-        return (int) $result->num_rows;
+        return (int)$result->num_rows;
     }
 
     /**
@@ -239,7 +239,7 @@ class DatabaseProcessor
     /**
      * Get a MySQL result from a SQL string
      *
-     * @param  string  $sql The SQL to execute
+     * @param  string $sql The SQL to execute
      * @return \mysqli result
      */
     public function getMySQLResult($sql)
@@ -272,12 +272,12 @@ class DatabaseProcessor
     /**
      * Convert a datetime from one timezone to another using the MySQL database as the timezone source. Use the "US/Eastern" format or "Europe/London" formats
      *
-     * @param  timestamp|string|DateTime $dateTime       The datetime in the source timezone
-     * @param  string                    $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
-     * @param  string                    $destTimezone   The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @param  timestamp|string|DateTime $dateTime The datetime in the source timezone
+     * @param  string $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @param  string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
      * @return \DateTime
      */
-    public function convertTimezone($dateTime,$sourceTimezone,$destTimezone)
+    public function convertTimezone($dateTime, $sourceTimezone, $destTimezone)
     {
         if ($dateTime === NULL) {
             return NULL;
@@ -320,27 +320,27 @@ class DatabaseProcessor
     {
         echo "[";
 
-            $firstRecord = true;
+        $firstRecord = true;
 
-            $conn = $this->databaseNode->getConnection();
+        $conn = $this->databaseNode->getConnection();
 
-            $conn->real_query($this->getSQL());
+        $conn->real_query($this->getSQL());
 
-            $result = $conn->use_result();
+        $result = $conn->use_result();
 
-            while ($row = $result->fetch_assoc()) {
-                if (!$firstRecord) {
-                    echo ",";
-                } else {
-                    $firstRecord = false;
-                }
-
-                $obj = $this->loadDataObject($row);
-
-                echo $obj->toJSONString();
+        while ($row = $result->fetch_assoc()) {
+            if (!$firstRecord) {
+                echo ",";
+            } else {
+                $firstRecord = false;
             }
 
-            $this->freeResult($result);
+            $obj = $this->loadDataObject($row);
+
+            echo $obj->toJSONString();
+        }
+
+        $this->freeResult($result);
 
         echo "]";
 
@@ -362,16 +362,16 @@ class DatabaseProcessor
      */
     public static function formatTextCSV($text)
     {
-        $text = preg_replace("/<(.|\n)*?>/","",$text);
+        $text = preg_replace("/<(.|\n)*?>/", "", $text);
 
-        $text = str_replace("<br/>","\n",$text);
+        $text = str_replace("<br/>", "\n", $text);
 
-        $text = str_replace("&nbsp;"," ",$text);
+        $text = str_replace("&nbsp;", " ", $text);
 
-        if (strpos($text,'"') === true) {
-            $text = '"' . str_replace('"','""',$text) . '"';
-        } elseif (strpos($text,',') || strpos($text,"\n") || strpos($text,"\r")) {
-            $text = '"' . str_replace('"','""',$text) . '"';
+        if (strpos($text, '"') === true) {
+            $text = '"' . str_replace('"', '""', $text) . '"';
+        } elseif (strpos($text, ',') || strpos($text, "\n") || strpos($text, "\r")) {
+            $text = '"' . str_replace('"', '""', $text) . '"';
         }
 
         return html_entity_decode($text);

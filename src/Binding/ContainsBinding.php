@@ -33,7 +33,7 @@ class ContainsBinding extends SQLString
      * @param $factory DataAccessObjectFactory
      * @return string
      */
-    public function getSQL(\Parm\DataAccessObjectFactory$factory)
+    public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
         return $factory->escapeString($this->field) . " LIKE '%" . $factory->escapeString(str_replace("_", "\_", str_replace("%", "\%", $this->query))) . "%'";
     }

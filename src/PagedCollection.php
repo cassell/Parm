@@ -17,13 +17,13 @@ class PagedCollection extends Collection
 
         $this->factory = $factory;
         $this->pageSize = $pageSize;
-        $this->count = (int) $this->factory->count();
+        $this->count = (int)$this->factory->count();
         $this->position = 0;
     }
 
     public function rewind()
     {
-        $this->factory->limit($this->pageSize,0);
+        $this->factory->limit($this->pageSize, 0);
         $this->result = $this->factory->getMySQLResult($this->factory->getSQL());
         $this->position = 0;
     }
@@ -38,7 +38,7 @@ class PagedCollection extends Collection
         ++$this->position;
 
         if ($this->position % $this->pageSize == 0) {
-            $this->factory->limit($this->pageSize,$this->position);
+            $this->factory->limit($this->pageSize, $this->position);
             $this->result = $this->factory->getMySQLResult($this->factory->getSQL());
         }
     }

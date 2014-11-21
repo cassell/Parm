@@ -16,7 +16,7 @@ abstract class DataAccessObject extends Row implements TableInterface
             $row = static::getDefaultRow();
         }
 
-        if (!array_key_exists(static::getIdField(),$row)) {
+        if (!array_key_exists(static::getIdField(), $row)) {
             $row[static::getIdField()] = null;
         }
 
@@ -24,7 +24,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
         if ($this->isNewObject()) {
             foreach (array_keys($row) as $field) {
-                if (in_array($field,static::getFields())) {
+                if (in_array($field, static::getFields())) {
                     $this->addModifiedColumn($field);
                 }
             }
@@ -49,7 +49,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * Find an object by ID
-     * @param  integer     $id ID of the row in the database
+     * @param  integer $id ID of the row in the database
      * @return object|null The record from the database
      */
     public static function findId($id)
@@ -105,7 +105,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     {
         if (!$this->isNewObject()) {
             $f = static::getFactory();
-            $f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int) $this->getId());
+            $f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
         } else {
             throw new \Parm\Exception\RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }
@@ -135,9 +135,8 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function duplicateAsNewObject()
     {
-        $data = (array) $this;
-        if(static::getIdField())
-        {
+        $data = (array)$this;
+        if (static::getIdField()) {
             unset($data[static::getIdField()]);
         }
         return new static($data);
@@ -183,7 +182,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName,(int) $val);
+            return $this->setFieldValue($columnName, (int)$val);
         }
     }
 
@@ -193,7 +192,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val === null) {
             return null;
         } else {
-            return (int) $val;
+            return (int)$val;
         }
     }
 
@@ -211,27 +210,26 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
-    protected function getDateFieldValue($columnName,$format = null)
+    protected function getDateFieldValue($columnName, $format = null)
     {
-        if($format != null && $this->getFieldValue($columnName) != null)
-        {
+        if ($format != null && $this->getFieldValue($columnName) != null) {
             // \Datetime::createFromFormat parses a date value format and sets the time of day to the current system time
             // see http://php.net/manual/en/datetime.createfromformat.php for explanation
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDateStorageFormat(),$this->getFieldValue($columnName));
+            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDateStorageFormat(), $this->getFieldValue($columnName));
 
-            if($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
+            if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
             {
                 // setting the time to midnight as the expected value when pulling from a database
-                $dateTime->setTime(0,0,0);
+                $dateTime->setTime(0, 0, 0);
 
                 return $dateTime->format($format);
             }
         }
 
-		return $this->getFieldValue($columnName);
+        return $this->getFieldValue($columnName);
     }
 
-    protected function getDatetimeObjectFromField($columnName,$format)
+    protected function getDatetimeObjectFromField($columnName, $format)
     {
         $val = $this->getFieldValue($columnName);
         if ($val != null && $format != null) {
@@ -255,16 +253,15 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
-    protected function getDatetimeFieldValue($columnName,$format = null)
+    protected function getDatetimeFieldValue($columnName, $format = null)
     {
-		if($format != null && $this->getFieldValue($columnName) != null)
-        {
-			$dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(),$this->getFieldValue($columnName));
+        if ($format != null && $this->getFieldValue($columnName) != null) {
+            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
 
-			if($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
-			{
-				return $dateTime->format($format);
-			}
+            if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
+            {
+                return $dateTime->format($format);
+            }
         }
 
         return $this->getFieldValue($columnName);
@@ -275,7 +272,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName,$val ? 1 : 0);
+            return $this->setFieldValue($columnName, $val ? 1 : 0);
         }
     }
 
@@ -285,7 +282,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val === null) {
             return null;
         } else {
-            return (bool) $val;
+            return (bool)$val;
         }
     }
 
@@ -294,7 +291,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val == null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName,(float) $val);
+            return $this->setFieldValue($columnName, (float)$val);
         }
     }
 
@@ -304,7 +301,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($val == null) {
             return null;
         } else {
-            return (float) $val;
+            return (float)$val;
         }
     }
 

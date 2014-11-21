@@ -28,26 +28,26 @@ class InBinding extends SQLString
         $this->array = $array;
     }
 
-	public function getSQL(\Parm\DataAccessObjectFactory $factory)
-	{
-		if (count($this->array) == 1) {
-			return $factory->escapeString($this->field) . " = " . $factory->escapeString(reset($this->array));
-		} elseif (count($this->array) > 1) {
+    public function getSQL(\Parm\DataAccessObjectFactory $factory)
+    {
+        if (count($this->array) == 1) {
+            return $factory->escapeString($this->field) . " = " . $factory->escapeString(reset($this->array));
+        } elseif (count($this->array) > 1) {
 
-			$escaped = array();
+            $escaped = array();
 
-			foreach ($this->array as $key => $item) {
-				if (is_numeric($item)) {
-					$escaped[] = $item;
-				} else {
-					$escaped[] = "'" . $factory->escapeString($item) . "'";
-				}
-			}
+            foreach ($this->array as $key => $item) {
+                if (is_numeric($item)) {
+                    $escaped[] = $item;
+                } else {
+                    $escaped[] = "'" . $factory->escapeString($item) . "'";
+                }
+            }
 
-			return $factory->escapeString($this->field) . " IN (" . implode(",", $escaped) . ")";
-		} else {
-			throw new \Parm\Exception\ErrorException("The array passed to the NotInBinding is empty");
-		}
-	}
+            return $factory->escapeString($this->field) . " IN (" . implode(",", $escaped) . ")";
+        } else {
+            throw new \Parm\Exception\ErrorException("The array passed to the NotInBinding is empty");
+        }
+    }
 
 }

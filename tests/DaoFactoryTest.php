@@ -111,27 +111,27 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     public function testSelectClause()
     {
-        $f =  new ParmTests\Dao\PeopleDaoFactory();
+        $f = new ParmTests\Dao\PeopleDaoFactory();
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.zipcode_id,people.archived,people.verified,people.test_data_blob,people.create_date,people.create_datetime,people.create_timestamp", $f->getSelectClause());
     }
 
     public function testSetSelectFields()
     {
-        $f =  new ParmTests\Dao\PeopleDaoFactory();
-        $f->setSelectFields("first_name","last_name");
+        $f = new ParmTests\Dao\PeopleDaoFactory();
+        $f->setSelectFields("first_name", "last_name");
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
     }
 
     public function testSingleSelectFields()
     {
-        $f =  new ParmTests\Dao\PeopleDaoFactory();
+        $f = new ParmTests\Dao\PeopleDaoFactory();
         $f->setSelectFields("last_name");
         $this->assertEquals("SELECT people.people_id,people.last_name", $f->getSelectClause());
     }
 
     public function testAddSelectField()
     {
-        $f =  new ParmTests\Dao\PeopleDaoFactory();
+        $f = new ParmTests\Dao\PeopleDaoFactory();
         $f->setSelectFields(array("first_name"));
         $f->addSelectField("last_name");
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
@@ -141,7 +141,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
     {
         $exceptionCaught = false;
         try {
-            $f =  new ParmTests\Dao\PeopleDaoFactory();
+            $f = new ParmTests\Dao\PeopleDaoFactory();
             $f->setSelectFields(null);
         } catch (\Parm\Exception\ErrorException $e) {
             $exceptionCaught = true;
@@ -155,7 +155,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $f = new CountryNationDaoFactory();
         $countries = $f->getObjects();
 
-        $this->assertEquals(239,count($countries));
+        $this->assertEquals(239, count($countries));
 
     }
 
@@ -168,63 +168,63 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
     public function testWorkingWithBindings()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
-        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
         $f->addBinding("latitude > 42.1");
 
         $zipCodeTotal = 0;
 
         foreach ($f->getObjects() as $zipcode) {
 
-            $zipCodeTotal += (int) $zipcode->getZipcode();
+            $zipCodeTotal += (int)$zipcode->getZipcode();
         }
 
-        $this->assertEquals(99028,$zipCodeTotal);
+        $this->assertEquals(99028, $zipCodeTotal);
 
     }
 
     public function testPageProcess()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
-        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN,"Erie");
+        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
         $f->addBinding("latitude > 42.1");
 
         $zipCodeTotal = 0;
 
-        $f->pagedProcess(2,function ($zipcode) use (&$zipCodeTotal) {
+        $f->pagedProcess(2, function ($zipcode) use (&$zipCodeTotal) {
 
-            $zipCodeTotal += (int) $zipcode->getZipcode();
+            $zipCodeTotal += (int)$zipcode->getZipcode();
         });
 
-        $this->assertEquals(99028,$zipCodeTotal);
+        $this->assertEquals(99028, $zipCodeTotal);
 
     }
 
-	public function testOrderBy()
-	{
-		$f = new CountryNationDaoFactory();
-		$f->orderBy("Region","asc");
-		$this->assertEquals(CountryNationDaoObject::findId(12),$f->getFirstObject());
+    public function testOrderBy()
+    {
+        $f = new CountryNationDaoFactory();
+        $f->orderBy("Region", "asc");
+        $this->assertEquals(CountryNationDaoObject::findId(12), $f->getFirstObject());
 
-		$f = new CountryNationDaoFactory();
-		$f->orderBy("Region");
-		$this->assertEquals(CountryNationDaoObject::findId(12),$f->getFirstObject());
+        $f = new CountryNationDaoFactory();
+        $f->orderBy("Region");
+        $this->assertEquals(CountryNationDaoObject::findId(12), $f->getFirstObject());
 
-		$f = new CountryNationDaoFactory();
-		$f->orderBy("Region","desc");
-		$this->assertEquals(CountryNationDaoObject::findId(16),$f->getFirstObject());
+        $f = new CountryNationDaoFactory();
+        $f->orderBy("Region", "desc");
+        $f->orderBy("Name", "asc");
+        $this->assertEquals(CountryNationDaoObject::findId(16), $f->getFirstObject());
 
-		$f = new CountryNationDaoFactory();
-		$f->orderBy("Region","asc");
-		$f->orderBy("Name","DESC");
-		$this->assertEquals(CountryNationDaoObject::findId(188),$f->getFirstObject());
+        $f = new CountryNationDaoFactory();
+        $f->orderBy("Region", "asc");
+        $f->orderBy("Name", "DESC");
+        $this->assertEquals(CountryNationDaoObject::findId(188), $f->getFirstObject());
 
-		$f = new CountryNationDaoFactory();
-		$f->orderBy("Region asc, Name desc");
-		$this->assertEquals(CountryNationDaoObject::findId(188),$f->getFirstObject());
+        $f = new CountryNationDaoFactory();
+        $f->orderBy("Region asc, Name desc");
+        $this->assertEquals(CountryNationDaoObject::findId(188), $f->getFirstObject());
 
 
-
-	}
+    }
 
 
 }

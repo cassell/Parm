@@ -17,7 +17,7 @@ class Rows implements \Iterator
     {
         $this->processor = $processor;
         $this->result = $this->processor->getMySQLResult($processor->getSQL());
-        $this->count = (int) $this->processor->getNumberOfRowsFromResult($this->result);
+        $this->count = (int)$this->processor->getNumberOfRowsFromResult($this->result);
         $this->position = 0;
     }
 
@@ -36,7 +36,7 @@ class Rows implements \Iterator
 
     public function current()
     {
-        if (array_key_exists($this->position,$this->cache)) {
+        if (array_key_exists($this->position, $this->cache)) {
             return $this->cache[$this->position];
         } else {
             return $this->cache[$this->position] = $this->processor->loadDataObject($this->result->fetch_assoc());
@@ -81,7 +81,7 @@ class Rows implements \Iterator
         $data = array();
 
         foreach ($this as $row) {
-            $data[] = (array) $row;
+            $data[] = (array)$row;
         }
 
         return $data;

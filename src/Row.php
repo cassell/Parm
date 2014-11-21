@@ -15,7 +15,7 @@ class Row extends \ArrayObject
      */
     public function __construct(Array $row)
     {
-        parent::__construct($row,\ArrayObject::ARRAY_AS_PROPS);
+        parent::__construct($row, \ArrayObject::ARRAY_AS_PROPS);
     }
 
     /**
@@ -48,7 +48,7 @@ class Row extends \ArrayObject
     {
         $result = '';
 
-        $segments = explode("_", str_replace(array("-"," "), "_", $columnName));
+        $segments = explode("_", str_replace(array("-", " "), "_", $columnName));
         for ($i = 0; $i < count($segments); $i++) {
             $segment = $segments[$i];
             if ($i == 0)

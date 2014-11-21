@@ -2,8 +2,8 @@
 namespace Parm\Binding\Conditional;
 
 /**
-* Conditional that will join clauses with AND
-*/
+ * Conditional that will join clauses with AND
+ */
 class AndConditional extends Conditional
 {
     /**

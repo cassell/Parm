@@ -14,8 +14,8 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
     {
         $sharon = ParmTests\Dao\ZipcodesDaoObject::findId(1445);
         $sharonClone = clone $sharon;
-        $this->assertEquals($sharon->getZipcode(),$sharonClone->getZipcode());
-        $this->assertEquals($sharon->getId(),$sharonClone->getId());
+        $this->assertEquals($sharon->getZipcode(), $sharonClone->getZipcode());
+        $this->assertEquals($sharon->getId(), $sharonClone->getId());
     }
 
     public function testGetDatabaseName()
@@ -98,38 +98,38 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new = new ParmTests\Dao\PeopleDaoObject();
         $new->setCreateDatetime($time);
 
-        $this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime());
+        $this->assertEquals(date("Y-m-d H:i:s", $time), $new->getCreateDatetime());
 
     }
 
-	public function testGetDateFieldValue()
-	{
-		$time = time();
+    public function testGetDateFieldValue()
+    {
+        $time = time();
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setCreateDate($time);
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setCreateDate($time);
 
-		$this->assertEquals(date("Y-m-d",$time), $new->getCreateDate());
+        $this->assertEquals(date("Y-m-d", $time), $new->getCreateDate());
 
-		$this->assertEquals(date("Y-m-d 00:00:00",$time), $new->getCreateDate("Y-m-d H:i:s"));
-		$this->assertNotEquals(date("Y-m-d H:i:s",$time), $new->getCreateDate("Y-m-d H:i:s"));
+        $this->assertEquals(date("Y-m-d 00:00:00", $time), $new->getCreateDate("Y-m-d H:i:s"));
+        $this->assertNotEquals(date("Y-m-d H:i:s", $time), $new->getCreateDate("Y-m-d H:i:s"));
 
-		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDate("m/d/Y"));
+        $this->assertEquals(date("m/d/Y", $time), $new->getCreateDate("m/d/Y"));
 
-	}
+    }
 
-	public function testGetDatetimeFieldValue()
-	{
-		$time = time();
+    public function testGetDatetimeFieldValue()
+    {
+        $time = time();
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setCreateDatetime($time);
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setCreateDatetime($time);
 
-		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime());
-		$this->assertEquals(date("Y-m-d H:i:s",$time), $new->getCreateDatetime("Y-m-d H:i:s"));
-		$this->assertEquals(date("m/d/Y",$time), $new->getCreateDatetime("m/d/Y"));
+        $this->assertEquals(date("Y-m-d H:i:s", $time), $new->getCreateDatetime());
+        $this->assertEquals(date("Y-m-d H:i:s", $time), $new->getCreateDatetime("Y-m-d H:i:s"));
+        $this->assertEquals(date("m/d/Y", $time), $new->getCreateDatetime("m/d/Y"));
 
-	}
+    }
 
     public function testInsertNewObject()
     {
@@ -145,98 +145,98 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
         if ($test != null) {
             $this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getArchived(), $new->getArchived());
+            $this->assertEquals($test->getArchived(), $new->getArchived());
         } else {
             $this->fail();
         }
 
-		echo $test->getArchived();
+        echo $test->getArchived();
 
     }
 
-	public function testInsertBooleanValuesNullAllowed()
-	{
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setArchived(true);
-		$new->save();
+    public function testInsertBooleanValuesNullAllowed()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setFirstName("Winnie");
+        $new->setLastName("Bool");
+        $new->setArchived(true);
+        $new->save();
 
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getArchived(), true);
-		} else {
-			$this->fail();
-		}
+        if ($test != null) {
+            $this->assertEquals($test->getLastName(), $new->getLastName());
+            $this->assertEquals($test->getArchived(), true);
+        } else {
+            $this->fail();
+        }
 
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setArchived(false);
-		$new->save();
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setFirstName("Winnie");
+        $new->setLastName("Bool");
+        $new->setArchived(false);
+        $new->save();
 
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getArchived(), false);
-		} else {
-			$this->fail();
-		}
+        if ($test != null) {
+            $this->assertEquals($test->getLastName(), $new->getLastName());
+            $this->assertEquals($test->getArchived(), false);
+        } else {
+            $this->fail();
+        }
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setArchived(NULL);
-		$new->save();
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setFirstName("Winnie");
+        $new->setLastName("Bool");
+        $new->setArchived(NULL);
+        $new->save();
 
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getArchived(), NULL);
-		} else {
-			$this->fail();
-		}
+        if ($test != null) {
+            $this->assertEquals($test->getLastName(), $new->getLastName());
+            $this->assertEquals($test->getArchived(), NULL);
+        } else {
+            $this->fail();
+        }
 
-	}
+    }
 
-	public function testInsertBooleanValuesNullNotAllowed()
-	{
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setVerified(true);
-		$new->save();
+    public function testInsertBooleanValuesNullNotAllowed()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setFirstName("Winnie");
+        $new->setLastName("Bool");
+        $new->setVerified(true);
+        $new->save();
 
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getVerified(), true);
-		} else {
-			$this->fail();
-		}
+        if ($test != null) {
+            $this->assertEquals($test->getLastName(), $new->getLastName());
+            $this->assertEquals($test->getVerified(), true);
+        } else {
+            $this->fail();
+        }
 
-		$new = new ParmTests\Dao\PeopleDaoObject();
-		$new->setFirstName("Winnie");
-		$new->setLastName("Bool");
-		$new->setVerified(false);
-		$new->save();
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setFirstName("Winnie");
+        $new->setLastName("Bool");
+        $new->setVerified(false);
+        $new->save();
 
-		$test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
-		if ($test != null) {
-			$this->assertEquals($test->getLastName(), $new->getLastName());
-			$this->assertEquals($test->getVerified(), false);
-		} else {
-			$this->fail();
-		}
+        if ($test != null) {
+            $this->assertEquals($test->getLastName(), $new->getLastName());
+            $this->assertEquals($test->getVerified(), false);
+        } else {
+            $this->fail();
+        }
 
-	}
+    }
 
     public function testInsertNewObjectByArray()
     {
@@ -244,13 +244,13 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
             "first_name" => "Mister",
             "last_name" => "Muenster",
             "archived" => "0",
-            ));
+        ));
         $new->save();
 
         $test = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
 
         if ($test != null) {
-            $this->assertEquals($new->getLastName(),$test->getLastName());
+            $this->assertEquals($new->getLastName(), $test->getLastName());
         } else {
             $this->fail();
         }
@@ -307,7 +307,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new->setZipcodeId(555);
         $new->setArchived(0);
 
-		$this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";s:1:"0";s:8:"verified";s:1:"0";s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
+        $this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";s:1:"0";s:8:"verified";s:1:"0";s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
 
     }
 
@@ -320,7 +320,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
     public function testJSONString()
     {
         $buchananBirthplace = ParmTests\Dao\ZipcodesDaoObject::findId(555);
-        $this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":555}',$buchananBirthplace->toJSONString());
+        $this->assertEquals('{"zipcodeId":"555","zipcode":"17224","state":"PA","longitude":"-77.906230000000","latitude":"39.957564000000","archived":"0","city":"Fort Loudon","stateName":"Pennsylvania","id":555}', $buchananBirthplace->toJSONString());
     }
 
     public function testDuplicateAsNewObject()
@@ -328,85 +328,85 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $fredonia = ParmTests\Dao\ZipcodesDaoObject::findId(565);
         $delaware = $fredonia->duplicateAsNewObject();
         $this->assertTrue($delaware->isNewObject());
-        $this->assertEquals($fredonia->getZipcode(),$delaware->getZipcode());
-        $this->assertEquals($fredonia['city'],$delaware['city']);
+        $this->assertEquals($fredonia->getZipcode(), $delaware->getZipcode());
+        $this->assertEquals($fredonia['city'], $delaware['city']);
         $delaware->setCity("Delaware Township");
         $delaware->save();
 
-        $this->assertEquals(1777,$delaware->getId());
+        $this->assertEquals(1777, $delaware->getId());
 
         $newDelaware = ParmTests\Dao\ZipcodesDaoObject::findId($delaware->getId());
 
-        $this->assertEquals("16124",$newDelaware->getZipcode());
-        $this->assertEquals("PA",$newDelaware->getState());
-        $this->assertEquals("Delaware Township",$newDelaware['city']);
+        $this->assertEquals("16124", $newDelaware->getZipcode());
+        $this->assertEquals("PA", $newDelaware->getState());
+        $this->assertEquals("Delaware Township", $newDelaware['city']);
 
         $newDelaware->delete();
     }
 
-	public function testIdAsPrimaryKeySave()
-	{
-		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
-		$new->setPeopleId(9);
-		$new->setZipcodesId(66);
-		$new->setCreateDate(time());
-		$new->save();
+    public function testIdAsPrimaryKeySave()
+    {
+        $new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+        $new->setPeopleId(9);
+        $new->setZipcodesId(66);
+        $new->setCreateDate(time());
+        $new->save();
 
-		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId($new->getId());
-		$this->assertEquals($new, $test);
+        $test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId($new->getId());
+        $this->assertEquals($new, $test);
 
-	}
+    }
 
-	public function testIdAsPrimaryKeyUpdate()
-	{
-		$update = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
-		$update->setPeopleId(10);
-		$update->save();
+    public function testIdAsPrimaryKeyUpdate()
+    {
+        $update = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
+        $update->setPeopleId(10);
+        $update->save();
 
-		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
-		$this->assertEquals($update->getPeopleId(), $test->getPeopleId());
+        $test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(1);
+        $this->assertEquals($update->getPeopleId(), $test->getPeopleId());
 
 
-	}
+    }
 
-	public function testIdAsPrimaryKeyDelete()
-	{
-		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
-		$new->setPeopleId(5);
-		$new->setZipcodesId(50);
-		$new->setCreateDate(time());
-		$new->save();
+    public function testIdAsPrimaryKeyDelete()
+    {
+        $new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+        $new->setPeopleId(5);
+        $new->setZipcodesId(50);
+        $new->setCreateDate(time());
+        $new->save();
 
-		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
-		$this->assertEquals($new->getPeopleId(), $test->getPeopleId());
+        $test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
+        $this->assertEquals($new->getPeopleId(), $test->getPeopleId());
 
-		$new->delete();
+        $new->delete();
 
-		$test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
-		$this->assertNull($test);
+        $test = \ParmTests\Dao\PeopleZipcodesLinkDaoObject::findId(2);
+        $this->assertNull($test);
 
-		$new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
-		$new->setPeopleId(3);
-		$new->setZipcodesId(30);
-		$new->setCreateDate(time());
-		$new->save();
+        $new = new \ParmTests\Dao\PeopleZipcodesLinkDaoObject();
+        $new->setPeopleId(3);
+        $new->setZipcodesId(30);
+        $new->setCreateDate(time());
+        $new->save();
 
-		$this->assertEquals(3, $new->getId());
+        $this->assertEquals(3, $new->getId());
 
-	}
+    }
 
-	public function testIdPrimaryKeyJSON()
-	{
-		$f = new \ParmTests\Dao\PeopleZipcodesLinkDaoFactory();
-		$f->setSelectFields([\ParmTests\Dao\PeopleZipcodesLinkDaoFactory::PEOPLE_ID_COLUMN,\ParmTests\Dao\PeopleZipcodesLinkDaoFactory::ZIPCODES_ID_COLUMN]);
-		$test = $f->getFirstObject();
-		$this->assertEquals('a:3:{s:2:"id";i:1;s:8:"peopleId";s:2:"10";s:10:"zipcodesId";s:2:"66";}',serialize($test->toJson()));
-	}
+    public function testIdPrimaryKeyJSON()
+    {
+        $f = new \ParmTests\Dao\PeopleZipcodesLinkDaoFactory();
+        $f->setSelectFields([\ParmTests\Dao\PeopleZipcodesLinkDaoFactory::PEOPLE_ID_COLUMN, \ParmTests\Dao\PeopleZipcodesLinkDaoFactory::ZIPCODES_ID_COLUMN]);
+        $test = $f->getFirstObject();
+        $this->assertEquals('a:3:{s:2:"id";i:1;s:8:"peopleId";s:2:"10";s:10:"zipcodesId";s:2:"66";}', serialize($test->toJson()));
+    }
 
-	public function testGetDateFieldValueNull()
-	{
-		$nullDateObject = \ParmTests\Dao\PeopleDaoObject::findId(6);
-		$this->assertEquals("", $nullDateObject->getCreateDate('Y-m-d'));
-	}
+    public function testGetDateFieldValueNull()
+    {
+        $nullDateObject = \ParmTests\Dao\PeopleDaoObject::findId(6);
+        $this->assertEquals("", $nullDateObject->getCreateDate('Y-m-d'));
+    }
 
 }

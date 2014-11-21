@@ -22,7 +22,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 
     public function testPassingNodeToConstructor()
     {
-        $dp = new Parm\DatabaseProcessor(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
+        $dp = new Parm\DatabaseProcessor(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'], $GLOBALS['db_namespaced_host'], $GLOBALS['db_namespaced_username'], $GLOBALS['db_namespaced_password']));
         $dp->setSQL('select * from people');
         $result = $dp->getArray();
     }
@@ -30,7 +30,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
     public function testPassingDatabaseToConstructor()
     {
         $db = new Parm\Database();
-        $db->setMaster(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));
+        $db->setMaster(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'], $GLOBALS['db_namespaced_host'], $GLOBALS['db_namespaced_username'], $GLOBALS['db_namespaced_password']));
         $dp = new Parm\DatabaseProcessor($db);
         $dp->setSQL('select * from people');
         $result = $dp->getArray();
@@ -74,7 +74,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $array = $dp->getArray();
 
         $this->assertTrue(is_array($array));
-        $this->assertEquals(6,count($array));
+        $this->assertEquals(6, count($array));
     }
 
     public function testGetArrayReturnsEmptyArray()
@@ -85,7 +85,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $array = $dp->getArray();
 
         $this->assertTrue(is_array($array));
-        $this->assertEquals(0,count($array));
+        $this->assertEquals(0, count($array));
     }
 
     public function testGetJSON()
@@ -105,7 +105,7 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
         $dp->setSQL("select zipcode from zipcodes where city = 'Scranton' order by zipcode asc");
 
-        $this->assertEquals("18503",$dp->getFirstField("zipcode"));
+        $this->assertEquals("18503", $dp->getFirstField("zipcode"));
     }
 
     public function testOutputJSONString()
@@ -119,23 +119,23 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 
         $json = ob_get_clean();
 
-        $this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]',$json);
+        $this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]', $json);
     }
 
     public function testConvertTimezone()
     {
         if (array_key_exists("mysql_timezones_loaded", $GLOBALS) && $GLOBALS['mysql_timezones_loaded'] == 1) {
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2013-12-31 23:59:59"),$dp->convertTimezone("2014-01-01 02:59:59", "US/Eastern", "US/Pacific"));
+            $this->assertEquals(new \DateTime("2013-12-31 23:59:59"), $dp->convertTimezone("2014-01-01 02:59:59", "US/Eastern", "US/Pacific"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"),$dp->convertTimezone("1123581321", "US/Pacific", "US/Central"));
+            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"), $dp->convertTimezone("1123581321", "US/Pacific", "US/Central"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"),$dp->convertTimezone(1123581321.5, "US/Pacific", "US/Central"));
+            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"), $dp->convertTimezone(1123581321.5, "US/Pacific", "US/Central"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 14:55:21"),$dp->convertTimezone("1123581321", "US/Eastern", "Europe/London"));
+            $this->assertEquals(new \DateTime("2005-08-09 14:55:21"), $dp->convertTimezone("1123581321", "US/Eastern", "Europe/London"));
 
         }
     }

@@ -14,7 +14,7 @@ class Config
     public static $databases = Array();
 
     /**
-     * @param string       $name
+     * @param string $name
      * @param DatabaseNode $masterNode
      */
     public static function addDatabase($name, DatabaseNode $masterNode)
