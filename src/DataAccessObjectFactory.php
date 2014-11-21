@@ -740,7 +740,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     private function sqlFunctionFieldQuery($sqlFunction, $field, $clause)
     {
-        return reset($this->findField($sqlFunction . '(' . $this->escapeString($field) . ')', $clause));
+        $resultArray = $this->findField($sqlFunction . '(' . $this->escapeString($field) . ')', $clause);
+        if(is_array($resultArray))
+        {
+            return array_shift($resultArray);
+        }
     }
 
     // deprecate old naming convetion
@@ -749,7 +753,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         $this->orderBy($field, $direction);
     }
 
-    // depecate
+    // deprecate
     public function executeQuery($sql)
     {
         $data = array();

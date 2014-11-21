@@ -129,13 +129,13 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
             $this->assertEquals(new \DateTime("2013-12-31 23:59:59"),$dp->convertTimezone("2014-01-01 02:59:59", "US/Eastern", "US/Pacific"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 07:55:21"),$dp->convertTimezone("1123581321", "US/Pacific", "US/Central"));
+            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"),$dp->convertTimezone("1123581321", "US/Pacific", "US/Central"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 07:55:21"),$dp->convertTimezone(1123581321.5, "US/Pacific", "US/Central"));
+            $this->assertEquals(new \DateTime("2005-08-09 11:55:21"),$dp->convertTimezone(1123581321.5, "US/Pacific", "US/Central"));
 
             $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-            $this->assertEquals(new \DateTime("2005-08-09 10:55:21"),$dp->convertTimezone("1123581321", "US/Eastern", "Europe/London"));
+            $this->assertEquals(new \DateTime("2005-08-09 14:55:21"),$dp->convertTimezone("1123581321", "US/Eastern", "Europe/London"));
 
         }
     }

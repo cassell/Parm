@@ -6,6 +6,8 @@ set_error_handler(function ($number, $message, $file, $line) {
     print_r(array( 'type' => $number, 'message' => $message, 'file' => $file, 'line' => $line ));
 });
 
+ini_set('date.timezone', 'UTC');
+
 require_once dirname(dirname(__FILE__)) . '/vendor/autoload.php';
 
 \Parm\Config::addDatabase('parm_namespaced_tests',new Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'],$GLOBALS['db_namespaced_host'],$GLOBALS['db_namespaced_username'],$GLOBALS['db_namespaced_password']));

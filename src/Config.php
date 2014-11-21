@@ -46,7 +46,8 @@ class Config
      */
     public static function __getFirstDatabaseMaster()
     {
-        return static::getDatabaseMaster(reset(array_keys(static::$databases)));
+        $arrayKeys = array_keys(static::$databases);
+        return static::getDatabaseMaster(reset($arrayKeys));
     }
 
 }

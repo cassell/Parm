@@ -1,3 +1,5 @@
+SET NAMES 'utf8';
+
 CREATE TABLE `Country-Nation` (
   `CountryId` int(11) unsigned NOT NULL AUTO_INCREMENT,
   `Code` char(3) NOT NULL DEFAULT '',
@@ -8,9 +10,9 @@ CREATE TABLE `Country-Nation` (
   `Population` int(11) NOT NULL DEFAULT '0',
   `LifeExpectancy` float(3,1) DEFAULT NULL,
   `GNP` float(10,2) DEFAULT NULL,
-  `LocalName` char(45) NOT NULL DEFAULT '',
+  `LocalName` varchar(100) NOT NULL DEFAULT '',
   PRIMARY KEY (`CountryId`)
-) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 INSERT INTO `Country-Nation` (`Code`, `Name`, `Region`, `Surface-Area`, `Indep_Year`, `Population`, `LifeExpectancy`, `GNP`, `LocalName`)
 VALUES

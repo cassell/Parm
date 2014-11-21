@@ -3,6 +3,7 @@
 namespace Parm;
 
 use Parm\Exception\ErrorException;
+use Parm\Exception\TimezoneConversionException;
 
 class DatabaseProcessor
 {

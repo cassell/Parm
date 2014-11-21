@@ -211,7 +211,7 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
 		$f = new CountryNationDaoFactory();
 		$f->orderBy("Region","desc");
-		$this->assertEquals(CountryNationDaoObject::findId(19),$f->getFirstObject());
+		$this->assertEquals(CountryNationDaoObject::findId(16),$f->getFirstObject());
 
 		$f = new CountryNationDaoFactory();
 		$f->orderBy("Region","asc");
