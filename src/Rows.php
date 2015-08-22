@@ -16,7 +16,7 @@ class Rows implements \Iterator
     public function __construct(\Parm\DatabaseProcessor $processor)
     {
         $this->processor = $processor;
-        $this->result = $this->processor->getMySQLResult($processor->getSQL());
+        $this->result = $this->processor->getResult($processor->getSQL());
         $this->count = (int)$this->processor->getNumberOfRowsFromResult($this->result);
         $this->position = 0;
     }
@@ -29,9 +29,6 @@ class Rows implements \Iterator
     public function rewind()
     {
         $this->position = 0;
-        if (!$this->isCacheFull()) {
-            $this->result->data_seek(0);
-        }
     }
 
     public function current()
@@ -39,7 +36,7 @@ class Rows implements \Iterator
         if (array_key_exists($this->position, $this->cache)) {
             return $this->cache[$this->position];
         } else {
-            return $this->cache[$this->position] = $this->processor->loadDataObject($this->result->fetch_assoc());
+            return $this->cache[$this->position] = $this->processor->loadDataObject($this->result->fetch(\PDO::FETCH_ASSOC));
         }
     }
 
@@ -55,25 +52,7 @@ class Rows implements \Iterator
 
     public function valid()
     {
-        if ($this->position < $this->count) {
-            return true;
-        } else {
-            if ($this->isCacheFull() && $this->freed == false) {
-                $this->freeResult();
-            }
-
-            return false;
-        }
-    }
-
-    public function freeResult()
-    {
-        if ($this->freed == false && $this->result instanceof \mysqli_result) {
-            $this->result->free_result();
-        } else {
-            throw new ErrorException("Result already freed. Rows::freeResult called twice.");
-        }
-        $this->freed = true;
+        return ($this->position < $this->count);
     }
 
     public function toArray()

@@ -1,10 +1,12 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
+
 
 class RowsTest extends PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @test
+     */
     public function testRowsIteration()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -20,6 +22,9 @@ class RowsTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testIterateTwice()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -41,6 +46,9 @@ class RowsTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testIterateNTimes()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');

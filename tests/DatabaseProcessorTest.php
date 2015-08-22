@@ -1,41 +1,36 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
 class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 {
-
-    public function testConfig()
-    {
-        $node = \Parm\Config::getDatabase('parm_namespaced_tests')->getMaster();
-        if (!($node instanceof \Parm\DatabaseNode)) {
-            $this->fail();
-        }
-    }
-
+    /**
+     * @test
+     */
     public function testPassingStringToConstructor()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-        $dp->setSQL('select * from people');
-        $result = $dp->getArray();
+        $dp->setSQL('select * from zipcodes');
+        $this->assertGreaterThan(0,count($dp->getArray()));
     }
 
-    public function testPassingNodeToConstructor()
+    /**
+     * @test
+     */
+    public function testPassingConnectionToConstructor()
     {
-        $dp = new Parm\DatabaseProcessor(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'], $GLOBALS['db_namespaced_host'], $GLOBALS['db_namespaced_username'], $GLOBALS['db_namespaced_password']));
-        $dp->setSQL('select * from people');
-        $result = $dp->getArray();
+        $dp = new Parm\DatabaseProcessor(new Doctrine\DBAL\Connection([
+            'dbname' => $GLOBALS['db_namespaced_name'],
+            'user' => $GLOBALS['db_namespaced_username'],
+            'password' => $GLOBALS['db_namespaced_password'],
+            'host' => $GLOBALS['db_namespaced_host'],
+            'driver' => 'pdo_mysql',
+        ], new Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
+        $dp->setSQL('select * from zipcodes');
+        $this->assertGreaterThan(0,count($dp->getArray()));
     }
 
-    public function testPassingDatabaseToConstructor()
-    {
-        $db = new Parm\Database();
-        $db->setMaster(new \Parm\Mysql\DatabaseNode($GLOBALS['db_namespaced_name'], $GLOBALS['db_namespaced_host'], $GLOBALS['db_namespaced_username'], $GLOBALS['db_namespaced_password']));
-        $dp = new Parm\DatabaseProcessor($db);
-        $dp->setSQL('select * from people');
-        $result = $dp->getArray();
-    }
-
+    /**
+     * @test
+     */
     public function testProcess()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -51,21 +46,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 
     }
 
-    public function testUnbufferedProcess()
-    {
-        $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
-        $dp->setSQL("select * from zipcodes");
-
-        $sum = 0;
-
-        $dp->unbufferedProcess(function ($obj) use (&$sum) {
-            $sum += $obj['latitude'];
-        });
-
-        $this->assertEquals(72209, round($sum));
-
-    }
-
+    /**
+     * @test
+     */
     public function testGetArray()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -77,6 +60,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(6, count($array));
     }
 
+    /**
+     * @test
+     */
     public function testGetArrayReturnsEmptyArray()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -88,6 +74,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals(0, count($array));
     }
 
+    /**
+     * @test
+     */
     public function testGetJSON()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -100,6 +89,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testGetFirstField()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -108,6 +100,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("18503", $dp->getFirstField("zipcode"));
     }
 
+    /**
+     * @test
+     */
     public function testOutputJSONString()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
@@ -122,6 +117,9 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]', $json);
     }
 
+    /**
+     * @test
+     */
     public function testConvertTimezone()
     {
         if (array_key_exists("mysql_timezones_loaded", $GLOBALS) && $GLOBALS['mysql_timezones_loaded'] == 1) {

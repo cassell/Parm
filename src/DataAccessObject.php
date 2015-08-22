@@ -72,7 +72,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         foreach ($this->__modifiedColumns as $field => $j) {
             if ($field != $this->getIdField() && in_array($field, static::getFields())) {
                 if ($this[$field] !== null) {
-                    $sql[] = $this->getTableName() . "." . $field . ' = "' . $f->escapeString($this[$field]) . '"';
+                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $f->escapeString($this[$field]) . '';
                 } else {
                     $sql[] = $this->getTableName() . "." . $field . ' = NULL';
                 }
@@ -158,7 +158,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      * Used by the generated classes
      */
 
-    protected function getFieldValue($columnName)
+    public function getFieldValue($columnName)
     {
         if (array_key_exists($columnName, $this)) {
             return $this[$columnName];
@@ -199,12 +199,12 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function setDateFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
-            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDateStorageFormat()));
+            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->getDateStorageFormat()));
         } elseif (is_int($mixed)) {
             $date = new \DateTime();
             $date->setTimestamp($mixed);
 
-            return $this->setFieldValue($columnName, $date->format($this->getFactory()->databaseNode->getDateStorageFormat()));
+            return $this->setFieldValue($columnName, $date->format($this->getFactory()->getDateStorageFormat()));
         } else {
             return $this->setFieldValue($columnName, $mixed);
         }
@@ -215,7 +215,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($format != null && $this->getFieldValue($columnName) != null) {
             // \Datetime::createFromFormat parses a date value format and sets the time of day to the current system time
             // see http://php.net/manual/en/datetime.createfromformat.php for explanation
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDateStorageFormat(), $this->getFieldValue($columnName));
+            $dateTime = \DateTime::createFromFormat($this->getFactory()->getDateStorageFormat(), $this->getFieldValue($columnName));
 
             if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
             {
@@ -242,12 +242,12 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function setDatetimeFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
-            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));
+            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->getDatetimeStorageFormat()));
         } elseif (is_int($mixed)) {
             $date = new \DateTime();
             $date->setTimestamp($mixed);
 
-            return $this->setFieldValue($columnName, $date->format($this->getFactory()->databaseNode->getDatetimeStorageFormat()));
+            return $this->setFieldValue($columnName, $date->format($this->getFactory()->getDatetimeStorageFormat()));
         } else {
             return $this->setFieldValue($columnName, $mixed);
         }
@@ -256,7 +256,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function getDatetimeFieldValue($columnName, $format = null)
     {
         if ($format != null && $this->getFieldValue($columnName) != null) {
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->databaseNode->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
+            $dateTime = \DateTime::createFromFormat($this->getFactory()->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
 
             if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
             {

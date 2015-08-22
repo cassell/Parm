@@ -1,9 +1,10 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
 class BindingsTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @test
+     */
     public function testStringBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -13,20 +14,26 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testBindingEscaping()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
 
         $binding = new \Parm\Binding\ContainsBinding("last_name", "Parmo's");
-        $this->assertEquals("last_name LIKE '%Parmo\'s%'", $binding->getSQL($f));
+        $this->assertEquals("last_name LIKE '%Parmo\\'s%'", $binding->getSQL($f));
 
         $binding = new \Parm\Binding\EqualsBinding("last_name", "Parmo's");
-        $this->assertEquals("last_name = 'Parmo\'s'", $binding->getSQL($f));
+        $this->assertEquals("last_name = 'Parmo\\'s'", $binding->getSQL($f));
 
-        $binding = new \Parm\Binding\EqualsBinding("last_name", "Parmo\'\'\"s");
-        $this->assertEquals("last_name = 'Parmo\\\\\'\\\\\'\\\"s'", $binding->getSQL($f));
+        $binding = new \Parm\Binding\EqualsBinding("last_name", "Parmo\\'\\'\"s");
+        $this->assertEquals("last_name = 'Parmo\\\\\\'\\\\\\'\\\"s'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testCaseSensitiveEqualsBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -35,6 +42,9 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("last_name COLLATE utf8_bin LIKE 'Parmo'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testContainsBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -43,15 +53,22 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("last_name LIKE '%Parmo%'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testForeignKeyObjectBinding()
     {
-        $sharon = ParmTests\Dao\ZipcodesDaoObject::findId(1445);
+        $sharon = new ParmTests\Dao\ZipcodesDaoObject();
+        $sharon->setZipcodeId(1445);
 
         $f = new ParmTests\Dao\PeopleDaoFactory();
         $binding = new \Parm\Binding\ForeignKeyObjectBinding($sharon);
         $this->assertEquals("zipcode_id = '1445'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testEqualsBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -72,12 +89,15 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("last_name = 'κόσμε'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testInBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
 
         $binding = new Parm\Binding\InBinding("zipcode_id", array(1));
-        $this->assertEquals("zipcode_id = 1", $binding->getSQL($f));
+        $this->assertEquals("zipcode_id IN (1)", $binding->getSQL($f));
 
         $binding = new Parm\Binding\InBinding("zipcode_id", array(1, 2, 3, 4));
         $this->assertEquals("zipcode_id IN (1,2,3,4)", $binding->getSQL($f));
@@ -100,12 +120,15 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testNotInBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
 
         $binding = new Parm\Binding\NotInBinding("zipcode_id", array(1));
-        $this->assertEquals("zipcode_id != 1", $binding->getSQL($f));
+        $this->assertEquals("zipcode_id NOT IN (1)", $binding->getSQL($f));
 
         $binding = new Parm\Binding\NotInBinding("zipcode_id", array(1, 2, 3, 4));
         $this->assertEquals("zipcode_id NOT IN (1,2,3,4)", $binding->getSQL($f));
@@ -114,6 +137,9 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("zipcode_id NOT IN ('','','')", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testDateBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -134,6 +160,9 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("create_date < '" . date('Y-m-d', $time->getTimestamp()) . "'", $binding->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testDatetimeBinding()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();

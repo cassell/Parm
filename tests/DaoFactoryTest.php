@@ -1,9 +1,12 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
+
 
 class DaoFactoryTest extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @test
+     */
     public function testFindId()
     {
         $f = new ParmTests\Dao\ZipcodesDaoFactory();
@@ -11,6 +14,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('16146', $sharon->getZipcode());
     }
 
+    /**
+     * @test
+     */
     public function testFind()
     {
         $f = new ParmTests\Dao\ZipcodesDaoFactory();
@@ -19,6 +25,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('16146', $sharon->getZipcode());
     }
 
+    /**
+     * @test
+     */
     public function testFindThrowException()
     {
         $exceptionCaught = false;
@@ -33,7 +42,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($exceptionCaught);
     }
 
-    // return all objects
+    /**
+     * @test
+     */
     public function testFindAll()
     {
         $f = new ParmTests\Dao\ZipcodesDaoFactory();
@@ -41,7 +52,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('1776', count($allZipcodes));
     }
 
-    // return all objects
+    /**
+     * @test
+     */
     public function testFirstObject()
     {
         $stein = new ParmTests\Dao\PeopleDaoObject();
@@ -61,6 +74,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($stein->toJSON(), $steinClone->toJSON());
     }
 
+    /**
+     * @test
+     */
     public function testWhereEquals()
     {
         $perry = new ParmTests\Dao\PeopleDaoObject();
@@ -80,6 +96,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals($perry->toJSON(), $perryClone->toJSON());
     }
 
+    /**
+     * @test
+     */
     public function testDelete()
     {
         $hoffa = new ParmTests\Dao\PeopleDaoObject();
@@ -109,12 +128,18 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testSelectClause()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.zipcode_id,people.archived,people.verified,people.test_data_blob,people.create_date,people.create_datetime,people.create_timestamp", $f->getSelectClause());
     }
 
+    /**
+     * @test
+     */
     public function testSetSelectFields()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -122,6 +147,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
     }
 
+    /**
+     * @test
+     */
     public function testSingleSelectFields()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -129,6 +157,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("SELECT people.people_id,people.last_name", $f->getSelectClause());
     }
 
+    /**
+     * @test
+     */
     public function testAddSelectField()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -137,6 +168,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
     }
 
+    /**
+     * @test
+     */
     public function testSetSelectFieldNullThrowsException()
     {
         $exceptionCaught = false;
@@ -150,6 +184,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $this->assertTrue($exceptionCaught);
     }
 
+    /**
+     * @test
+     */
     public function testSelectDashedColumns()
     {
         $f = new CountryNationDaoFactory();
@@ -159,12 +196,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     }
 
-//	function testGetCollection()
-//	{
-//		$f = new \ParmTests\Dao\ZipcodesDaoFactory();
-//		$this->assertInstanceOf("\\Parm\\Collection",$f->getCollection());
-//	}
-
+    /**
+     * @test
+     */
     public function testWorkingWithBindings()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -182,6 +216,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testPageProcess()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -199,6 +236,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testOrderBy()
     {
         $f = new CountryNationDaoFactory();

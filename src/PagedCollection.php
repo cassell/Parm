@@ -2,6 +2,8 @@
 
 namespace Parm;
 
+use Parm\DataAccessObjectFactory;
+
 class PagedCollection extends Collection
 {
     protected $factory;
@@ -9,8 +11,10 @@ class PagedCollection extends Collection
     protected $currentKey;
     protected $nextKey;
 
-    public function __construct(\Parm\DataAccessObjectFactory $factory, $pageSize = 1000)
+    public function __construct(DataAccessObjectFactory $factory, $pageSize = 1000)
     {
+        parent::__construct($factory);
+
         if (!is_int($pageSize) || $pageSize < 1) {
             throw new Exception\ErrorException("Collection pageSize must be an integer greater than 0");
         }
@@ -24,13 +28,13 @@ class PagedCollection extends Collection
     public function rewind()
     {
         $this->factory->limit($this->pageSize, 0);
-        $this->result = $this->factory->getMySQLResult($this->factory->getSQL());
+        $this->result = $this->factory->getResult($this->factory->getSQL());
         $this->position = 0;
     }
 
     public function current()
     {
-        return $this->factory->loadDataObject($this->result->fetch_assoc());
+        return $this->factory->loadDataObject($this->result->fetch());
     }
 
     public function next()
@@ -39,7 +43,7 @@ class PagedCollection extends Collection
 
         if ($this->position % $this->pageSize == 0) {
             $this->factory->limit($this->pageSize, $this->position);
-            $this->result = $this->factory->getMySQLResult($this->factory->getSQL());
+            $this->result = $this->factory->getResult($this->factory->getSQL());
         }
     }
 

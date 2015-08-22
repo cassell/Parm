@@ -61,7 +61,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
         * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}" as a DateTime object
         * @return DateTime|null
         */
-        final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDateStorageFormat()); }
+        final function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->getDateStorageFormat()); }
 
     {{/typeDate}}
     {{#typeInt}}

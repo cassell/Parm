@@ -1,10 +1,10 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
 class CollectionTest extends PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @test
+     */
     public function testCollectionInstance()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -18,6 +18,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionIteration()
     {
         $zipCodeTotal = 0;
@@ -33,6 +36,9 @@ class CollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionCount()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -43,8 +49,6 @@ class CollectionTest extends PHPUnit_Framework_TestCase
         $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
         $collection = $f->getCollection();
         $this->assertEquals(9, $collection->getCount());
-
-
     }
 
 }

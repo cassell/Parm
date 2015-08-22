@@ -2,6 +2,8 @@
 
 namespace Parm\Binding;
 
+use Parm\DataAccessObjectFactory;
+
 class ContainsBinding extends SQLString
 {
     /**
@@ -35,6 +37,6 @@ class ContainsBinding extends SQLString
      */
     public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
-        return $factory->escapeString($this->field) . " LIKE '%" . $factory->escapeString(str_replace("_", "\_", str_replace("%", "\%", $this->query))) . "%'";
+        return $this->field . " LIKE " . $factory->escapeString('%'.str_replace("_", "\\_", str_replace("%", "\\%", $this->query)).'%') . "";
     }
 }

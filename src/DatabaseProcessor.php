@@ -2,34 +2,35 @@
 
 namespace Parm;
 
+use Doctrine\DBAL\Statement;
 use Parm\Exception\ErrorException;
 use Parm\Exception\TimezoneConversionException;
+use Parm\Exception\UpdateFailedException;
 
 class DatabaseProcessor
 {
     public $databaseNode;
     protected $sql = null;
+    /**
+     * @var \Doctrine\DBAL\Connection
+     */
+    private $connection;
 
     /**
-     * @param Database|DatabaseNode|string $mixed The database to connect to
+     * @param \Doctrine\DBAL\Connection|string $connection The database to connect to
      */
-    public function __construct($mixed)
+    public function __construct($connection)
     {
         // setup node
-        if ($mixed instanceof DatabaseNode) {
-            $this->databaseNode = $mixed;
-        } elseif ($mixed instanceof Database) {
-            $this->databaseNode = $mixed->getMaster();
-        } elseif (is_string($mixed)) {
-            $this->databaseNode = Config::getDatabaseMaster($mixed);
+        if ($connection instanceof \Doctrine\DBAL\Connection) {
+            $this->connection = $connection;
+        } elseif (is_string($connection)) {
+            $this->connection = Config::getConnection($connection);
 
-            if ($this->databaseNode == null || !($this->databaseNode instanceof DatabaseNode)) {
-                throw new \Parm\Exception\ErrorException("Unable to find database named " . \htmlentities($mixed) . " in \\Parm\\Config configuration.");
+            if ($this->connection == null) {
+                throw new \Parm\Exception\ErrorException("Unable to find database named " . \htmlentities($connection) . " in \\Parm\\Config configuration.");
             }
-        } else {
-            throw new \Parm\Exception\ErrorException("A Database, DatabaseNode, or \\Parm\\Config must be used for Parm to work.");
         }
-
     }
 
     /**
@@ -103,7 +104,7 @@ class DatabaseProcessor
 
         $conn = $this->databaseNode->getConnection();
 
-        $result = $this->getMySQLResult($this->getSQL(), $conn);
+        $result = $this->getResult($this->getSQL(), $conn);
 
         if ($result != null) {
             if ($this->getNumberOfRowsFromResult($result) > 0) {
@@ -121,7 +122,7 @@ class DatabaseProcessor
     /**
      * Set the SQL to process
      *
-     * @param  string $sql
+     * @param  string            $sql
      * @return DatabaseProcessor
      */
     public function setSQL($sql)
@@ -130,6 +131,12 @@ class DatabaseProcessor
 
         return $this;
     }
+
+//    public function prepare($sql,$params = [])
+//    {
+//        $this->setSQL($this->connection->prepare($sql))
+//
+//    }
 
     /**
      * Get the SQL that has been set
@@ -154,7 +161,7 @@ class DatabaseProcessor
     /**
      * Loop through the rows of a query and process with a closure
      *
-     * @param  callable $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
+     * @param  callable          $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
      * @return DatabaseProcessor This DatabaseProcessor so you can chain it
      */
     public function process($closure)
@@ -169,38 +176,14 @@ class DatabaseProcessor
     }
 
     /**
-     * Using an Unbuffered Query, Loop through the rows of a query and process with a closure
-     * You can use this on millions of rows without memory problems
-     * Does lock the table to writes on some databases
-     *
-     * @param  callable $closure Closure to process the rows of the database retrieved with, the closure is passed a Row or DataAccessObject
-     * @return DatabaseProcessor This DatabaseProcessor so you can chain it
-     */
-    public function unbufferedProcess($closure)
-    {
-        $conn = $this->databaseNode->getConnection();
-
-        $conn->real_query($this->getSQL());
-
-        $result = $conn->use_result();
-
-        while ($row = $result->fetch_assoc()) {
-            $closure($this->loadDataObject($row));
-        }
-
-        return $this;
-
-    }
-
-    /**
      * Get the number of rows for a query from the MySQL database via the result
      *
-     * @param  \mysqli $result
-     * @return integer The number of rows reported from the database
+     * @param  \Doctrine\DBAL\Driver\Statement $result
+     * @return int                             The number of rows reported from the database
      */
-    public function getNumberOfRowsFromResult($result)
+    public function getNumberOfRowsFromResult(\Doctrine\DBAL\Driver\Statement $result)
     {
-        return (int)$result->num_rows;
+        return (int) $result->rowCount();
     }
 
     /**
@@ -210,7 +193,7 @@ class DatabaseProcessor
      */
     public function update($sql)
     {
-        if ($this->getMySQLResult($sql) === true) {
+        if ($this->getResult($sql) != null) {
             return true;
         } else {
             throw new UpdateFailedException($sql);
@@ -237,23 +220,15 @@ class DatabaseProcessor
     }
 
     /**
-     * Get a MySQL result from a SQL string
-     *
-     * @param  string $sql The SQL to execute
-     * @return \mysqli result
+     * @param $sql
+     * @return \Doctrine\DBAL\Driver\Statement
+     * @throws ErrorException
      */
-    public function getMySQLResult($sql)
+    public function getResult($sql)
     {
-        $conn = $this->databaseNode->getConnection();
-
         try {
-            $result = $conn->query($sql);
-            if ($conn->error != null) {
-                throw new \Parm\Exception\ErrorException($conn->error);
-            } else {
-                return $result;
-            }
-        } catch (\Parm\Exception\ErrorException $e) {
+            return $this->connection->query($sql);
+        } catch (\Doctrine\DBAL\DBALException $e) {
             throw new \Parm\Exception\ErrorException("DatabaseProcessor SQL Error. MySQL Query Failed: " . htmlentities($sql) . '. Reason given ' . $e);
         }
     }
@@ -266,15 +241,15 @@ class DatabaseProcessor
      */
     public function getLastInsertId()
     {
-        return $this->databaseNode->getLastInsertId();
+        return $this->connection->lastInsertId();
     }
 
     /**
      * Convert a datetime from one timezone to another using the MySQL database as the timezone source. Use the "US/Eastern" format or "Europe/London" formats
      *
-     * @param  timestamp|string|DateTime $dateTime The datetime in the source timezone
-     * @param  string $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
-     * @param  string $destTimezone The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @param  timestamp|string|DateTime $dateTime       The datetime in the source timezone
+     * @param  string                    $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @param  string                    $destTimezone   The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
      * @return \DateTime
      */
     public function convertTimezone($dateTime, $sourceTimezone, $destTimezone)
@@ -322,25 +297,16 @@ class DatabaseProcessor
 
         $firstRecord = true;
 
-        $conn = $this->databaseNode->getConnection();
-
-        $conn->real_query($this->getSQL());
-
-        $result = $conn->use_result();
-
-        while ($row = $result->fetch_assoc()) {
+        foreach($this->getRows() as $row)
+        {
             if (!$firstRecord) {
                 echo ",";
             } else {
                 $firstRecord = false;
             }
 
-            $obj = $this->loadDataObject($row);
-
-            echo $obj->toJSONString();
+            echo $row->toJSONString();
         }
-
-        $this->freeResult($result);
 
         echo "]";
 
@@ -352,29 +318,17 @@ class DatabaseProcessor
      */
     public function escapeString($string)
     {
-        $conn = $this->databaseNode->getConnection();
-
-        return $conn->real_escape_string($string);
+        return $this->connection->quote($string);
     }
 
-    /**
-     * Format some text for CSV
-     */
-    public static function formatTextCSV($text)
+    public function getDateStorageFormat()
     {
-        $text = preg_replace("/<(.|\n)*?>/", "", $text);
+        return Config::getDateStorageFormat();
+    }
 
-        $text = str_replace("<br/>", "\n", $text);
-
-        $text = str_replace("&nbsp;", " ", $text);
-
-        if (strpos($text, '"') === true) {
-            $text = '"' . str_replace('"', '""', $text) . '"';
-        } elseif (strpos($text, ',') || strpos($text, "\n") || strpos($text, "\r")) {
-            $text = '"' . str_replace('"', '""', $text) . '"';
-        }
-
-        return html_entity_decode($text);
+    public function getDatetimeStorageFormat()
+    {
+        return Config::getDatetimeStorageFormat();
     }
 
     /**
@@ -382,13 +336,7 @@ class DatabaseProcessor
      */
     public static function mysql_real_escape_string($string)
     {
-        $firstAvailableDatabaseMaster = Config::__getFirstDatabaseMaster();
-
-        if ($firstAvailableDatabaseMaster == null || !($firstAvailableDatabaseMaster instanceof DatabaseNode)) {
-            throw new \Parm\Exception\ErrorException("DatabaseProcessor::mysql_real_escape_string requires \\Parm\\Config");
-        }
-
-        $dp = new DatabaseProcessor($firstAvailableDatabaseMaster);
+        $dp = new DatabaseProcessor(current(Config::getAllConnections()));
 
         return $dp->escapeString($string);
     }

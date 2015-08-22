@@ -1,10 +1,10 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
 class PagedCollectionTest extends PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @test
+     */
     public function testCollectionInstance()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -19,6 +19,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionIteration()
     {
         $zipCodeTotal = 0;
@@ -34,6 +37,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionPageSize10()
     {
         $zipCodeTotal = 0;
@@ -49,6 +55,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionPageSize10IterateAgain()
     {
         $zipCodeTotal = 0;
@@ -75,6 +84,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionPageSize1()
     {
         $zipCodeTotal = 0;
@@ -90,6 +102,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionPageSize0ThrowsException()
     {
 
@@ -110,6 +125,9 @@ class PagedCollectionTest extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testCollectionWithFactoryBindings()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();

@@ -74,7 +74,7 @@ trait {{className}}TableFunctions
 		return new {{className}}DaoObject($row);
 	}
 	
-	final function getDefaultRow()
+	public final static function getDefaultRow()
 	{
 		return array({{{defaultValuePack}}});
 	}

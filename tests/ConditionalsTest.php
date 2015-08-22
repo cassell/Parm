@@ -1,9 +1,10 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
 class ConditionalsText extends PHPUnit_Framework_TestCase
 {
+    /**
+     * @test
+     */
     public function testAndConditionalEmpty()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -13,6 +14,9 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testAndConditionalStringsAndBindings()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -27,6 +31,9 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
 
     }
 
+    /**
+     * @test
+     */
     public function testOrCondtionalEmpty()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -35,6 +42,9 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
         $this->assertEquals('', $cond->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testOrConditionalStringsAndBindings()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
@@ -47,6 +57,9 @@ class ConditionalsText extends PHPUnit_Framework_TestCase
         $this->assertEquals("(zipcode_id = 0 OR archived = 1 OR people_id = '99999999999999999')", $cond->getSQL($f));
     }
 
+    /**
+     * @test
+     */
     public function testNestedConditionals()
     {
         $f = new ParmTests\Dao\PeopleDaoFactory();
