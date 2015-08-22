@@ -1,9 +1,11 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
-
-class AAAGeneratorTest extends PHPUnit_Framework_TestCase
+class GeneratorTest extends PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @test
+     */
     public function testGenerationSuccessful()
     {
         $this->assertFileExists(dirname(__FILE__) . '/dao/namespaced/PeopleDaoObject.php');
