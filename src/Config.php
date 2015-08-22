@@ -9,45 +9,85 @@ namespace Parm;
 class Config
 {
     /**
-     * @var array
+     * @var \Doctrine\DBAL\Connection[]
      */
-    public static $databases = Array();
+    private static $connections = Array();
+    private static $dateStorageFormat = 'Y-m-d';
+    private static $datetimeStorageFormat = 'Y-m-d H:i:s';
+    private static $caseSenstitiveCollation = 'utf8_bin';
+
 
     /**
      * @param string $name
-     * @param DatabaseNode $masterNode
+     * @param \Doctrine\DBAL\Connection $connection
      */
-    public static function addDatabase($name, DatabaseNode $masterNode)
+    public static function addConnection($name, \Doctrine\DBAL\Connection $connection)
     {
-        static::$databases[$name] = new Database();
-        static::$databases[$name]->setMaster($masterNode);
+        static::$connections[$name] = $connection;
     }
 
     /**
      * @param $name
-     * @return Database
+     * @return \Doctrine\DBAL\Connection $connection
      */
-    public static function getDatabase($name)
+    public static function getConnection($name)
     {
-        return static::$databases[$name];
+        return static::$connections[$name];
+    }
+
+    public static function getAllConnections()
+    {
+        return static::$connections;
     }
 
     /**
-     * @param $name
-     * @return Database
+     * @return string
      */
-    public static function getDatabaseMaster($name)
+    public static function getCaseSenstitiveCollation()
     {
-        return static::$databases[$name]->getMaster();
+        return self::$caseSenstitiveCollation;
     }
 
     /**
-     * @return Database
+     * @param string $caseSenstitiveCollation
      */
-    public static function __getFirstDatabaseMaster()
+    public static function setCaseSenstitiveCollation($caseSenstitiveCollation)
     {
-        $arrayKeys = array_keys(static::$databases);
-        return static::getDatabaseMaster(reset($arrayKeys));
+        self::$caseSenstitiveCollation = $caseSenstitiveCollation;
     }
+
+    /**
+     * @return string
+     */
+    public static function getDateStorageFormat()
+    {
+        return self::$dateStorageFormat;
+    }
+
+    /**
+     * @param string $dateStorageFormat
+     */
+    public static function setDateStorageFormat($dateStorageFormat)
+    {
+        self::$dateStorageFormat = $dateStorageFormat;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDatetimeStorageFormat()
+    {
+        return self::$datetimeStorageFormat;
+    }
+
+    /**
+     * @param string $datetimeStorageFormat
+     */
+    public static function setDatetimeStorageFormat($datetimeStorageFormat)
+    {
+        self::$datetimeStorageFormat = $datetimeStorageFormat;
+    }
+
+
 
 }
