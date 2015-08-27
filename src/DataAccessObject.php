@@ -2,6 +2,8 @@
 
 namespace Parm;
 
+use Parm\Exception\GetFieldValueException;
+
 abstract class DataAccessObject extends Row implements TableInterface
 {
     private $__modifiedColumns = array();
@@ -49,14 +51,15 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * Find an object by ID
-     * @param  integer $id ID of the row in the database
-     * @return object|null The record from the database
+     * @param  integer                 $id      ID of the row in the database
+     * @param  DataAccessObjectFactory $factory
+     * @return null|object             The record from the database
      */
-    public static function findId($id)
+    public static function findId($id, DataAccessObjectFactory $factory = null)
     {
-        $f = static::getFactory();
+        $factory = self::ifNullReturnNewFactory($factory);
 
-        return $f->findId($id);
+        return $factory->findId($id);
     }
 
     /**
@@ -65,14 +68,14 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function save()
     {
-        $f = static::getFactory();
+        $factory = static::getFactory();
 
         $sql = array();
 
         foreach ($this->__modifiedColumns as $field => $j) {
             if ($field != $this->getIdField() && in_array($field, static::getFields())) {
                 if ($this[$field] !== null) {
-                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $f->escapeString($this[$field]) . '';
+                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $factory->escapeString($this[$field]) . '';
                 } else {
                     $sql[] = $this->getTableName() . "." . $field . ' = NULL';
                 }
@@ -81,14 +84,14 @@ abstract class DataAccessObject extends Row implements TableInterface
 
         if ($this->isNewObject()) {
             if (count($sql) > 0) {
-                $f->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
+                $factory->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
             } else {
-                $f->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
+                $factory->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
             }
 
-            $this[$this->getIdField()] = $f->getLastInsertId();
+            $this[$this->getIdField()] = $factory->getLastInsertId();
         } elseif (count($sql) > 0) {
-            $f->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+            $factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
         }
 
         $this->clearModifiedColumns();
@@ -100,12 +103,14 @@ abstract class DataAccessObject extends Row implements TableInterface
      * Delete the object from the database.
      * @return TRUE if successful, False if failed or ID is not greater than
      *
+     * @throws Exception\RecordNotFoundException
+     * @throws Exception\UpdateFailedException
      */
     public function delete()
     {
         if (!$this->isNewObject()) {
             $f = static::getFactory();
-            $f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int)$this->getId());
+            $f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int) $this->getId());
         } else {
             throw new \Parm\Exception\RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }
@@ -135,10 +140,11 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function duplicateAsNewObject()
     {
-        $data = (array)$this;
+        $data = (array) $this;
         if (static::getIdField()) {
             unset($data[static::getIdField()]);
         }
+
         return new static($data);
     }
 
@@ -163,10 +169,15 @@ abstract class DataAccessObject extends Row implements TableInterface
         if (array_key_exists($columnName, $this)) {
             return $this[$columnName];
         } else {
-            throw new \Parm\Exception\GetFieldValueException($columnName . ' not initialized for get method in ' . get_class($this));
+            throw new GetFieldValueException($columnName . ' not initialized for get method in ' . get_class($this));
         }
     }
 
+    /**
+     * @param $columnName
+     * @param $val
+     * @return $this
+     */
     protected function setFieldValue($columnName, $val)
     {
         if ($val === NULL || strcmp($this[$columnName], $val) !== 0) {
@@ -177,25 +188,40 @@ abstract class DataAccessObject extends Row implements TableInterface
         return $this;
     }
 
+    /**
+     * @param $columnName
+     * @param $val
+     * @return DataAccessObject
+     */
     protected function setIntFieldValue($columnName, $val)
     {
         if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName, (int)$val);
+            return $this->setFieldValue($columnName, (int) $val);
         }
     }
 
+    /**
+     * @param $columnName
+     * @return int|null
+     * @throws GetFieldValueException
+     */
     protected function getIntFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
         if ($val === null) {
             return null;
         } else {
-            return (int)$val;
+            return (int) $val;
         }
     }
 
+    /**
+     * @param $columnName
+     * @param $mixed
+     * @return $this|DataAccessObject
+     */
     protected function setDateFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
@@ -210,6 +236,12 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
+    /**
+     * @param $columnName
+     * @param null $format
+     * @return mixed|string
+     * @throws GetFieldValueException
+     */
     protected function getDateFieldValue($columnName, $format = null)
     {
         if ($format != null && $this->getFieldValue($columnName) != null) {
@@ -217,8 +249,7 @@ abstract class DataAccessObject extends Row implements TableInterface
             // see http://php.net/manual/en/datetime.createfromformat.php for explanation
             $dateTime = \DateTime::createFromFormat($this->getFactory()->getDateStorageFormat(), $this->getFieldValue($columnName));
 
-            if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
-            {
+            if ($dateTime) { // $dateTime will be a new DateTime instance or FALSE on failure.
                 // setting the time to midnight as the expected value when pulling from a database
                 $dateTime->setTime(0, 0, 0);
 
@@ -229,6 +260,12 @@ abstract class DataAccessObject extends Row implements TableInterface
         return $this->getFieldValue($columnName);
     }
 
+    /**
+     * @param $columnName
+     * @param $format
+     * @return \DateTime|null
+     * @throws GetFieldValueException
+     */
     protected function getDatetimeObjectFromField($columnName, $format)
     {
         $val = $this->getFieldValue($columnName);
@@ -239,6 +276,11 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
+    /**
+     * @param $columnName
+     * @param $mixed
+     * @return $this|DataAccessObject
+     */
     protected function setDatetimeFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
@@ -253,13 +295,19 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
+    /**
+     * @param $columnName
+     * @param null $format
+     * @return mixed|string
+     * @throws GetFieldValueException
+     */
     protected function getDatetimeFieldValue($columnName, $format = null)
     {
         if ($format != null && $this->getFieldValue($columnName) != null) {
             $dateTime = \DateTime::createFromFormat($this->getFactory()->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
 
-            if ($dateTime) // $dateTime will be a new DateTime instance or FALSE on failure.
-            {
+            if ($dateTime) { // $dateTime will be a new DateTime instance or FALSE on failure.
+
                 return $dateTime->format($format);
             }
         }
@@ -267,6 +315,11 @@ abstract class DataAccessObject extends Row implements TableInterface
         return $this->getFieldValue($columnName);
     }
 
+    /**
+     * @param $columnName
+     * @param $val
+     * @return $this|DataAccessObject
+     */
     protected function setBooleanFieldValue($columnName, $val)
     {
         if ($val === null) {
@@ -276,32 +329,60 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
     }
 
+    /**
+     * @param $columnName
+     * @return bool|null
+     * @throws GetFieldValueException
+     */
     protected function getBooleanFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
         if ($val === null) {
             return null;
         } else {
-            return (bool)$val;
+            return (bool) $val;
         }
     }
 
+    /**
+     * @param $columnName
+     * @param $val
+     * @return DataAccessObject
+     */
     protected function setNumericalFieldValue($columnName, $val)
     {
         if ($val == null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
-            return $this->setFieldValue($columnName, (float)$val);
+            return $this->setFieldValue($columnName, (float) $val);
         }
     }
 
+    /**
+     * @param $columnName
+     * @return float|null
+     * @throws GetFieldValueException
+     */
     protected function getNumericalFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
         if ($val == null) {
             return null;
         } else {
-            return (float)$val;
+            return (float) $val;
+        }
+    }
+
+    /**
+     * @param DataAccessObjectFactory|null $factory
+     * @return DataAccessObjectFactory
+     */
+    private function ifNullReturnNewFactory(DataAccessObjectFactory $factory = null)
+    {
+        if ($factory == null) {
+            return static::getFactory();
+        } else {
+            return $factory;
         }
     }
 

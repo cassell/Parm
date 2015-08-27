@@ -220,18 +220,6 @@ Process each row queried with a closure(anonymous function). Iterate over very l
 		}
 	});
 
-Unbuffered Processing of large data sets for Memory Safe Closures (will potentially lock the table while processing)
-	
-	$f = new UserFactory(); // imagine a table with millions of rows
-	$f->unbufferedProcess(function($user)
-	{
-		if(!validate_email($user->getEmail()))
-		{
-			$user->setEmail('');
-			$user->save();
-		}
-	});
-
 ##  Data Processors
 Data processors are great for processing the results from an entirely custom SELECT query with closures.
 
@@ -272,12 +260,6 @@ Getting a JSON ready array
 
 ## Other Neat Features
 
-### Output directly to JSON from a Factory
-	
-	$f = new UserFactory();
-	$f->outputJSONString();
-
-	
 ### Flexible Queries
 	
 Find method for writing a custom where clause (returns objects)

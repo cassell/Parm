@@ -18,4 +18,22 @@ class GeneratorTest extends PHPUnit_Framework_TestCase
         $this->assertFileExists(dirname(__FILE__) . '/dao/global/CountryNationDaoObject.php');
         $this->assertFileExists(dirname(__FILE__) . '/dao/global/CountryNationDaoFactory.php');
     }
+
+    /**
+     * @test
+     */
+    public function testNamespaceGeneration()
+    {
+        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm_namespaced_tests'),dirname(__FILE__) . '/dao/namespaced','ParmTests\Dao');
+        $generator->generate();
+    }
+
+    /**
+     * @test
+     */
+    public function testGlobalGeneration()
+    {
+        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm-global-tests'),dirname(__FILE__) . '/dao/global');
+        $generator->generate();
+    }
 }

@@ -1,7 +1,7 @@
 {
 	"name": "parm/parm",
 	"type": "library",
-	"description": "Active Record ORM with closures and web interface",
+	"description": "PHP Active Record for MySQL. Connects to the your database and generates the Object Relational Mapping. Built in Database Query Processor for custom queries. Ability to use closures to process rows",
 	"keywords": ["active record", "activerecord", "orm", "closures", "dao", "database", "mysql"],
 	"homepage": "http://github.com/cassell/parm",
 	"license": "BSD-2-Clause",

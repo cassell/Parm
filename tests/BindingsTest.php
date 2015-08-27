@@ -63,7 +63,7 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 
         $f = new ParmTests\Dao\PeopleDaoFactory();
         $binding = new \Parm\Binding\ForeignKeyObjectBinding($sharon);
-        $this->assertEquals("zipcode_id = '1445'", $binding->getSQL($f));
+        $this->assertEquals("zipcode_id = 1445", $binding->getSQL($f));
     }
 
     /**
@@ -74,7 +74,7 @@ class BindingsTest extends PHPUnit_Framework_TestCase
         $f = new ParmTests\Dao\PeopleDaoFactory();
 
         $binding = new \Parm\Binding\EqualsBinding("people_id", 1);
-        $this->assertEquals("people_id = '1'", $binding->getSQL($f));
+        $this->assertEquals("people_id = 1", $binding->getSQL($f));
 
         $binding = new \Parm\Binding\EqualsBinding("last_name", "Montoya");
         $this->assertEquals("last_name = 'Montoya'", $binding->getSQL($f));
@@ -87,6 +87,50 @@ class BindingsTest extends PHPUnit_Framework_TestCase
 
         $binding = new \Parm\Binding\EqualsBinding("last_name", "κόσμε");
         $this->assertEquals("last_name = 'κόσμε'", $binding->getSQL($f));
+    }
+
+    /**
+     * @test
+     */
+    public function testNotEqualsBinding()
+    {
+        $f = new ParmTests\Dao\PeopleDaoFactory();
+
+        $binding = new \Parm\Binding\NotEqualsBinding("people_id", 1);
+        $this->assertEquals("people_id != 1", $binding->getSQL($f));
+
+        $binding = new \Parm\Binding\NotEqualsBinding("last_name", "Montoya");
+        $this->assertEquals("last_name != 'Montoya'", $binding->getSQL($f));
+
+        $binding = new \Parm\Binding\NotEqualsBinding("last_name", null);
+        $this->assertEquals("last_name != NULL", $binding->getSQL($f));
+
+        $binding = new \Parm\Binding\NotEqualsBinding("last_name", "");
+        $this->assertEquals("last_name != ''", $binding->getSQL($f));
+
+        $binding = new \Parm\Binding\NotEqualsBinding("last_name", "κόσμε");
+        $this->assertEquals("last_name != 'κόσμε'", $binding->getSQL($f));
+    }
+
+
+    /**
+     * @test
+     */
+    public function testTrueBinding()
+    {
+        $f = new ParmTests\Dao\PeopleDaoFactory();
+        $binding = new \Parm\Binding\TrueBooleanBinding("verified");
+        $this->assertEquals("verified = 1", $binding->getSQL($f));
+    }
+
+    /**
+     * @test
+     */
+    public function testFalseBinding()
+    {
+        $f = new ParmTests\Dao\PeopleDaoFactory();
+        $binding = new \Parm\Binding\FalseBooleanBinding("verified");
+        $this->assertEquals("verified = 0", $binding->getSQL($f));
     }
 
     /**
