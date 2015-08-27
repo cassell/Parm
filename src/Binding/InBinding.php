@@ -2,7 +2,7 @@
 
 namespace Parm\Binding;
 
-class InBinding extends SQLString
+class InBinding implements SQLString
 {
 
     /**

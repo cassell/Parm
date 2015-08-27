@@ -2,8 +2,9 @@
 
 namespace Parm\Binding;
 
-abstract class SQLString
-{
-    abstract protected function getSQL(\Parm\DataAccessObjectFactory $factory);
+use Parm\DataAccessObjectFactory;
 
+interface SQLString
+{
+    public function getSQL(DataAccessObjectFactory $factory);
 }

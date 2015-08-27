@@ -2,7 +2,7 @@
 
 namespace Parm\Binding;
 
-class NotInBinding extends SQLString
+class NotInBinding implements SQLString
 {
 
     /**

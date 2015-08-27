@@ -4,7 +4,7 @@ namespace Parm\Binding;
 
 use Parm\DataAccessObjectFactory;
 
-class ContainsBinding extends SQLString
+class ContainsBinding implements SQLString
 {
     /**
      * The field/column to filter on

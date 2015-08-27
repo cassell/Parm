@@ -2,7 +2,7 @@
 
 namespace Parm\Binding;
 
-class StringBinding extends SQLString
+class StringBinding implements SQLString
 {
     /**
      * The sql to filter on
