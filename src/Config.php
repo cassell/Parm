@@ -14,7 +14,7 @@ class Config
     private static $connections = Array();
     private static $dateStorageFormat = 'Y-m-d';
     private static $datetimeStorageFormat = 'Y-m-d H:i:s';
-    private static $caseSenstitiveCollation = 'utf8_bin';
+    private static $caseSensitiveCollation = 'utf8_bin';
 
 
     /**
@@ -45,15 +45,15 @@ class Config
      */
     public static function getCaseSenstitiveCollation()
     {
-        return self::$caseSenstitiveCollation;
+        return self::$caseSensitiveCollation;
     }
 
     /**
-     * @param string $caseSenstitiveCollation
+     * @param string $caseSensitiveCollation
      */
-    public static function setCaseSenstitiveCollation($caseSenstitiveCollation)
+    public static function setCaseSensitiveCollation($caseSensitiveCollation)
     {
-        self::$caseSenstitiveCollation = $caseSenstitiveCollation;
+        self::$caseSensitiveCollation = $caseSensitiveCollation;
     }
 
     /**
