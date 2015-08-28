@@ -3,22 +3,27 @@
 namespace Parm;
 
 use Parm\Exception\GetFieldValueException;
+use Parm\Exception\RecordNotFoundException;
 
 abstract class DataAccessObject extends Row implements TableInterface
 {
-    private $__modifiedColumns = array();
+    private $modifiedColumns = array();
+    /**
+     * @var DataAccessObjectFactory
+     */
+    private $factory;
 
     /**
      * Constructor
      * @param array $row Array of data
+     * @param DataAccessObjectFactory $factory
      */
-    public function __construct(array $row = null)
+    public function __construct(array $row = null, DataAccessObjectFactory $factory = null)
     {
         if ($row == null) {
             $row = static::getDefaultRow();
         }
-
-        if (!array_key_exists(static::getIdField(), $row)) {
+        else if (!array_key_exists(static::getIdField(), $row)) {
             $row[static::getIdField()] = null;
         }
 
@@ -31,6 +36,8 @@ abstract class DataAccessObject extends Row implements TableInterface
                 }
             }
         }
+
+        $this->factory = static::ifNullReturnNewFactory($factory);
     }
 
     /**
@@ -38,7 +45,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     protected function addModifiedColumn($column)
     {
-        $this->__modifiedColumns[$column] = 1;
+        $this->modifiedColumns[$column] = 1;
     }
 
     /**
@@ -46,7 +53,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     protected function clearModifiedColumns()
     {
-        $this->__modifiedColumns = array();
+        $this->modifiedColumns = array();
     }
 
     /**
@@ -68,14 +75,12 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function save()
     {
-        $factory = static::getFactory();
-
         $sql = array();
 
-        foreach ($this->__modifiedColumns as $field => $j) {
+        foreach ($this->modifiedColumns as $field => $j) {
             if ($field != $this->getIdField() && in_array($field, static::getFields())) {
                 if ($this[$field] !== null) {
-                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $factory->escapeString($this[$field]) . '';
+                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this[$field]) . '';
                 } else {
                     $sql[] = $this->getTableName() . "." . $field . ' = NULL';
                 }
@@ -84,14 +89,14 @@ abstract class DataAccessObject extends Row implements TableInterface
 
         if ($this->isNewObject()) {
             if (count($sql) > 0) {
-                $factory->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
+                $this->factory->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
             } else {
-                $factory->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
+                $this->factory->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
             }
 
-            $this[$this->getIdField()] = $factory->getLastInsertId();
+            $this[$this->getIdField()] = $this->factory->getLastInsertId();
         } elseif (count($sql) > 0) {
-            $factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+            $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
         }
 
         $this->clearModifiedColumns();
@@ -109,10 +114,9 @@ abstract class DataAccessObject extends Row implements TableInterface
     public function delete()
     {
         if (!$this->isNewObject()) {
-            $f = static::getFactory();
-            $f->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int) $this->getId());
+            $this->factory->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int) $this->getId());
         } else {
-            throw new \Parm\Exception\RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
+            throw new RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }
     }
 
@@ -225,12 +229,12 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function setDateFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
-            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->getDateStorageFormat()));
+            return $this->setFieldValue($columnName, $mixed->format($this->factory->getDateStorageFormat()));
         } elseif (is_int($mixed)) {
             $date = new \DateTime();
             $date->setTimestamp($mixed);
 
-            return $this->setFieldValue($columnName, $date->format($this->getFactory()->getDateStorageFormat()));
+            return $this->setFieldValue($columnName, $date->format($this->factory->getDateStorageFormat()));
         } else {
             return $this->setFieldValue($columnName, $mixed);
         }
@@ -247,7 +251,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         if ($format != null && $this->getFieldValue($columnName) != null) {
             // \Datetime::createFromFormat parses a date value format and sets the time of day to the current system time
             // see http://php.net/manual/en/datetime.createfromformat.php for explanation
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->getDateStorageFormat(), $this->getFieldValue($columnName));
+            $dateTime = \DateTime::createFromFormat($this->factory->getDateStorageFormat(), $this->getFieldValue($columnName));
 
             if ($dateTime) { // $dateTime will be a new DateTime instance or FALSE on failure.
                 // setting the time to midnight as the expected value when pulling from a database
@@ -284,12 +288,12 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function setDatetimeFieldValue($columnName, $mixed)
     {
         if ($mixed instanceof \DateTime) {
-            return $this->setFieldValue($columnName, $mixed->format($this->getFactory()->getDatetimeStorageFormat()));
+            return $this->setFieldValue($columnName, $mixed->format($this->factory->getDatetimeStorageFormat()));
         } elseif (is_int($mixed)) {
             $date = new \DateTime();
             $date->setTimestamp($mixed);
 
-            return $this->setFieldValue($columnName, $date->format($this->getFactory()->getDatetimeStorageFormat()));
+            return $this->setFieldValue($columnName, $date->format($this->factory->getDatetimeStorageFormat()));
         } else {
             return $this->setFieldValue($columnName, $mixed);
         }
@@ -304,7 +308,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function getDatetimeFieldValue($columnName, $format = null)
     {
         if ($format != null && $this->getFieldValue($columnName) != null) {
-            $dateTime = \DateTime::createFromFormat($this->getFactory()->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
+            $dateTime = \DateTime::createFromFormat($this->factory->getDatetimeStorageFormat(), $this->getFieldValue($columnName));
 
             if ($dateTime) { // $dateTime will be a new DateTime instance or FALSE on failure.
 
@@ -377,7 +381,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      * @param DataAccessObjectFactory|null $factory
      * @return DataAccessObjectFactory
      */
-    private function ifNullReturnNewFactory(DataAccessObjectFactory $factory = null)
+    private static function ifNullReturnNewFactory(DataAccessObjectFactory $factory = null)
     {
         if ($factory == null) {
             return static::getFactory();

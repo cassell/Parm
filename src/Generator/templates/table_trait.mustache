@@ -51,10 +51,12 @@ trait {{className}}TableFunctions
 	 * Get the factory associated with this object
 	 * @return {{className}}DaoFactory A DAO Factory
      */
-	static function getFactory(\Parm\DatabaseNode $databaseNode = null)
+	static function getFactory(\Doctrine\DBAL\Connection $connection = null)
 	{
-		return new {{className}}DaoFactory($databaseNode);
+		return new {{className}}DaoFactory($connection);
 	}
+
+
 	
 	/**
 	 * Get the list of columns in {{tableName}} from logical database "{{databaseName}}"
