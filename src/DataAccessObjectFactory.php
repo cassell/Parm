@@ -59,6 +59,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
                 $data[] = $object;
             }
         }
+
+        $this->clearBindings();
+
         return $data;
 
     }
@@ -328,11 +331,12 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     }
 
     /**
-     * Set the coluns to return from the database. You would use this to limit the number of fields return per row
+     * Set the columns to return from the database. You would use this to limit the number of fields return per row
      * or select other fields from a join clause.
      * Usage: $f->setSelectFields("first_name","last_name","email");
      * @param  array|string|string[] $arrayOfFields An array of strings or all the fields separated by commas
      * @return DataAccessObject
+     * @throws ErrorException
      */
     public function setSelectFields($arrayOfFields)
     {

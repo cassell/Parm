@@ -117,7 +117,61 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
     {
         $new = new ParmTests\Dao\PeopleDaoObject();
         $new->setCreateDate(null);
-        $this->assertEquals(null, $new->getCreateDate());
+        $this->assertNull($new->getCreateDate());
+        $this->assertNull($new->getCreateDate("Y-m-d H:i:s"));
+        $this->assertNull($new->getCreateDateDateTimeObject());
+    }
+
+    /**
+     * @test
+     */
+    public function testSetDateCrapValue()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setCreateDate("Crap");
+        $this->assertEquals("Crap",$new->getCreateDate());
+    }
+
+    /**
+     * @test
+     */
+    public function testSetDatetimeCrapValue()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setCreateDatetime("Crap");
+        $this->assertEquals("Crap",$new->getCreateDatetime());
+    }
+
+    /**
+     * @test
+     */
+    public function testSetNumericalValueNull()
+    {
+        $new = new \ParmTests\Dao\ZipcodesDaoObject();
+        $new->setLatitude(null);
+        $this->assertNull($new->getLatitude());
+    }
+
+    /**
+     * @test
+     */
+    public function testSetNumericalValue()
+    {
+        $new = new \ParmTests\Dao\ZipcodesDaoObject();
+        $new->setLatitude(42.195488);
+        $this->assertEquals(42.195488,$new->getLatitude());
+    }
+
+
+    /**
+     * @test
+     */
+    public function testSetDateUsingDatetime()
+    {
+        $datetime = new \DateTime();
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->setCreateDatetime($datetime);
+        $this->assertEquals($datetime->format("Y-m-d H:i:s"),$new->getCreateDatetime());
     }
 
     /**
@@ -333,6 +387,50 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testSaveWithoutSettingAnythingOnTheObject()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject();
+        $new->save();
+        $this->assertGreaterThan(0,$new->getId());
+    }
+
+    /**
+     * @test
+     * @expectedException \Parm\Exception\ErrorException
+     */
+    public function testIntegrityConstraintViolation()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject([]);
+        $new->setVerified(null);
+        $new->save();
+    }
+
+    /**
+     * @test
+     */
+    public function testSetNull()
+    {
+        $new = new ParmTests\Dao\PeopleDaoObject([]);
+        $new->setFirstName(null);
+        $new->setLastName(null);
+        $new->setArchived(null);
+        $new->setZipcodeId(null);
+        $new->save();
+        $this->assertNull($new->getFirstName());
+        $this->assertNull($new->getLastName());
+        $this->assertNull($new->getArchived());
+        $this->assertGreaterThan(0,$new->getId());
+
+        $findAgain = ParmTests\Dao\PeopleDaoObject::findId($new->getId());
+        $this->assertNull($findAgain->getFirstName());
+        $this->assertNull($findAgain->getLastName());
+        $this->assertNull($findAgain->getArchived());
+        $this->assertEquals($new->getId(),$findAgain->getId());
+    }
+
+    /**
+     * @test
+     */
     public function testUTF8Saving()
     {
         $new = new ParmTests\Dao\PeopleDaoObject();
@@ -490,6 +588,27 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
     {
         $nullDateObject = \ParmTests\Dao\PeopleDaoObject::findId(6);
         $this->assertEquals("", $nullDateObject->getCreateDate('Y-m-d'));
+    }
+
+    /**
+     * @test
+     */
+    public function testFindIdWithFactory()
+    {
+        $city = ParmTests\Dao\ZipcodesDaoObject::findId(653, new ParmTests\Dao\ZipcodesDaoFactory());
+        $this->assertEquals('16421', $city->getZipcode());
+        $this->assertEquals(false, $city->getArchived());
+    }
+
+    /**
+     * @test
+     */
+    public function testFindIdWithFactoryAndConnection()
+    {
+        $connection = \Parm\Config::getConnection('parm_namespaced_tests');
+
+        $city = ParmTests\Dao\ZipcodesDaoObject::findId(1684, new ParmTests\Dao\ZipcodesDaoFactory($connection));
+        $this->assertEquals('16510', $city->getZipcode());
     }
 
 }

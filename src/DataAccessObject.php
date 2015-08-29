@@ -7,6 +7,12 @@ use Parm\Exception\RecordNotFoundException;
 
 abstract class DataAccessObject extends Row implements TableInterface
 {
+    /**
+     * Get the ID (Primary Key) of the object
+     * @return mixed ID of the record in the database. null if a new record
+     */
+    abstract public function getId();
+
     private $modifiedColumns = array();
     /**
      * @var DataAccessObjectFactory
@@ -15,15 +21,14 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * Constructor
-     * @param array $row Array of data
+     * @param array                   $row     Array of data
      * @param DataAccessObjectFactory $factory
      */
     public function __construct(array $row = null, DataAccessObjectFactory $factory = null)
     {
         if ($row == null) {
             $row = static::getDefaultRow();
-        }
-        else if (!array_key_exists(static::getIdField(), $row)) {
+        } elseif (!array_key_exists(static::getIdField(), $row)) {
             $row[static::getIdField()] = null;
         }
 
@@ -75,28 +80,27 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function save()
     {
-        $sql = array();
+        if (count($this->modifiedColumns) > 0) {
 
-        foreach ($this->modifiedColumns as $field => $j) {
-            if ($field != $this->getIdField() && in_array($field, static::getFields())) {
-                if ($this[$field] !== null) {
-                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this[$field]) . '';
-                } else {
-                    $sql[] = $this->getTableName() . "." . $field . ' = NULL';
+            $sql = array();
+
+            foreach ($this->modifiedColumns as $field => $j) {
+                if ($field != $this->getIdField() && in_array($field, static::getFields())) {
+                    if ($this[$field] !== null) {
+                        $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this[$field]) . '';
+                    } else {
+                        $sql[] = $this->getTableName() . "." . $field . ' = NULL';
+                    }
                 }
             }
-        }
 
-        if ($this->isNewObject()) {
-            if (count($sql) > 0) {
+            if ($this->isNewObject()) {
                 $this->factory->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
+                $this[$this->getIdField()] = $this->factory->getLastInsertId();
             } else {
-                $this->factory->update('INSERT INTO ' . $this->getTableName() . " VALUES()");
+                $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
             }
 
-            $this[$this->getIdField()] = $this->factory->getLastInsertId();
-        } elseif (count($sql) > 0) {
-            $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
         }
 
         $this->clearModifiedColumns();
@@ -118,15 +122,6 @@ abstract class DataAccessObject extends Row implements TableInterface
         } else {
             throw new RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }
-    }
-
-    /**
-     * Get the ID (Primary Key) of the object
-     * @return mixed ID of the record in the database. null if a new record
-     */
-    public function getId()
-    {
-        return $this->getFieldValue($this->getIdField());
     }
 
     /**
@@ -242,7 +237,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * @param $columnName
-     * @param null $format
+     * @param  null                   $format
      * @return mixed|string
      * @throws GetFieldValueException
      */
@@ -301,7 +296,7 @@ abstract class DataAccessObject extends Row implements TableInterface
 
     /**
      * @param $columnName
-     * @param null $format
+     * @param  null                   $format
      * @return mixed|string
      * @throws GetFieldValueException
      */
@@ -378,7 +373,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     }
 
     /**
-     * @param DataAccessObjectFactory|null $factory
+     * @param  DataAccessObjectFactory|null $factory
      * @return DataAccessObjectFactory
      */
     private static function ifNullReturnNewFactory(DataAccessObjectFactory $factory = null)

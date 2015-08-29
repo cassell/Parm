@@ -132,7 +132,7 @@ class DatabaseGenerator
                 }
 
                 if ($column['Key'] == "PRI") {
-                    $idFieldName = $column['Field'];
+                    $idFieldName = strtoupper(str_replace("-", "_",$column['Field']));
                     $columns[$key]['isPrimaryKey'] = true;
 
                     if ($column['Field'] != "id" && preg_match("/int\(/", $column['Type'])) {
@@ -146,7 +146,7 @@ class DatabaseGenerator
                 $columns[$key]['FieldCase'] = ucfirst(\Parm\Row::columnToCamelCase($column['Field']));
                 $columns[$key]['AllCaps'] = strtoupper(str_replace("-", "_", $column['Field']));
 
-                $fieldsPack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN";
+                $fieldsPack[] = $className . "Table::" . $columns[$key]['AllCaps'] . "_COLUMN";
 
                 // column type
                 $columns[$key]['typeDate'] = 0;
@@ -177,7 +177,7 @@ class DatabaseGenerator
                     $columns[$key]['typeString'] = 1;
                 }
 
-                $defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'", "\'", $column['Default']) . "'");
+                $defaultValuePack[] = $className . "Table::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'", "\'", $column['Default']) . "'");
 
             }
         }
