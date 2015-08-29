@@ -130,6 +130,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new = new ParmTests\Dao\PeopleDaoObject();
         $new->setCreateDate("Crap");
         $this->assertEquals("Crap",$new->getCreateDate());
+        $this->assertEquals("Crap",$new->getCreateDate('Y-m-d'));
     }
 
     /**
@@ -140,6 +141,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new = new ParmTests\Dao\PeopleDaoObject();
         $new->setCreateDatetime("Crap");
         $this->assertEquals("Crap",$new->getCreateDatetime());
+        $this->assertEquals("Crap",$new->getCreateDatetime('Y-m-d'));
     }
 
     /**
@@ -609,6 +611,21 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
 
         $city = ParmTests\Dao\ZipcodesDaoObject::findId(1684, new ParmTests\Dao\ZipcodesDaoFactory($connection));
         $this->assertEquals('16510', $city->getZipcode());
+    }
+
+    /**
+     * @test
+     * @expectedException \Parm\Exception\GetFieldValueException
+     */
+    public function testUninitializedValue()
+    {
+        $city = new ParmTests\Dao\ZipcodesDaoObject([
+            'zipcode' => '99999',
+            'state'=> 'PA'
+
+        ]);
+
+        $city->getCity();
     }
 
 }
