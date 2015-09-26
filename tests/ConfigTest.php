@@ -53,6 +53,29 @@ class ConfigTest extends PHPUnit_Framework_TestCase
         ], new Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
     }
 
+    /**
+     * @test
+     */
+    public function testSetupConnection()
+    {
+        \Parm\Config::setupConnection('parm-global-tests', $GLOBALS['db_global_name'], $GLOBALS['db_global_username'], $GLOBALS['db_global_password'], $GLOBALS['db_global_host']);
+    }
+
+    /**
+     * @test
+     * @expectedException \Parm\Exception\ErrorException
+     */
+    public function testAddConnectionWrongDriver()
+    {
+        \Parm\Config::addConnection('parm-global-tests', new Doctrine\DBAL\Connection([
+            'dbname' => $GLOBALS['db_global_name'],
+            'user' => $GLOBALS['db_global_username'],
+            'password' => $GLOBALS['db_global_password'],
+            'host' => $GLOBALS['db_global_host'],
+            'driver' => 'pdo_mysql',
+        ], new Doctrine\DBAL\Driver\PDOOracle\Driver(), null, null));
+    }
+
 
     public function tearDown()
     {

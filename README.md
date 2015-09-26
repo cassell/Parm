@@ -40,26 +40,32 @@ It generates models based on your schema and its powerful closure based query pr
 ### Composer (Packagist)
 https://packagist.org/packages/parm/parm
 
-	"parm/parm": "2.*"
+	"parm/parm": "^3.0"
 
 ### Example Database Configuration
 
-	\Parm\Config::addDatabase('database-name',new Parm\Mysql\DatabaseNode('database-name-on-server','database-host','database-username','database-password'));
+	\Parm\Config::setupConnection('parm_namespaced_tests', 'database-name-on-server','database-host','database-username','database-password');
 
+or you can pass a Doctrine DBAL Connection
+	
+	\Parm\Config::addConnection('parm-global-tests', new Doctrine\DBAL\Connection([
+        'dbname' => $GLOBALS['db__name'],
+        'user' => $GLOBALS['db_username'],
+        'password' => $GLOBALS['db_password'],
+        'host' => $GLOBALS['db_host']
+    ], new Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
 
 ### Example Generator Configuration
 
-	$generator = new Parm\Generator\DatabaseGenerator(Parm\Config::getDatabase('database-name'));
-	$generator->setDestinationDirectory('/web/includes/dao');
-	$generator->setGeneratedNamespace("Project\\Dao");
+	$generator = new Parm\Generator\DatabaseGenerator(Parm\Config::getDatabase('people-database-name'));
+	$generator->setDestinationDirectory('/classes/dao/peopleDatabase');
+	$generator->setGeneratedNamespace("\\Dao\\PeopleDatabase");
 	$generator->generate();
 
-When the generator runs it will create two files for each table (an object and a factory), an auto loader (autoload.php), and (if generating into a namespace) a class namespace alias file.
-(Global namespacing is also available for the Parm base classes using the use_global_namespace.php include file.)
 
 
 ## Extending Models
-You can easily extend the models to encapsulate business logic. The examples below use these extended objects for brevity.
+You can easily extend the models to encapsulate simple business logic. The examples below use these extended objects for brevity.
 
 	class User extends Project\Dao\UserDaoObject
 	{
@@ -107,25 +113,25 @@ Finding an object with id 17.
 Finding all objects form a table (returns a Collection)
 
 	$f = new UserFactory();
-	$users = $f->query();
+	$users = $f->findAll();
 	
 Limit the query to the first 20 rows
 	
 	$f = new UserFactory();
 	$f->setLimit(20);
-	$users = $f->query();
+	$users = $f->getCollection();
 
 Querying for objects filtered by a column (the following four statements are all equivalent)
 	
 	$f = new UserFactory();
 	$f->whereEquals("archived","0");
-	$users = $f->query();
+	$users = $f->getCollection();
 
 	$f = new UserFactory();
 	$f->whereEquals(User::ARCHIVED_COLUMN,"0");
 
 	$f = new UserFactory();
-	$f->addBinding(new new Parm\Binding\EqualsBinding(User::ARCHIVED_COLUMN,"0"));
+	$f->addBinding(new new \Parm\Binding\EqualsBinding(User::ARCHIVED_COLUMN,"0"));
 
 	// if use_global_namespace.php is included
 	$f = new UserFactory();
@@ -135,11 +141,11 @@ Contains searches for objects
 	
 	// looking for users with example.com in their email
 	$f = new UserFactory();
-	$f->addBinding(new ContainsBinding("email","example.com"));
+	$f->addBinding(new \Parm\Binding\ContainsBinding("email","example.com"));
 
 	// looking for users with example.com in their email using a case sensitive search
 	$f = new UserFactory();
-	$f->addBinding(new CaseSensitiveContainsBinding("email","example.com"));
+	$f->addBinding(new \Parm\Binding\CaseSensitiveContainsBinding("email","example.com"));
 	
 String based where clauses
 	
@@ -151,19 +157,19 @@ Filter by array
 	
 	// looking for users created before today
 	$f = new UserFactory();
-	$f->addBinding(new Parm\Binding\InBinding("zipcode_id",array(1,2,3,4)));
+	$f->addBinding(new \Parm\Binding\InBinding("zipcode_id",array(1,2,3,4)));
 
 Filter by foreign key using an object
 
 	$f = new UserFactory();
 	$company = Company::findId(1);
-	$f->addBinding(new Parm\Binding\ForeignKeyObjectBinding($company));
+	$f->addBinding(new \Parm\Binding\ForeignKeyObjectBinding($company));
 
 Date based searches
 	
 	// looking for users created before today
 	$f = new UserFactory();
-	$f->addBinding(new Parm\Binding\DateBinding("create_date",'<',new \DateTime()));
+	$f->addBinding(new \Parm\Binding\DateBinding("create_date",'<',new \DateTime()));
 	
 ### Updating
 Updates are minimal and create an UPDATE statement only for the fields that change. If the first name is changing this example will generate "UPDATE user SET first_name = 'John' WHERE user_id = 17;"

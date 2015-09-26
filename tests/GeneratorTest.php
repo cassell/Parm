@@ -21,6 +21,16 @@ class GeneratorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \Parm\Exception\ErrorException
+     */
+    public function testInvalidDirectory()
+    {
+        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm_namespaced_tests'),null);
+    }
+
+
+    /**
+     * @test
      */
     public function testNamespaceGeneration()
     {

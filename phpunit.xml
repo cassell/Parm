@@ -35,7 +35,6 @@
         </whitelist>
     </filter>
     <logging>
-        <log type="coverage-text" target="php://stdout" showUncoveredFiles="true"/>
         <log type="coverage-html" target="./tests/build/coverage/" title="Parm Test Coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="35" highLowerBound="70" />
     </logging>
 </phpunit>

@@ -19,6 +19,8 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     private $factory;
 
+    private $isNewObject = false;
+
     /**
      * Constructor
      * @param array                   $row     Array of data
@@ -28,11 +30,11 @@ abstract class DataAccessObject extends Row implements TableInterface
     {
         if ($row == null) {
             $row = static::getDefaultRow();
+            $this->isNewObject = true;
         } elseif (!array_key_exists(static::getIdField(), $row)) {
             $row[static::getIdField()] = null;
+            $this->isNewObject = true;
         }
-
-        parent::__construct($row);
 
         if ($this->isNewObject()) {
             foreach (array_keys($row) as $field) {
@@ -43,6 +45,8 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
 
         $this->factory = static::ifNullReturnNewFactory($factory);
+
+        parent::__construct($row);
     }
 
     /**
@@ -104,6 +108,7 @@ abstract class DataAccessObject extends Row implements TableInterface
         }
 
         $this->clearModifiedColumns();
+        $this->isNewObject = false;
 
         return $this;
     }
@@ -130,7 +135,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     public function isNewObject()
     {
-        return $this->getId() == null;
+        return $this->isNewObject;
     }
 
     /**

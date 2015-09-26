@@ -1,6 +1,7 @@
 <?php
 
 namespace Parm;
+use Parm\Exception\ErrorException;
 
 /**
  * Class Config
@@ -16,23 +17,46 @@ class Config
     private static $datetimeStorageFormat = 'Y-m-d H:i:s';
     private static $caseSensitiveCollation = 'utf8_bin';
 
-
     /**
      * @param string $name
+     */
+    public static function setupConnection($name, $databaseNameOnServer, $databaseUser, $databasePassword, $databaseHost)
+    {
+        self::addConnection($name, new \Doctrine\DBAL\Connection([
+            'dbname' => $databaseNameOnServer,
+            'user' => $databaseUser,
+            'password' => $databasePassword,
+            'host' => $databaseHost,
+            'driver' => 'pdo_mysql',
+        ], new \Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
+    }
+
+    /**
+     * @param string                    $name
      * @param \Doctrine\DBAL\Connection $connection
      */
     public static function addConnection($name, \Doctrine\DBAL\Connection $connection)
     {
-        static::$connections[$name] = $connection;
+        if ($connection->getDriver() instanceof \Doctrine\DBAL\Driver\PDOMySql\Driver) {
+            static::$connections[$name] = $connection;
+        } else {
+            throw new ErrorException("Database connection must use a \\Doctrine\\DBAL\\Driver\\PDOMySql\\Driver Driver");
+        }
     }
 
     /**
      * @param $name
      * @return \Doctrine\DBAL\Connection $connection
+     * @throws ErrorException
      */
     public static function getConnection($name)
     {
-        return static::$connections[$name];
+        if (array_key_exists($name,static::$connections)) {
+            return static::$connections[$name];
+        }
+        else {
+            throw new ErrorException("Database connection not found in Config");
+        }
     }
 
     public static function getAllConnections()
@@ -87,7 +111,5 @@ class Config
     {
         self::$datetimeStorageFormat = $datetimeStorageFormat;
     }
-
-
 
 }

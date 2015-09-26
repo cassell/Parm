@@ -4,6 +4,24 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 {
     /**
      * @test
+     * @expectedException Parm\Exception\ErrorException
+     */
+    public function testConstructorFail()
+    {
+        $dp = new Parm\DatabaseProcessor('unknown');
+    }
+
+    /**
+     * @test
+     * @expectedException Parm\Exception\ErrorException
+     */
+    public function testConstructorFailNull()
+    {
+        $dp = new Parm\DatabaseProcessor(null);
+    }
+
+    /**
+     * @test
      */
     public function testPassingStringToConstructor()
     {
@@ -102,20 +120,81 @@ class DatabaseProcessorTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \Parm\Exception\ErrorException
      */
-    public function testOutputJSONString()
+    public function testGetFirstFieldFails()
+    {
+        $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
+        $dp->setSQL("select zipcode from zipcodes where city = 'Scranton' order by zipcode asc");
+        $dp->getFirstField("city_id"); // not in the select query above
+    }
+
+    /**
+     * @test
+     * @expectedException \Parm\Exception\ErrorException
+     */
+    public function testGetSingleColumnArrayFails()
+    {
+        $dp = new Parm\DatabaseProcessor('parm-global-tests');
+        $dp->setSQL("SELECT Name FROM City WHERE District = 'Pennsylvania' ORDER BY Population DESC");
+        $dp->getSingleColumnArray("City");  // not in the select query above
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function testGetSingleColumnArray()
+    {
+        $dp = new Parm\DatabaseProcessor('parm-global-tests');
+        $dp->setSQL("SELECT Name FROM City WHERE District = 'Pennsylvania' ORDER BY Population DESC");
+        $this->assertEquals(["Philadelphia","Pittsburgh","Allentown","Erie"],$dp->getSingleColumnArray("Name"));
+
+    }
+
+    /**
+     * @test
+     *
+     */
+    public function testUpdate()
+    {
+        $dp = new Parm\DatabaseProcessor('parm-global-tests');
+        $dp->update("UPDATE City SET Population = '1517551' WHERE `City-Id` = '5';");
+    }
+
+    /**
+     * @test
+     * @expectedException Parm\Exception\UpdateFailedException
+     *
+     *
+     */
+    public function testUpdateFailed()
+    {
+        $dp = new Parm\DatabaseProcessor('parm-global-tests');
+        $dp->update("UPDATE City SET NotAColumn = false WHERE `City-Id` = '5';");
+
+    }
+
+
+    /**
+     * @test
+     */
+    public function testmysql_real_escape_string()
+    {
+        $this->assertEquals("'O\\'Brien\\'s'",Parm\DatabaseProcessor::mysql_real_escape_string("O'Brien's"));
+    }
+
+    /**
+     * @test
+     */
+    public function testGetJSONString()
     {
         $dp = new Parm\DatabaseProcessor('parm_namespaced_tests');
         $dp->setSQL("SELECT * FROM `zipcodes` WHERE `city` LIKE '%Freedom%';");
 
-        ob_start();
-
-        $dp->outputJSONString();
-
-        $json = ob_get_clean();
-
-        $this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]', $json);
+        $this->assertEquals('[{"zipcodeId":"446","zipcode":"16637","state":"PA","longitude":"-78.433010000000","latitude":"40.340680000000","archived":"0","city":"East Freedom","stateName":"Pennsylvania"},{"zipcodeId":"567","zipcode":"15042","state":"PA","longitude":"-80.232080000000","latitude":"40.682566000000","archived":"0","city":"Freedom","stateName":"Pennsylvania"},{"zipcodeId":"1099","zipcode":"17349","state":"PA","longitude":"-76.681120000000","latitude":"39.753369000000","archived":"0","city":"New Freedom","stateName":"Pennsylvania"}]', $dp->getJSONString());
     }
+
 
     /**
      * @test

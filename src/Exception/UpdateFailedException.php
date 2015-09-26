@@ -2,7 +2,7 @@
 
 namespace Parm\Exception;
 
-class UpdateFailedException extends \ErrorException
+class UpdateFailedException extends ErrorException
 {
     public function __construct($sql)
     {

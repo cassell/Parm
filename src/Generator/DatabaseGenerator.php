@@ -20,13 +20,16 @@ class DatabaseGenerator
             throw new \Parm\Exception\ErrorException('destinationDirectory must be a string');
         }
 
-        if (!is_string($generateToNamespace)) {
-            throw new \Parm\Exception\ErrorException('generateToNamespace must be a string');
-        }
-
         $this->connection = $connection;
         $this->destinationDirectory = $destinationDirectory;
-        $this->generateToNamespace = $generateToNamespace;
+        if($generateToNamespace == null || $generateToNamespace == "\\")
+        {
+            $this->useGlobalNamespace();
+        }
+        else {
+            $this->generateToNamespace = (string) $generateToNamespace;
+        }
+
     }
 
     /**
@@ -80,7 +83,9 @@ class DatabaseGenerator
                 $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/autoload.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'), $globalNamespaceData));
             }
         } else {
+            // @codeCoverageIgnoreStart
             throw new \Parm\Exception\ErrorException("No tables in database.");
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -127,9 +132,13 @@ class DatabaseGenerator
         if ($columns != null && count($columns) > 0) {
             foreach ($columns as $key => $column) {
 
+                // Infrequent problem but throw exception:
+                // This could be fixed by changing getTemplatingDataFromTableName($tableName) to getTemplatingDataFromTableData($data)
+                // @codeCoverageIgnoreStart
                 if ($column['Field'] == "id" && $column['Key'] != "PRI") {
                     throw new \Parm\Exception\ErrorException('"id" is an invalid column name unless it is the primary key for the Parm\DatabaseGenerator. It causes a collision with the function getId() which always returns the primary key.');
                 }
+                // @codeCoverageIgnoreEnd
 
                 if ($column['Key'] == "PRI") {
                     $idFieldName = strtoupper(str_replace("-", "_",$column['Field']));
@@ -201,6 +210,14 @@ class DatabaseGenerator
 
     }
 
+
+    /**
+     * @param $fileName
+     * @param $contents
+     * @return bool
+     * @throws \Parm\Exception\ErrorException
+     * @codeCoverageIgnore
+     */
     private function writeContentsToFile($fileName, $contents)
     {
         if (file_exists($fileName) && !is_writable($fileName)) {
@@ -218,6 +235,10 @@ class DatabaseGenerator
         }
     }
 
+    /**
+     * @throws \Parm\Exception\ErrorException
+     * @codeCoverageIgnore
+     */
     private function readyDestinationDirectory()
     {
         if (!file_exists($this->destinationDirectory)) {

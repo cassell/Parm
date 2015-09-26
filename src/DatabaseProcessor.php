@@ -17,28 +17,17 @@ class DatabaseProcessor
     private $connection;
 
     /**
-     * @param \Doctrine\DBAL\Connection|string $connection The database to connect to
+     * @param  \Doctrine\DBAL\Connection|string $connection The database to connect to
+     * @throws ErrorException
      */
     public function __construct($connection)
     {
         // setup node
         if ($connection instanceof \Doctrine\DBAL\Connection) {
             $this->connection = $connection;
-        } elseif (is_string($connection)) {
+        } else {
             $this->connection = Config::getConnection($connection);
-
-            if ($this->connection == null) {
-                throw new \Parm\Exception\ErrorException("Unable to find database named " . \htmlentities($connection) . " in \\Parm\\Config configuration.");
-            }
         }
-    }
-
-    /**
-     * @return Rows
-     */
-    public function query()
-    {
-        return $this->getRows();
     }
 
     /**
@@ -78,19 +67,20 @@ class DatabaseProcessor
 
     /**
      * Get the first value from a single column from the database
-     *
-     * @param  string $columnName The name of the column to select from
-     * @return array
+     * @param  string         $columnName
+     * @return string
+     * @throws ErrorException
      */
     public function getFirstField($columnName)
     {
-        $a = $this->getArray();
+        $a = current($this->getArray());
 
-        if (is_array($a)) {
-            $a = reset($a);
-
-            return $a[$columnName];
+        if (!array_key_exists($columnName,$a)) {
+            throw new ErrorException("getFirstField: columnName was not in the result");
         }
+
+        return $a[$columnName];
+
     }
 
     /**
@@ -100,20 +90,15 @@ class DatabaseProcessor
      */
     public function getSingleColumnArray($columnName = null)
     {
-        $data = array();
+        $data = [];
 
-        $conn = $this->databaseNode->getConnection();
-
-        $result = $this->getResult($this->getSQL(), $conn);
-
-        if ($result != null) {
-            if ($this->getNumberOfRowsFromResult($result) > 0) {
-                $result->data_seek(0);
-
-                while ($row = $result->fetch_array($columnName ? MYSQLI_ASSOC : MYSQLI_NUM)) {
-                    $data[] = $row[$columnName ? $columnName : 0];
-                }
+        foreach ($this->getArray() as $row) {
+            if ($columnName != null && !array_key_exists($columnName,$row)) {
+                throw new ErrorException("getSingleColumnArray: columnName was not in the result");
             }
+
+            $data[] = $row[$columnName ? $columnName : 0];
+
         }
 
         return $data;
@@ -131,12 +116,6 @@ class DatabaseProcessor
 
         return $this;
     }
-
-//    public function prepare($sql,$params = [])
-//    {
-//        $this->setSQL($this->connection->prepare($sql))
-//
-//    }
 
     /**
      * Get the SQL that has been set
@@ -193,29 +172,11 @@ class DatabaseProcessor
      */
     public function update($sql)
     {
-        if ($this->getResult($sql) != null) {
-            return true;
-        } else {
-            throw new UpdateFailedException($sql);
+        try {
+            $this->getResult($sql);
+        } catch (\Parm\Exception\ErrorException $e) {
+            throw new \Parm\Exception\UpdateFailedException($sql);
         }
-    }
-
-    public function executeMultiQuery()
-    {
-        $conn = $this->databaseNode->getConnection();
-
-        $conn->multi_query($this->getSQL());
-
-        do {
-            if ($conn->errno != 0) {
-                throw new \Parm\Exception\ErrorException("Parm DatabaseProcessor multiQuery SQL Error. Reason given " . $conn->error);
-            }
-
-            if (!$conn->more_results() || (!$conn->next_result() && $conn->error == null)) {
-                break;
-            }
-
-        } while (true);
 
     }
 
@@ -234,10 +195,9 @@ class DatabaseProcessor
     }
 
     /**
-     * Get the id of the last inserted object from the database node
+     * Get the id of the last inserted object
      *
-     * @param  string $sql The SQL to execute
-     * @return mysql  result
+     * @return string
      */
     public function getLastInsertId()
     {
@@ -247,10 +207,13 @@ class DatabaseProcessor
     /**
      * Convert a datetime from one timezone to another using the MySQL database as the timezone source. Use the "US/Eastern" format or "Europe/London" formats
      *
-     * @param  timestamp|string|DateTime $dateTime       The datetime in the source timezone
-     * @param  string                    $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
-     * @param  string                    $destTimezone   The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @codeCoverageIgnore
+     * @param  int|string|\DateTime        $dateTime       The datetime in the source timezone
+     * @param  string                      $sourceTimezone The source timezone. "US/Eastern" mysql format (mysql.time_zone_name)
+     * @param  string                      $destTimezone   The destination timezone. "US/Eastern" mysql format (mysql.time_zone_name)
      * @return \DateTime
+     * @throws ErrorException
+     * @throws TimezoneConversionException
      */
     public function convertTimezone($dateTime, $sourceTimezone, $destTimezone)
     {
@@ -281,34 +244,20 @@ class DatabaseProcessor
     }
 
     /**
-     * Free a mysqli_result
+     * @return string
      */
-    public function freeResult(\mysqli_result $result)
+    public function getJsonString()
     {
-        $result->free();
+        return json_encode($this->getJSON());
     }
 
     /**
+     * @codeCoverageIgnore
      * Output a JSON string using a real_query from the SQL that has been set using setSQL($sql)
      */
     public function outputJSONString()
     {
-        echo "[";
-
-        $firstRecord = true;
-
-        foreach($this->getRows() as $row)
-        {
-            if (!$firstRecord) {
-                echo ",";
-            } else {
-                $firstRecord = false;
-            }
-
-            echo $row->toJSONString();
-        }
-
-        echo "]";
+        echo $this->getJsonString();
 
         return true;
     }

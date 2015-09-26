@@ -69,14 +69,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * @return Collection
      */
-    public function query()
-    {
-        return $this->getCollection();
-    }
-
-    /**
-     * @return Collection
-     */
     public function getCollection()
     {
         return new Collection($this);
@@ -125,7 +117,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Find an object by primary key
      * @param  integer $id ID of the row in the database
-     * @return object|null The record from the database
+     * @return null|object The record from the database
+     * @throws ErrorException
      */
     public function findId($id)
     {
@@ -133,10 +126,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
         if (static::getIdField()) {
             $this->addBinding(new EqualsBinding(static::getIdField(), (int)$id));
-
             return $this->getFirstObject();
         } else {
-            return null;
+            throw new ErrorException('Unable to findId on a table that does not have a primary key');
         }
     }
 
@@ -144,6 +136,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param  integer $id ID of the row in the database
      * @return object|null                             The record from the database
      * @throws RecordNotFoundException
+     * @throws ErrorException
      */
     public function findIdOrFail($id)
     {
@@ -201,11 +194,10 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Alias to addBinding. Adds a binding to the default factory Binding which is an AND conditional
      * @param  Binding|string $binding
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function bind($binding)
     {
-        $this->conditional->addBinding($binding);
-
         return $this->addBinding($binding);
     }
 
@@ -213,6 +205,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Adds a conditional to the default FactoryConditional which is an AND conditional
      * @param  Conditional $conditional
      * @return DataAccessObjectFactory   so that you can chain bindings and conditionals
+     * @codeCoverageIgnore
      */
     public function addConditional(Conditional $conditional)
     {
@@ -227,6 +220,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param  string $localField
      * @param  string $remoteField
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function addForeignKeyObjectBinding(DataAccessObject $object, $localField = null, $remoteField = null)
     {
@@ -238,6 +232,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param  string $field
      * @param  string $value
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function whereEquals($field, $value)
     {
@@ -249,6 +244,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param  string $field
      * @param  string $value
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function whereNotEquals($field, $value)
     {
@@ -260,6 +256,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param  string $field
      * @param  string $value
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function whereContains($field, $value)
     {
@@ -270,6 +267,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
      * @param  string $field
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function whereTrue($field)
     {
@@ -280,6 +278,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
      * @param  string $field
      * @return DataAccessObjectFactory so that you can chain bindings
+     * @codeCoverageIgnore
      */
     public function whereFalse($field)
     {
@@ -426,6 +425,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Alias to the join() function
      * @param  string $clause join clause
      * @return DataAccessObject
+     * @codeCoverageIgnore
      */
     public function addJoinClause($clause)
     {
@@ -599,6 +599,17 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     }
 
     /**
+     * Clear the internal bindings of a factory
+     * @return $this
+     */
+    public function clearBindings()
+    {
+        $this->conditional = new AndConditional();
+
+        return $this;
+    }
+
+    /**
      * Get count of the number of rows from the database (based on Bindings).
      * @return integer The count of rows
      */
@@ -622,6 +633,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Truncate all the data in the table
+     * @codeCoverageIgnore
      */
     public function truncateTable()
     {
@@ -795,12 +807,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         return $conditionalSQL;
     }
 
-    protected function clearBindings()
-    {
-        $this->conditional = new AndConditional();
-
-        return $this;
-    }
 
     private function getSingleFieldFunctionValue($function, $field)
     {
