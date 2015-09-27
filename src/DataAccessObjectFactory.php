@@ -663,7 +663,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
         foreach($this->getArray() as $row)
         {
-            $array[] = $row["fdf"];
+            $array[] = $row["ff"];
         }
 
         return $array;
