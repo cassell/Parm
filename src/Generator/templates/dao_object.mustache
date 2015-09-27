@@ -18,28 +18,49 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     public function getId()
     {
         return $this->getIntFieldValue($this->getIdField());
-}
+    }
+
 {{/idFieldIsInteger}}
+{{^idFieldName}}
+    /**
+    * Get the ID (Primary Key) of the object
+    * @throws \Parm\Exception\GetFieldValueException
+    */
+    public function getId()
+    {
+        throw new \Parm\Exception\GetFieldValueException("There is no id field on this table.");
+    }
+
+{{/idFieldName}}
 {{#columns}}
     {{#typeDatetime}}
     /**
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
     * @param string|\DateTime|int|timestamp $val
     */
-    public function set{{FieldCase}}($val) { $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @param string $format optional Defaults to MySQL formatted Datetime YYYY-MM-DD HH:MM:SS
     * @return string
     */
-    public function get{{FieldCase}}($format = null) { return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+    public function get{{FieldCase}}($format = null)
+    {
+        return $this->getDatetimeFieldValue(self::{{AllCaps}}_COLUMN,$format);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}" as a DateTime object
     * @return \DateTime
     */
-    public function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDatetimeStorageFormat()); }
+    public function get{{FieldCase}}DateTimeObject()
+    {
+        return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDatetimeStorageFormat());
+    }
 
     {{/typeDatetime}}
     {{#typeDate}}
@@ -48,20 +69,29 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     * @param string|\DateTime|int|timestamp|null $val
     * @return string|null MySQL formatted Datetime YYYY-MM-DD
     */
-    public function set{{FieldCase}}($val) { $this->setDateFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setDateFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @param string|null $format optional Defaults to MySQL formatted Date YYYY-MM-DD
     * @return string|null
     */
-    public function get{{FieldCase}}($format = null) { return $this->getDateFieldValue(self::{{AllCaps}}_COLUMN,$format); }
+    public function get{{FieldCase}}($format = null)
+    {
+        return $this->getDateFieldValue(self::{{AllCaps}}_COLUMN,$format);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}" as a DateTime object
     * @return \DateTime|null
     */
-    public function get{{FieldCase}}DateTimeObject() { return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->getDateStorageFormat()); }
+    public function get{{FieldCase}}DateTimeObject()
+    {
+        return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->getDateStorageFormat());
+    }
 
     {{/typeDate}}
     {{#typeInt}}
@@ -69,13 +99,19 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
     * @param string|int|null $val
     */
-    public function set{{FieldCase}}($val) { $this->setIntFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setIntFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @return int|null
     */
-    public function get{{FieldCase}}(){ return $this->getIntFieldValue(self::{{AllCaps}}_COLUMN); }
+    public function get{{FieldCase}}()
+    {
+        return $this->getIntFieldValue(self::{{AllCaps}}_COLUMN);
+    }
 
     {{/typeInt}}
     {{#typeBoolean}}
@@ -83,13 +119,19 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
     * @param string|int|bool|null $val
     */
-    public function set{{FieldCase}}($val) { $this->setBooleanFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setBooleanFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @return bool|null
     */
-    public function get{{FieldCase}}(){ return $this->getBooleanFieldValue(self::{{AllCaps}}_COLUMN); }
+    public function get{{FieldCase}}()
+    {
+        return $this->getBooleanFieldValue(self::{{AllCaps}}_COLUMN);
+    }
 
     {{/typeBoolean}}
     {{#typeNumeric}}
@@ -97,13 +139,19 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
     * @param string|int|null $val
     */
-    public function set{{FieldCase}}($val) { $this->setNumericalFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setNumericalFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @return float|null
     */
-    public function get{{FieldCase}}(){ return $this->getNumericalFieldValue(self::{{AllCaps}}_COLUMN); }
+    public function get{{FieldCase}}()
+    {
+        return $this->getNumericalFieldValue(self::{{AllCaps}}_COLUMN);
+    }
 
     {{/typeNumeric}}
     {{#typeString}}
@@ -111,13 +159,19 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
     * @param string|null $val
     */
-    public function set{{FieldCase}}($val) { $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val); }
+    public function set{{FieldCase}}($val)
+    {
+        $this->setFieldValue(self::{{AllCaps}}_COLUMN,$val);
+    }
 
     /**
     * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
     * @return string|null
     */
-    public function get{{FieldCase}}(){ return $this->getFieldValue(self::{{AllCaps}}_COLUMN); }
+    public function get{{FieldCase}}()
+    {
+        return $this->getFieldValue(self::{{AllCaps}}_COLUMN);
+    }
 
     {{/typeString}}
 {{/columns}}

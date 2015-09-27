@@ -75,33 +75,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     }
 
     /**
-     * Loop through the rows a page at a time and process with a closure
-     * @param int $pageSize
-     * @param callable $function
-     * @throws ErrorException
-     */
-    public function pagedProcess($pageSize, $function)
-    {
-        if ($pageSize < 1 || !is_int($pageSize)) {
-            throw new Exception\ErrorException("pageSize must be an integer greater than 0");
-        }
-
-        $round = 0;
-
-        $rowCount = $this->count();
-
-        $this->limit($pageSize, 0);
-
-        while ($round * $pageSize < $rowCount) {
-            $this->limit($pageSize, $round * $pageSize);
-            $this->process($function);
-
-            $round++;
-        }
-
-    }
-
-    /**
      * Return the first object from a getObjects
      * @return object
      */
@@ -165,7 +138,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * @param string $clause
      * @return array of DataAccessObjects
      * @throws ErrorException
-     * @internal param string $whereClause
      */
     public function find($clause = "")
     {
@@ -321,12 +293,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     public function getFromClause()
     {
-        if (strpos(static::getTableName(), "-") !== false) {
-            return 'FROM `' . static::getTableName() . '`';
-        } else {
-            return 'FROM ' . static::getTableName();
-        }
-
+        return 'FROM ' . static::getEscapedTableName();
     }
 
     /**
@@ -378,11 +345,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         if (strpos($field, ".") !== false) {
             $this->fields[] = $field;
         } else {
-            if (strpos(static::getTableName(), "-") !== false) {
-                $this->fields[] = "`" . static::getTableName() . "`." . $field;
-            } else {
-                $this->fields[] = static::getTableName() . "." . $field;
-            }
+            $this->fields[] = static::getEscapedTableName() . "." . $field;
         }
 
         return $this;
@@ -616,7 +579,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     public function count()
     {
         if (static::getIdField()) {
-            return $this->getSingleFieldFunctionValue('COUNT', static::getTableName() . '.' . static::getIdField());
+            return $this->getSingleFieldFunctionValue('COUNT', static::getEscapedTableName() . '.' . static::getIdField());
         } else {
             return $this->getSingleFieldFunctionValue('COUNT', '*');
         }
@@ -637,7 +600,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     public function truncateTable()
     {
-        $this->update("TRUNCATE TABLE " . static::getTableName());
+        $this->update("TRUNCATE TABLE " . static::getEscapedTableName());
     }
 
     /**
@@ -647,7 +610,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     public function deleteWhere($whereClause)
     {
-        return $this->update("DELETE FROM " . static::getTableName() . " WHERE " . $whereClause);
+        return $this->update("DELETE FROM " . static::getEscapedTableName() . " WHERE " . $whereClause);
     }
 
     /**
@@ -673,19 +636,17 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     public function findDistinctField($field, $clause = "")
     {
-        $array = array();
+        $array = [];
 
-        $result = $this->getResult('SELECT DISTINCT(' . $field . ") as fdf FROM " . static::getTableName() . " " . $clause);
+        $this->setSQL('SELECT DISTINCT(' . $field . ") as fdf FROM " . static::getEscapedTableName() . " " . $clause);
 
-        if ($result != null && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $array[] = $row["fdf"];
-            }
-
-            $this->freeResult($result);
+        foreach($this->getArray() as $row)
+        {
+            $array[] = $row["fdf"];
         }
 
         return $array;
+
     }
 
     /**
@@ -696,16 +657,13 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     public function findField($field, $clause = "")
     {
-        $array = array();
+        $array = [];
 
-        $result = $this->getResult('SELECT ' . $field . " as ff FROM " . static::getTableName() . " " . $clause);
+        $this->setSQL('SELECT ' . $field . " as ff FROM " . static::getEscapedTableName() . " " . $clause);
 
-        if ($result != null && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $array[] = $row["ff"];
-            }
-
-            $this->freeResult($result);
+        foreach($this->getArray() as $row)
+        {
+            $array[] = $row["fdf"];
         }
 
         return $array;
@@ -736,7 +694,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     public function getCount($clause = "")
     {
         if ($this->getIdField() != '') {
-            return (int)($this->sqlFunctionFieldQuery('COUNT', static::getTableName() . "." . static::getIdField(), $clause));
+            return (int)($this->sqlFunctionFieldQuery('COUNT', static::getEscapedTableName() . "." . static::getIdField(), $clause));
         } else {
             return (int)($this->sqlFunctionFieldQuery('COUNT', '*', $clause));
         }
@@ -778,24 +736,6 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         $this->orderBy($field, $direction);
     }
 
-    // deprecate
-    public function executeQuery($sql)
-    {
-        $data = array();
-
-        $result = $this->getResult($sql);
-
-        if ($result != null && $result->num_rows > 0) {
-            while ($row = $result->fetch_assoc()) {
-                $data[] = $row;
-            }
-
-            $this->freeResult($result);
-        }
-
-        return $data;
-    }
-
     protected function getConditionalSql()
     {
         $conditionalSQL = $this->conditional->getSql($this);
@@ -813,6 +753,18 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         $result = $this->getResult(implode(" ", array("SELECT " . $function . "(" . $field . ") as val", $this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql())));
 
         return (int)$result->fetchColumn();
+    }
+
+    /**
+     * @return string
+     */
+    private static function getEscapedTableName()
+    {
+        if (strpos(static::getTableName(), "-") !== false) {
+            return '`' . static::getTableName() . '`';
+        } else {
+            return static::getTableName();
+        }
     }
 
 }

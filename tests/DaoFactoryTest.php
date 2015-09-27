@@ -16,6 +16,36 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \Parm\Exception\ErrorException
+     */
+    public function testFindIdTableWithoutPrimaryKey()
+    {
+        $f = new RegionDaoFactory();
+        $f->findId(10);
+    }
+
+    /**
+     * @test
+     */
+    public function testFindIdOrFail()
+    {
+        $f = new ParmTests\Dao\ZipcodesDaoFactory();
+        $sharon = $f->findIdOrFail(1445);
+        $this->assertEquals('16146', $sharon->getZipcode());
+    }
+
+    /**
+     * @test
+     * @expectedException \Parm\Exception\RecordNotFoundException
+     */
+    public function testFindIdOrFailThrow()
+    {
+        $f = new ParmTests\Dao\ZipcodesDaoFactory();
+        $f->findIdOrFail(0);
+    }
+
+    /**
+     * @test
      */
     public function testFind()
     {
@@ -27,19 +57,13 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
     /**
      * @test
+     * @expectedException \Parm\Exception\ErrorException
      */
     public function testFindThrowException()
     {
-        $exceptionCaught = false;
-        try {
-            $f = new ParmTests\Dao\ZipcodesDaoFactory();
-            $f->addBinding(new \Parm\Binding\EqualsBinding("zipcode_id", 1445));
-            $sharon = $f->find("where zipcode_id = 1445");
-        } catch (\Parm\Exception\ErrorException $e) {
-            $exceptionCaught = true;
-        }
-
-        $this->assertTrue($exceptionCaught);
+        $f = new ParmTests\Dao\ZipcodesDaoFactory();
+        $f->addBinding(new \Parm\Binding\EqualsBinding("zipcode_id", 1445));
+        $f->find("where zipcode_id = 1445");
     }
 
     /**
@@ -165,7 +189,9 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $f = new ParmTests\Dao\PeopleDaoFactory();
         $f->setSelectFields(array("first_name"));
         $f->addSelectField("last_name");
-        $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name", $f->getSelectClause());
+        $f->addSelectField("people.archived");
+        $f->addSelectField(\ParmTests\Dao\PeopleTable::CREATE_DATE_COLUMN);
+        $this->assertEquals("SELECT people.people_id,people.first_name,people.last_name,people.archived,people.create_date", $f->getSelectClause());
     }
 
     /**
@@ -199,6 +225,20 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
     /**
      * @test
      */
+    public function testGetObjectsWithoutPrimaryKey()
+    {
+        $f = new RegionDaoFactory();
+        $regions = $f->getObjects();
+
+        $this->assertEquals(25, count($regions));
+
+    }
+
+
+
+    /**
+     * @test
+     */
     public function testWorkingWithBindings()
     {
         $f = new \ParmTests\Dao\ZipcodesDaoFactory();
@@ -211,26 +251,6 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
 
             $zipCodeTotal += (int)$zipcode->getZipcode();
         }
-
-        $this->assertEquals(99028, $zipCodeTotal);
-
-    }
-
-    /**
-     * @test
-     */
-    public function testPageProcess()
-    {
-        $f = new \ParmTests\Dao\ZipcodesDaoFactory();
-        $f->whereEquals(\ParmTests\Dao\ZipcodesDaoObject::CITY_COLUMN, "Erie");
-        $f->addBinding("latitude > 42.1");
-
-        $zipCodeTotal = 0;
-
-        $f->pagedProcess(2, function ($zipcode) use (&$zipCodeTotal) {
-
-            $zipCodeTotal += (int)$zipcode->getZipcode();
-        });
 
         $this->assertEquals(99028, $zipCodeTotal);
 
@@ -263,7 +283,22 @@ class DaoFactoryTest extends PHPUnit_Framework_TestCase
         $f->orderBy("Region asc, Name desc");
         $this->assertEquals(CountryNationDaoObject::findId(188), $f->getFirstObject());
 
+        $f = new CountryNationDaoFactory();
+        $f->whereEquals("Code","AAA");
+        $this->assertNull($f->getFirstObject());
 
+
+    }
+
+    /**
+     * @test
+     */
+    public function testJoin()
+    {
+        $f = new CountryNationDaoFactory();
+        $f->join("join Region on Region.Region = `Country-Nation`.Region");
+        $f->whereEquals("Region.Hemisphere","Southern");
+        $this->assertEquals(68, $f->count());
     }
 
 

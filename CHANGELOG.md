@@ -27,7 +27,9 @@
 * Method getMySQLResult renamed to getResult
 
 ### DAO Factories
-* clearBindings is public
+* clearBindings method is public
+* Deprecated pagedProcess
+* Deprecated executeQuery
 
 
 ### DAO Objects
