@@ -18,16 +18,16 @@ class DatetimeBinding extends Binding
     public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
         if ($this->value === null) {
-            return $factory->escapeString($this->field) . " " . $this->operator . " NULL";
+            return $this->field . " " . $this->operator . " NULL";
         } elseif ($this->value instanceof \DateTime) {
-            return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString(($this->value->format($factory->databaseNode->getDatetimeStorageFormat()))) . "'";
+            return $this->field . " " . $this->operator . " " . $factory->escapeString(($this->value->format($factory->getDatetimeStorageFormat())));
         } elseif (is_numeric($this->value)) {
             $date = new \DateTime();
             $date->setTimestamp((int)$this->value);
 
-            return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($date->format($factory->databaseNode->getDatetimeStorageFormat())) . "'";
+            return $this->field . " " . $this->operator . " " . $factory->escapeString($date->format($factory->getDatetimeStorageFormat()));
         } else {
-            return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString((string)$this->value) . "'";
+            return $this->field . " " . $this->operator . " " . $factory->escapeString((string)$this->value);
         }
     }
 

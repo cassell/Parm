@@ -1,10 +1,12 @@
 <?php
 
-require dirname(__FILE__) . '/test.inc.php';
+
 
 class RowTest extends PHPUnit_Framework_TestCase
 {
-
+    /**
+     * @test
+     */
     public function testCamelCase()
     {
         $this->assertEquals('arabianCamel', Parm\Row::columnToCamelCase('arabian_camel'));

@@ -1,7 +1,9 @@
 <?php
 namespace Parm\Binding\Conditional;
 
-abstract class Conditional extends \Parm\Binding\SQLString
+use Parm\Binding\SQLString;
+
+abstract class Conditional implements SQLString
 {
     /**
      * The separator that should be used in the SQL string

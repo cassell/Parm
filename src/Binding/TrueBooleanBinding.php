@@ -10,6 +10,6 @@ class TrueBooleanBinding extends Binding
      */
     public function __construct($field)
     {
-        parent::__construct($field, '=', '1');
+        parent::__construct($field, '=', 1);
     }
 }

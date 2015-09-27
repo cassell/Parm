@@ -1,6 +1,5 @@
 <?php
 
-class_alias('Parm\Binding\SQLString', 'SQLString');
 class_alias('Parm\Binding\Conditional\AndConditional', 'AndConditional');
 class_alias('Parm\Binding\Conditional\OrConditional', 'OrConditional');
 class_alias('Parm\Binding\Binding', 'Binding');

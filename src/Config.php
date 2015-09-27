@@ -1,6 +1,7 @@
 <?php
 
 namespace Parm;
+use Parm\Exception\ErrorException;
 
 /**
  * Class Config
@@ -9,45 +10,106 @@ namespace Parm;
 class Config
 {
     /**
-     * @var array
+     * @var \Doctrine\DBAL\Connection[]
      */
-    public static $databases = Array();
+    private static $connections = Array();
+    private static $dateStorageFormat = 'Y-m-d';
+    private static $datetimeStorageFormat = 'Y-m-d H:i:s';
+    private static $caseSensitiveCollation = 'utf8_bin';
 
     /**
      * @param string $name
-     * @param DatabaseNode $masterNode
      */
-    public static function addDatabase($name, DatabaseNode $masterNode)
+    public static function setupConnection($name, $databaseNameOnServer, $databaseUser, $databasePassword, $databaseHost)
     {
-        static::$databases[$name] = new Database();
-        static::$databases[$name]->setMaster($masterNode);
+        self::addConnection($name, new \Doctrine\DBAL\Connection([
+            'dbname' => $databaseNameOnServer,
+            'user' => $databaseUser,
+            'password' => $databasePassword,
+            'host' => $databaseHost,
+            'driver' => 'pdo_mysql',
+        ], new \Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
+    }
+
+    /**
+     * @param string                    $name
+     * @param \Doctrine\DBAL\Connection $connection
+     */
+    public static function addConnection($name, \Doctrine\DBAL\Connection $connection)
+    {
+        if ($connection->getDriver() instanceof \Doctrine\DBAL\Driver\PDOMySql\Driver) {
+            static::$connections[$name] = $connection;
+        } else {
+            throw new ErrorException("Database connection must use a \\Doctrine\\DBAL\\Driver\\PDOMySql\\Driver Driver");
+        }
     }
 
     /**
      * @param $name
-     * @return Database
+     * @return \Doctrine\DBAL\Connection $connection
+     * @throws ErrorException
      */
-    public static function getDatabase($name)
+    public static function getConnection($name)
     {
-        return static::$databases[$name];
+        if (array_key_exists($name,static::$connections)) {
+            return static::$connections[$name];
+        }
+        else {
+            throw new ErrorException("Database connection not found in Config");
+        }
+    }
+
+    public static function getAllConnections()
+    {
+        return static::$connections;
     }
 
     /**
-     * @param $name
-     * @return Database
+     * @return string
      */
-    public static function getDatabaseMaster($name)
+    public static function getCaseSenstitiveCollation()
     {
-        return static::$databases[$name]->getMaster();
+        return self::$caseSensitiveCollation;
     }
 
     /**
-     * @return Database
+     * @param string $caseSensitiveCollation
      */
-    public static function __getFirstDatabaseMaster()
+    public static function setCaseSensitiveCollation($caseSensitiveCollation)
     {
-        $arrayKeys = array_keys(static::$databases);
-        return static::getDatabaseMaster(reset($arrayKeys));
+        self::$caseSensitiveCollation = $caseSensitiveCollation;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDateStorageFormat()
+    {
+        return self::$dateStorageFormat;
+    }
+
+    /**
+     * @param string $dateStorageFormat
+     */
+    public static function setDateStorageFormat($dateStorageFormat)
+    {
+        self::$dateStorageFormat = $dateStorageFormat;
+    }
+
+    /**
+     * @return string
+     */
+    public static function getDatetimeStorageFormat()
+    {
+        return self::$datetimeStorageFormat;
+    }
+
+    /**
+     * @param string $datetimeStorageFormat
+     */
+    public static function setDatetimeStorageFormat($datetimeStorageFormat)
+    {
+        self::$datetimeStorageFormat = $datetimeStorageFormat;
     }
 
 }

@@ -7,58 +7,29 @@ class DatabaseGenerator
     public static $DESTINATION_DIRECTORY_FOLDER_PERMISSIONS = 0777;
     public static $GENERATED_CODE_FILE_PERMISSIONS = 0777;
 
-    public $database;
-    public $databaseNode;
     public $destinationDirectory;
-    public $generatedNamespace = "\\Parm\\Dao\\"; // default
-
-    public function __construct($database)
-    {
-        $this->setDatabase($database);
-    }
-
+    public $generateToNamespace = "";
     /**
-     * Set the database configuration to use the master from
-     * @param \Parm\Database $database The database to connect to
+     * @var \Doctrine\DBAL\Connection
      */
-    public function setDatabase(\Parm\Database $database)
-    {
-        $this->setDatabaseNode($database->getMaster());
-    }
+    private $connection;
 
-    /**
-     * Set the database node to use
-     * @param \Parm\DatabaseNode $databaseNode The database to connect to
-     */
-    public function setDatabaseNode(\Parm\DatabaseNode $databaseNode)
+    public function __construct(\Doctrine\DBAL\Connection $connection, $destinationDirectory, $generateToNamespace = "\\")
     {
-        $this->databaseNode = $databaseNode;
-    }
-
-    /**
-     * Set the destination directory to generate the objects and factories into
-     * @param string $directory
-     */
-    public function setDestinationDirectory($directory)
-    {
-        if (is_string($directory)) {
-            $this->destinationDirectory = $directory;
-        } else {
-            throw new \Parm\Exception\ErrorException('setDestinationDirectory($directory) must be a string');
+        if (!is_string($destinationDirectory)) {
+            throw new \Parm\Exception\ErrorException('destinationDirectory must be a string');
         }
-    }
 
-    /**
-     * The namespace to generate the objects and factories into
-     * @param string $directory
-     */
-    public function setGeneratedNamespace($namespaceString)
-    {
-        if (is_string($namespaceString)) {
-            $this->generatedNamespace = $namespaceString;
-        } else {
-            throw new \Parm\Exception\ErrorException('setGeneratedNamespace($namespaceString) must be a string');
+        $this->connection = $connection;
+        $this->destinationDirectory = $destinationDirectory;
+        if($generateToNamespace == null || $generateToNamespace == "\\")
+        {
+            $this->useGlobalNamespace();
         }
+        else {
+            $this->generateToNamespace = (string) $generateToNamespace;
+        }
+
     }
 
     /**
@@ -66,7 +37,7 @@ class DatabaseGenerator
      */
     public function useGlobalNamespace()
     {
-        $this->setGeneratedNamespace("");
+        $this->generateToNamespace = "\\";
     }
 
     /**
@@ -74,26 +45,7 @@ class DatabaseGenerator
      */
     public function generate()
     {
-        if ($this->destinationDirectory == null) {
-            throw new \Parm\Exception\ErrorException('Destination directory required');
-        } elseif (!file_exists($this->destinationDirectory)) {
-            if (!@mkdir($this->destinationDirectory)) {
-                throw new \Parm\Exception\ErrorException('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
-            }
-            try {
-                chmod($this->destinationDirectory, self::$DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
-            } catch (\Exception $e) {
-                throw new \Parm\Exception\ErrorException('Unable to make database destination directory "' . htmlentities($this->destinationDirectory) . '" writeable.');
-            }
-        }
-
-        $files = glob($this->destinationDirectory . '/*.php');
-
-        if ($files != null) {
-            foreach ($files as $file) {
-                @unlink($file);
-            }
-        }
+        $this->readyDestinationDirectory();
 
         $tableNames = $this->getTableNames();
 
@@ -117,12 +69,12 @@ class DatabaseGenerator
 
             }
 
-            $globalNamespaceData['namespace'] = $this->generatedNamespace;
-            $globalNamespaceData['escapedNamespace'] = $this->generatedNamespace != "" ? (str_replace("\\", "\\\\", $this->generatedNamespace) . "\\\\") : '';
-            $globalNamespaceData['namespaceLength'] = strlen($this->generatedNamespace) + 1;
+            $globalNamespaceData['namespace'] = $this->generateToNamespace;
+            $globalNamespaceData['escapedNamespace'] = $this->generateToNamespace != "" ? (str_replace("\\", "\\\\", $this->generateToNamespace) . "\\\\") : '';
+            $globalNamespaceData['namespaceLength'] = strlen($this->generateToNamespace) + 1;
 
             // global namespace file
-            if ($this->generatedNamespace != "\\" && $this->generatedNamespace != "") {
+            if ($this->generateToNamespace != "\\" && $this->generateToNamespace != "") {
                 $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/alias_all_tables_to_global_namespace.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/alias_all_tables_to_global_namespace.mustache'), $globalNamespaceData));
 
                 //autoloader
@@ -131,7 +83,9 @@ class DatabaseGenerator
                 $this->writeContentsToFile(rtrim($this->destinationDirectory, '/') . '/autoload.php', $m->render(file_get_contents(dirname(__FILE__) . '/templates/global_autoload.mustache'), $globalNamespaceData));
             }
         } else {
+            // @codeCoverageIgnoreStart
             throw new \Parm\Exception\ErrorException("No tables in database.");
+            // @codeCoverageIgnoreEnd
         }
     }
 
@@ -141,9 +95,9 @@ class DatabaseGenerator
      */
     public function getTableNames()
     {
-        $databaseName = $this->databaseNode->serverDatabaseName;
+        $databaseName = $this->connection->getDatabase();
 
-        $dp = new \Parm\DatabaseProcessor($this->databaseNode);
+        $dp = new \Parm\DatabaseProcessor($this->connection);
         $dp->setSQL('SHOW TABLES');
 
         $tableNames = array();
@@ -170,20 +124,24 @@ class DatabaseGenerator
 
         $className = ucfirst(\Parm\Row::columnToCamelCase($tableName));
 
-        $dp = new \Parm\DatabaseProcessor($this->databaseNode);
-        $dp->setSQL("SHOW COLUMNS FROM `" . $dp->escapeString($this->databaseNode->serverDatabaseName) . "`.`" . $dp->escapeString($tableName) . "`");
+        $dp = new \Parm\DatabaseProcessor($this->connection);
+        $dp->setSQL("SHOW COLUMNS FROM `" . $this->connection->getDatabase() . "`.`" . $tableName."`");
         $columns = $dp->getArray();
 
         // id field
         if ($columns != null && count($columns) > 0) {
             foreach ($columns as $key => $column) {
 
+                // Infrequent problem but throw exception:
+                // This could be fixed by changing getTemplatingDataFromTableName($tableName) to getTemplatingDataFromTableData($data)
+                // @codeCoverageIgnoreStart
                 if ($column['Field'] == "id" && $column['Key'] != "PRI") {
                     throw new \Parm\Exception\ErrorException('"id" is an invalid column name unless it is the primary key for the Parm\DatabaseGenerator. It causes a collision with the function getId() which always returns the primary key.');
                 }
+                // @codeCoverageIgnoreEnd
 
                 if ($column['Key'] == "PRI") {
-                    $idFieldName = $column['Field'];
+                    $idFieldName = strtoupper(str_replace("-", "_",$column['Field']));
                     $columns[$key]['isPrimaryKey'] = true;
 
                     if ($column['Field'] != "id" && preg_match("/int\(/", $column['Type'])) {
@@ -197,7 +155,7 @@ class DatabaseGenerator
                 $columns[$key]['FieldCase'] = ucfirst(\Parm\Row::columnToCamelCase($column['Field']));
                 $columns[$key]['AllCaps'] = strtoupper(str_replace("-", "_", $column['Field']));
 
-                $fieldsPack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN";
+                $fieldsPack[] = $className . "Table::" . $columns[$key]['AllCaps'] . "_COLUMN";
 
                 // column type
                 $columns[$key]['typeDate'] = 0;
@@ -228,7 +186,7 @@ class DatabaseGenerator
                     $columns[$key]['typeString'] = 1;
                 }
 
-                $defaultValuePack[] = "self::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'", "\'", $column['Default']) . "'");
+                $defaultValuePack[] = $className . "Table::" . $columns[$key]['AllCaps'] . "_COLUMN => " . ($column['Default'] == null ? "null" : "'" . str_replace("'", "\'", $column['Default']) . "'");
 
             }
         }
@@ -236,14 +194,14 @@ class DatabaseGenerator
         return array('tableName' => $tableName,
             'variableName' => \Parm\Row::columnToCamelCase($tableName),
             'className' => $className,
-            'databaseName' => $this->databaseNode->serverDatabaseName,
+            'databaseName' => $this->connection->getDatabase(),
             'idFieldIsInteger' => $idFieldInt,
             'idFieldName' => $idFieldName,
             'idFieldNameAllCaps' => strtoupper($idFieldName),
-            'namespace' => $this->generatedNamespace,
-            'autoloaderNamespace' => $this->generatedNamespace,
-            'namespaceClassSyntax' => ($this->generatedNamespace != "" && $this->generatedNamespace != "\\") ? 'namespace ' . $this->generatedNamespace . ';' : '',
-            'namespaceLength' => strlen($this->generatedNamespace),
+            'namespace' => $this->generateToNamespace,
+            'autoloaderNamespace' => $this->generateToNamespace,
+            'namespaceClassSyntax' => ($this->generateToNamespace != "" && $this->generateToNamespace != "\\") ? 'namespace ' . $this->generateToNamespace . ';' : '',
+            'namespaceLength' => strlen($this->generateToNamespace),
             'columns' => $columns,
             'defaultValuePack' => implode(", ", $defaultValuePack),
             'fieldList' => implode(", ", $fieldsPack),
@@ -252,6 +210,14 @@ class DatabaseGenerator
 
     }
 
+
+    /**
+     * @param $fileName
+     * @param $contents
+     * @return bool
+     * @throws \Parm\Exception\ErrorException
+     * @codeCoverageIgnore
+     */
     private function writeContentsToFile($fileName, $contents)
     {
         if (file_exists($fileName) && !is_writable($fileName)) {
@@ -268,4 +234,43 @@ class DatabaseGenerator
             throw new \Parm\Exception\ErrorException('Unable to write file: ' . htmlentities($fileName));
         }
     }
+
+    /**
+     * @throws \Parm\Exception\ErrorException
+     * @codeCoverageIgnore
+     */
+    private function readyDestinationDirectory()
+    {
+        if (!file_exists($this->destinationDirectory)) {
+            if (!@mkdir($this->destinationDirectory)) {
+                throw new \Parm\Exception\ErrorException('Unable to create database destination directory "' . htmlentities($this->destinationDirectory) . '".');
+            }
+            try {
+                chmod($this->destinationDirectory, self::$DESTINATION_DIRECTORY_FOLDER_PERMISSIONS);
+            } catch (\Exception $e) {
+                throw new \Parm\Exception\ErrorException('Unable to write to database destination directory "' . htmlentities($this->destinationDirectory) . '".');
+            }
+        }
+
+        $this->cleanupPreviousGeneration();
+    }
+
+    private function cleanupPreviousGeneration()
+    {
+        $this->deleteFiles(glob($this->destinationDirectory . '/autoload.php'));
+        $this->deleteFiles(glob($this->destinationDirectory . '/*DaoFactory.php'));
+        $this->deleteFiles(glob($this->destinationDirectory . '/*DaoObject.php'));
+        $this->deleteFiles(glob($this->destinationDirectory . '/*Table.php'));
+        $this->deleteFiles(glob($this->destinationDirectory . '/*TableFunctions.php'));
+    }
+
+    private function deleteFiles($files)
+    {
+        if ($files != null) {
+            foreach ($files as $file) {
+                @unlink($file);
+            }
+        }
+    }
+
 }

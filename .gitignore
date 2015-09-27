@@ -1,6 +1,8 @@
+.DS_Store
 composer.lock
 vendor
 .idea/
 tests/dao
-phpunit.xml.local
-run_tests.sh
+tests/build
+run_tests.bash
+tests/my.cnf

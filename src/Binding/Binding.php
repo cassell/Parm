@@ -2,7 +2,7 @@
 
 namespace Parm\Binding;
 
-class Binding extends SQLString
+class Binding implements SQLString
 {
     /**
      * The field/column to filter on
@@ -44,9 +44,12 @@ class Binding extends SQLString
     public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
         if ($this->value === null) {
-            return $factory->escapeString($this->field) . " " . $this->operator . " NULL";
+            return $this->field . " " . $this->operator . " NULL";
+
+        } elseif (is_int($this->value)) {
+            return $this->field . " " . $this->operator . " " . $this->value;
         } else {
-            return $factory->escapeString($this->field) . " " . $this->operator . " '" . $factory->escapeString($this->value) . "'";
+            return $this->field . " " . $this->operator . " " . $factory->escapeString($this->value);
         }
 
     }

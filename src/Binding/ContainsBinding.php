@@ -2,7 +2,9 @@
 
 namespace Parm\Binding;
 
-class ContainsBinding extends SQLString
+use Parm\DataAccessObjectFactory;
+
+class ContainsBinding implements SQLString
 {
     /**
      * The field/column to filter on
@@ -35,6 +37,6 @@ class ContainsBinding extends SQLString
      */
     public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
-        return $factory->escapeString($this->field) . " LIKE '%" . $factory->escapeString(str_replace("_", "\_", str_replace("%", "\%", $this->query))) . "%'";
+        return $this->field . " LIKE " . $factory->escapeString('%'.str_replace("_", "\\_", str_replace("%", "\\%", $this->query)).'%') . "";
     }
 }

@@ -2,7 +2,7 @@
 
 namespace Parm\Binding;
 
-class InBinding extends SQLString
+class InBinding implements SQLString
 {
 
     /**
@@ -30,9 +30,7 @@ class InBinding extends SQLString
 
     public function getSQL(\Parm\DataAccessObjectFactory $factory)
     {
-        if (count($this->array) == 1) {
-            return $factory->escapeString($this->field) . " = " . $factory->escapeString(reset($this->array));
-        } elseif (count($this->array) > 1) {
+        if (count($this->array) > 0) {
 
             $escaped = array();
 
@@ -40,11 +38,11 @@ class InBinding extends SQLString
                 if (is_numeric($item)) {
                     $escaped[] = $item;
                 } else {
-                    $escaped[] = "'" . $factory->escapeString($item) . "'";
+                    $escaped[] = $factory->escapeString($item);
                 }
             }
 
-            return $factory->escapeString($this->field) . " IN (" . implode(",", $escaped) . ")";
+            return $this->field . " IN (" . implode(",", $escaped) . ")";
         } else {
             throw new \Parm\Exception\ErrorException("The array passed to the NotInBinding is empty");
         }

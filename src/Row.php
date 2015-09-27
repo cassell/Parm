@@ -24,6 +24,8 @@ class Row extends \ArrayObject
      */
     public function toJSON()
     {
+        $json = [];
+
         foreach ($this as $field => $value) {
             $json[self::columnToCamelCase($field)] = $value;
         }

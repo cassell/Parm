@@ -10,6 +10,6 @@ class FalseBooleanBinding extends Binding
      */
     public function __construct($field)
     {
-        parent::__construct($field, '=', '0');
+        parent::__construct($field, '=', 0);
     }
 }

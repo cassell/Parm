@@ -543,3 +543,49 @@ VALUES
 	(274,'Charleston','USA','South Carolina',89063);
 
 
+CREATE TABLE `Region` (
+  `Region` varchar(50) DEFAULT NULL,
+  `Hemisphere` varchar(10) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Antarctica', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Australia and New Zealand', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Baltic Countries', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('British Islands', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Caribbean', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Central Africa', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Central America', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Eastern Africa', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Eastern Asia', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Eastern Europe', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Melanesia', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Micronesia', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Micronesia/Caribbean', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Middle East', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Nordic Countries', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('North America', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Northern Africa', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Polynesia', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('South America', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Southeast Asia', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Southern Africa', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Southern and Central Asia', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Southern Europe', 'Southern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Western Africa', 'Northern');
+INSERT INTO `Region` (`Region`, `Hemisphere`) VALUES ('Western Europe', 'Northern');
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

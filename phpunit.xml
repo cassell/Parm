@@ -1,6 +1,13 @@
-<?xml version="1.0" encoding="UTF-8"?>
-
-<phpunit colors="true">
+<phpunit bootstrap="tests/bootstrap.php"
+         backupGlobals="false"
+         backupStaticAttributes="false"
+         colors="true"
+         verbose="true"
+         convertErrorsToExceptions="true"
+         convertNoticesToExceptions="true"
+         convertWarningsToExceptions="true"
+         processIsolation="false"
+         stopOnFailure="true">
     <testsuites>
         <testsuite name="Parm test suite">
             <directory suffix="Test.php">./tests</directory>
@@ -20,12 +27,14 @@
 		<var name="mysql_timezones_loaded" value="0"/>
     </php>
     <filter>
+        <blacklist>
+            <directory>vendor</directory>
+        </blacklist>
         <whitelist>
-            <directory>./</directory>
-            <exclude>
-                <directory>./Tests</directory>
-                <directory>./vendor</directory>
-            </exclude>
+            <directory>src</directory>
         </whitelist>
     </filter>
+    <logging>
+        <log type="coverage-html" target="./tests/build/coverage/" title="Parm Test Coverage" charset="UTF-8" yui="true" highlight="true" lowUpperBound="35" highLowerBound="70" />
+    </logging>
 </phpunit>
