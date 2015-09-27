@@ -3,7 +3,9 @@
 ## Migration Guide:
 
 ### New Requirements:
+* PHP 5.5 or Greater
 * doctrine/dbal
+
 
 ### What's New
 * Uses the Doctrine Database Abstraction Layer Connection for all connections to the database
