@@ -13,3 +13,7 @@ php:
   - 5.6
   - 7.0
 script: ./vendor/bin/phpunit
+
+addons:
+    code_climate:
+        repo_token: 8203fc037080060805e300c50fc5c101369bbb665e1681a662531da5be723ab1
