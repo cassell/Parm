@@ -12,7 +12,12 @@ php:
   - 5.5
   - 5.6
   - 7.0
-script: ./vendor/bin/phpunit
+
+script: vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+
+after_script:
+  - vendor/bin/test-reporter --stdout --coverage-report tests/build/logs/clover.xml > codeclimate.json
+  - "curl -X POST -d @codeclimate.json -H 'Content-Type: application/json' -H 'User-Agent: Code Climate (PHP Test Reporter v0.1.1)' https://codeclimate.com/test_reports"
 
 addons:
     code_climate:
