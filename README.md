@@ -69,9 +69,9 @@ You can easily extend the models to encapsulate simple business logic. The examp
 
 	class User extends Project\Dao\UserDaoObject
 	{
-		static function getFactory(\Parm\MySql\DatabaseNode $databaseNode = null)
+		static function getFactory(\Doctrine\DBAL\Connection $connection = null)
 		{
-			return new UserFactory($databaseNode);
+			return new UserFactory($connection);
 		}
 
 		//example function
