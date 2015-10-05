@@ -13,7 +13,6 @@ It generates models based on your schema and its powerful closure based query pr
 1. SQL UPDATEs are minimal and only the modified columns/fields are sent to the database
 1. Closure based query processing that lets you handle data efficiently and in a fully customizable manner
 1. PagedCollection makes it very easy to page through a set of records one page at a time (Go through 1,000,000 records 1,000 at a time)
-1. Buffered queries for performance and unbuffered queries for processing huge data sets while staying memory safe
 1. Models can be generated into a namespace or generated into the global namespace
 1. Handles all escaping of input values when saving to the database
 1. Bindings automatically escape of query values
@@ -214,7 +213,7 @@ Running a sum query
 
 
 ## Closures
-Process each row queried with a closure(anonymous function). Iterate over very large data sets without hitting memory constraints use unbufferedProcess()
+Process each row queried with a closure(anonymous function).
 	
 	$f = new UserFactory();
 	$f->process(function($user)
@@ -238,15 +237,6 @@ Buffered Queries for Speed
 		echo $row['first_name'];
 		print_r($row);
 		
-	});
-
-Unbuffered for Large Data Sets
-
-	$p = new DatabaseProcessor('example');
-	$p->setSQL('select first_name, last_name from user');
-	$p->unbufferedProcess(function($row)
-	{
-		echo $row['first_name'];
 	});
 
 ## Performance
