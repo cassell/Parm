@@ -59,7 +59,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     */
     public function get{{FieldCase}}DateTimeObject()
     {
-        return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,$this->getFactory()->databaseNode->getDatetimeStorageFormat());
+        return $this->getDatetimeObjectFromField(self::{{AllCaps}}_COLUMN,Config::getDatetimeStorageFormat());
     }
 
     {{/typeDatetime}}

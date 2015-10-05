@@ -9,7 +9,6 @@ use Parm\Exception\UpdateFailedException;
 
 class DatabaseProcessor
 {
-    public $databaseNode;
     protected $sql = null;
     /**
      * @var \Doctrine\DBAL\Connection
@@ -228,7 +227,7 @@ class DatabaseProcessor
             $dateTimeObject = new \DateTime($dateTime);
         }
 
-        $this->setSQL("SELECT CONVERT_TZ('" . $dateTimeObject->format($this->databaseNode->getDatetimeStorageFormat()) . "','" . $this->escapeString($sourceTimezone) . "','" . $this->escapeString($destTimezone) . "') as convertTimezone;");
+        $this->setSQL("SELECT CONVERT_TZ('" . $dateTimeObject->format(Config::getDatetimeStorageFormat()) . "','" . $this->escapeString($sourceTimezone) . "','" . $this->escapeString($destTimezone) . "') as convertTimezone;");
 
         $result = $this->getSingleColumnArray("convertTimezone");
         if (is_array($result)) {
