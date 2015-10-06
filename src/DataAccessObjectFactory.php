@@ -780,8 +780,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     function __sleep()
     {
-        // reconnect to database
-        parent::__construct(static::getDatabaseName());
+        return ['fields','conditional','joinClause','groupByClause','orderByClause','limitClause'];
     }
 
     /**
@@ -795,7 +794,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      */
     function __wakeup()
     {
-        return ['fields','conditional','joinClause','groupByClause','orderByClause','limitClause'];
+        // reconnect to database
+        parent::__construct(static::getDatabaseName());
     }
 
 

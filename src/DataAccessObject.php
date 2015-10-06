@@ -2,6 +2,7 @@
 
 namespace Parm;
 
+use Parm\Exception\ErrorException;
 use Parm\Exception\GetFieldValueException;
 use Parm\Exception\RecordNotFoundException;
 
@@ -101,7 +102,12 @@ abstract class DataAccessObject extends Row implements TableInterface
             $sql = array();
 
             foreach ($this->modifiedColumns as $field => $j) {
-                if ( ($field != $this->getIdField() || ($field == $this->getIdField() && !$this->isAutoIncremented())) && in_array($field, static::getFields())) {
+                if ($field == $this->getIdField() && !$this->isAutoIncremented()) {
+                    if ($this->getId() == null) {
+                        throw new ErrorException($this->getIdField() . " is required for tables without an autoincrement id.");
+                    }
+                    $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this->getId()) . '';
+                } elseif ( $field != $this->getIdField() && in_array($field, static::getFields())) {
                     if ($this[$field] !== null) {
                         $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this[$field]) . '';
                     } else {
