@@ -122,7 +122,7 @@ abstract class DataAccessObject extends Row implements TableInterface
                     $this[$this->getIdField()] = $this->factory->getLastInsertId();
                 }
             } else {
-                $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
+                $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->factory->escapeString($this->getId()));
             }
 
         }

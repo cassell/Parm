@@ -681,19 +681,24 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $telephoneTtyUuid = \Ramsey\Uuid\Uuid::uuid4()->toString();
         $telephoneTty = new \ParmTests\Dao\TelephoneDaoObject();
         $telephoneTty->setTelephoneId($telephoneTtyUuid);
-        $telephoneTty->setPhoneNumber('8778892457');
+        $telephoneTty->setPhoneNumber('0');
         $telephoneTty->setAddressId($foundWahnetah->getId());
         $telephoneTty->setCreateDatetime(new DateTime());
 
         $this->assertEquals($telephoneTtyUuid,$telephoneTty->getId());
-        $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
+        $this->assertEquals('0',$telephoneTty->getPhoneNumber());
         $this->assertEquals($addressUuid,$telephoneTty->getAddressId());
 
         $telephoneTty->save();
 
         $this->assertEquals($telephoneTtyUuid,$telephoneTty->getId());
-        $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
+        $this->assertEquals('0',$telephoneTty->getPhoneNumber());
         $this->assertEquals($addressUuid,$telephoneTty->getAddressId());
+
+        $telephoneTty->setPhoneNumber('8778892457');
+        $telephoneTty->save();
+
+        $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
 
     }
 
