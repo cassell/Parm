@@ -13,6 +13,8 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     abstract public function getId();
 
+    abstract public function isAutoIncremented();
+
     private $modifiedColumns = array();
     /**
      * @var DataAccessObjectFactory
@@ -65,6 +67,16 @@ abstract class DataAccessObject extends Row implements TableInterface
         $this->modifiedColumns = array();
     }
 
+    protected function setupAsNewObject()
+    {
+        $this->clearModifiedColumns();
+        $this->isNewObject = true;
+        foreach (static::getFields() as $field) {
+            $this->addModifiedColumn($field);
+        }
+
+    }
+
     /**
      * Find an object by ID
      * @param  integer                 $id      ID of the row in the database
@@ -89,7 +101,7 @@ abstract class DataAccessObject extends Row implements TableInterface
             $sql = array();
 
             foreach ($this->modifiedColumns as $field => $j) {
-                if ($field != $this->getIdField() && in_array($field, static::getFields())) {
+                if ( ($field != $this->getIdField() || ($field == $this->getIdField() && !$this->isAutoIncremented())) && in_array($field, static::getFields())) {
                     if ($this[$field] !== null) {
                         $sql[] = $this->getTableName() . "." . $field . ' = ' . $this->factory->escapeString($this[$field]) . '';
                     } else {
@@ -100,7 +112,9 @@ abstract class DataAccessObject extends Row implements TableInterface
 
             if ($this->isNewObject()) {
                 $this->factory->update('INSERT INTO ' . $this->getTableName() . " SET " . implode(",", $sql));
-                $this[$this->getIdField()] = $this->factory->getLastInsertId();
+                if($this->isAutoIncremented()){
+                    $this[$this->getIdField()] = $this->factory->getLastInsertId();
+                }
             } else {
                 $this->factory->update('UPDATE ' . $this->getTableName() . " SET " . implode(",", $sql) . " WHERE " . $this->getTableName() . "." . $this->getIdField() . ' = ' . $this->getId());
             }
@@ -123,7 +137,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     public function delete()
     {
         if (!$this->isNewObject()) {
-            $this->factory->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . (int) $this->getId());
+            $this->factory->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . $this->getId());
         } else {
             throw new RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }

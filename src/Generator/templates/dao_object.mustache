@@ -10,7 +10,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
 {
     use {{className}}TableFunctions;
 
-{{#idFieldIsInteger}}
+{{#id.exists}}{{#id.isInteger}}
     /**
      * Get the ID (Primary Key) of the object
      * @return integer|null ID of the record in the database. null if a new record
@@ -20,8 +20,60 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
         return $this->getIntFieldValue($this->getIdField());
     }
 
-{{/idFieldIsInteger}}
-{{^idFieldName}}
+    /**
+    * Set the ID (Primary Key) of the object
+    * @param int $id
+    */
+    public function setNewObjectId($id)
+    {
+        $this->setIntFieldValue($this->getIdField(),$id);
+        $this->setupAsNewObject();
+    }
+
+    /**
+    * @return bool
+    */
+    public function isAutoIncremented()
+    {
+        {{#id.isAutoIncremented}}
+        return true;
+        {{/id.isAutoIncremented}}
+        {{^id.isAutoIncremented}}
+        return false;
+        {{/id.isAutoIncremented}}
+    }
+
+{{/id.isInteger}}{{/id.exists}}
+{{#id.exists}}{{^id.isInteger}}
+    /**
+    * Get the ID (Primary Key) of the object
+    * @return string|null ID of the record in the database. null if a new record
+    */
+    public function getId()
+    {
+        return $this->getFieldValue($this->getIdField());
+    }
+
+    /**
+    * Set the ID (Primary Key) of the object
+    * @param string $id
+    */
+    public function setNewObjectId($id)
+    {
+        $this->setFieldValue($this->getIdField(),$id);
+        $this->setupAsNewObject();
+    }
+
+    /**
+    * @return bool
+    */
+    public function isAutoIncremented()
+    {
+        return false;
+    }
+
+{{/id.isInteger}}{{/id.exists}}
+{{^id.exists}}
     /**
     * Get the ID (Primary Key) of the object
     * @throws \Parm\Exception\GetFieldValueException
@@ -31,8 +83,100 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
         throw new \Parm\Exception\GetFieldValueException("There is no id field on this table.");
     }
 
-{{/idFieldName}}
+    /**
+    * @return bool
+    */
+    public function isAutoIncremented()
+    {
+        return false;
+    }
+
+{{/id.exists}}
 {{#columns}}
+{{#isPrimaryKey}}
+    {{#id.isCalledId}}
+    {{#typeInt}}
+    /**
+    * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+    * @param int|null $val
+    */
+    public function set{{FieldCase}}($val)
+    {
+        $this->setNewObjectId($val);
+    }
+    {{/typeInt}}
+    {{#typeString}}
+    /**
+    * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+    * @param string|null $val
+    */
+    public function set{{FieldCase}}($val)
+    {
+        $this->setNewObjectId($val);
+    }
+    {{/typeString}}
+    {{/id.isCalledId}}
+    {{^id.isCalledId}}
+    {{#typeInt}}
+    /**
+    * Set the ID (Primary Key) of the object
+    * @param int $id
+    */
+    public function setId($id)
+    {
+        $this->setNewObjectId($id);
+    }
+
+    /**
+    * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+    * @param int|null $val
+    */
+    public function set{{FieldCase}}($val)
+    {
+        $this->setNewObjectId($val);
+    }
+
+    /**
+    * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+    * @return int|null
+    */
+    public function get{{FieldCase}}()
+    {
+        return $this->getId();
+    }
+    {{/typeInt}}
+    {{#typeString}}
+
+    /**
+    * Set the ID (Primary Key) of the object
+    * @param string $id
+    */
+    public function setId($id)
+    {
+        $this->setNewObjectId($id);
+    }
+
+    /**
+    * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
+    * @param string|null $val
+    */
+    public function set{{FieldCase}}($val)
+    {
+        $this->setNewObjectId($val);
+    }
+
+    /**
+    * Get {{Type}} field {{tableName}}.{{Field}} from logical database "{{databaseName}}"
+    * @return string|null
+    */
+    public function get{{FieldCase}}()
+    {
+        return $this->getId();
+    }
+    {{/typeString}}
+    {{/id.isCalledId}}
+{{/isPrimaryKey}}
+{{^isPrimaryKey}}
     {{#typeDatetime}}
     /**
     * Set {{Type}} field {{tableName}}.{{Field}} in logical database "{{databaseName}}"
@@ -174,6 +318,7 @@ class {{className}}DaoObject extends \Parm\DataAccessObject implements {{classNa
     }
 
     {{/typeString}}
+{{/isPrimaryKey}}
 {{/columns}}
 
 }

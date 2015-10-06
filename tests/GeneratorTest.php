@@ -25,7 +25,7 @@ class GeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function testInvalidDirectory()
     {
-        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm_namespaced_tests'),null);
+        $generator = new Parm\Generator\Generator(\Parm\Config::getConnection('parm_namespaced_tests'),null);
     }
 
 
@@ -34,7 +34,7 @@ class GeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function testNamespaceGeneration()
     {
-        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm_namespaced_tests'),dirname(__FILE__) . '/dao/namespaced','ParmTests\Dao');
+        $generator = new Parm\Generator\Generator(\Parm\Config::getConnection('parm_namespaced_tests'),dirname(__FILE__) . '/dao/namespaced','ParmTests\Dao');
         $generator->generate();
     }
 
@@ -43,7 +43,7 @@ class GeneratorTest extends PHPUnit_Framework_TestCase
      */
     public function testGlobalGeneration()
     {
-        $generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm-global-tests'),dirname(__FILE__) . '/dao/global');
+        $generator = new Parm\Generator\Generator(\Parm\Config::getConnection('parm-global-tests'),dirname(__FILE__) . '/dao/global');
         $generator->generate();
     }
 }

@@ -466,7 +466,7 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $new->setZipcodeId(555);
         $new->setArchived(0);
 
-        $this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";s:1:"0";s:8:"verified";s:1:"0";s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
+        $this->assertEquals('a:11:{s:8:"peopleId";N;s:9:"firstName";s:5:"James";s:8:"lastName";s:8:"Buchanan";s:9:"zipcodeId";i:555;s:8:"archived";i:0;s:8:"verified";i:0;s:12:"testDataBlob";N;s:10:"createDate";N;s:14:"createDatetime";N;s:15:"createTimestamp";N;s:2:"id";N;}', serialize($new->toJSON()));
 
     }
 
@@ -626,6 +626,75 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         ]);
 
         $city->getCity();
+    }
+
+    /**
+     * @test
+     */
+    public function testUuidObjectsColumn()
+    {
+        $addressUuid = \Ramsey\Uuid\Uuid::uuid4()->toString();
+
+        $zf = new \ParmTests\Dao\ZipcodesDaoFactory();
+        $jimThorpe = $zf->findFirst("where city = 'Jim Thorpe'");
+
+        $wahnetah = new \ParmTests\Dao\AddressDaoObject();
+        $wahnetah->setId($addressUuid);
+        $wahnetah->setStreetAddress('432 Center St');
+        $wahnetah->setZipcodeId($jimThorpe->getId());
+        $wahnetah->setCreateDatetime(time());
+
+        $this->assertEquals($addressUuid,$wahnetah->getId());
+        $this->assertEquals('432 Center St',$wahnetah->getStreetAddress());
+        $this->assertEquals(763,$wahnetah->getZipcodeId());
+
+        $wahnetah->save();
+
+        $this->assertEquals($addressUuid,$wahnetah->getId());
+        $this->assertEquals('432 Center St',$wahnetah->getStreetAddress());
+        $this->assertEquals(763,$wahnetah->getZipcodeId());
+
+        $af = new \ParmTests\Dao\AddressDaoFactory();
+        $foundWahnetah = $af->findId($addressUuid);
+        $this->assertEquals($addressUuid,$foundWahnetah->getId());
+        $this->assertEquals('432 Center St',$foundWahnetah->getStreetAddress());
+        $this->assertEquals(763,$foundWahnetah->getZipcodeId());
+
+
+        $landLineUuid = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $telephoneLandLine = new \ParmTests\Dao\TelephoneDaoObject();
+        $telephoneLandLine->setId($landLineUuid);
+        $telephoneLandLine->setPhoneNumber('5703253180');
+        $telephoneLandLine->setAddressId($wahnetah->getId());
+        $telephoneLandLine->setCreateDatetime(new DateTime());
+
+        $this->assertEquals($landLineUuid,$telephoneLandLine->getId());
+        $this->assertEquals('5703253180',$telephoneLandLine->getPhoneNumber());
+        $this->assertEquals($addressUuid,$telephoneLandLine->getAddressId());
+
+        $telephoneLandLine->save();
+
+        $this->assertEquals($landLineUuid,$telephoneLandLine->getId());
+        $this->assertEquals('5703253180',$telephoneLandLine->getPhoneNumber());
+        $this->assertEquals($addressUuid,$telephoneLandLine->getAddressId());
+
+        $telephoneTtyUuid = \Ramsey\Uuid\Uuid::uuid4()->toString();
+        $telephoneTty = new \ParmTests\Dao\TelephoneDaoObject();
+        $telephoneTty->setTelephoneId($telephoneTtyUuid);
+        $telephoneTty->setPhoneNumber('8778892457');
+        $telephoneTty->setAddressId($foundWahnetah->getId());
+        $telephoneTty->setCreateDatetime(new DateTime());
+
+        $this->assertEquals($telephoneTtyUuid,$telephoneTty->getId());
+        $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
+        $this->assertEquals($addressUuid,$telephoneTty->getAddressId());
+
+        $telephoneTty->save();
+
+        $this->assertEquals($telephoneTtyUuid,$telephoneTty->getId());
+        $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
+        $this->assertEquals($addressUuid,$telephoneTty->getAddressId());
+
     }
 
 }

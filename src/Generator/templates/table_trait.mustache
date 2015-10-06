@@ -26,17 +26,17 @@ trait {{className}}TableFunctions
         return '{{tableName}}';
     }
 
-{{#idFieldName}}
+{{#id.exists}}
     /**
      * Get the column name of the primary key field
      * @return string The primary key column name
      */
     public static function getIdField()
     {
-        return {{className}}Table::{{idFieldNameAllCaps}}_COLUMN;
+        return {{className}}Table::{{id.columnNameAllCaps}}_COLUMN;
     }
-{{/idFieldName}}
-    {{^idFieldName}}
+{{/id.exists}}
+{{^id.exists}}
     /**
      * This table or view does not have a primary key
      * @return string The primary key column name
@@ -45,7 +45,7 @@ trait {{className}}TableFunctions
     {
         return null;
     }
-{{/idFieldName}}
+{{/id.exists}}
 
     /**
      * Get the factory associated with this object

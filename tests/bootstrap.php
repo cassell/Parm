@@ -29,10 +29,10 @@ if (!file_exists(dirname(__FILE__) . '/dao')) {
     chmod(dirname(__FILE__) . '/dao', 0777);
 }
 
-$generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm_namespaced_tests'),dirname(__FILE__) . '/dao/namespaced','ParmTests\Dao');
+$generator = new Parm\Generator\Generator(\Parm\Config::getConnection('parm_namespaced_tests'),dirname(__FILE__) . '/dao/namespaced','ParmTests\Dao');
 $generator->generate();
 
-$generator = new Parm\Generator\DatabaseGenerator(\Parm\Config::getConnection('parm-global-tests'),dirname(__FILE__) . '/dao/global');
+$generator = new Parm\Generator\Generator(\Parm\Config::getConnection('parm-global-tests'),dirname(__FILE__) . '/dao/global');
 $generator->generate();
 
 require_once dirname(__FILE__) . '/dao/namespaced/autoload.php';

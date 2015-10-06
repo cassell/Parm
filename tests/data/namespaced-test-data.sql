@@ -1811,3 +1811,20 @@ CREATE TABLE `people_zipcodes_link` (
   `create_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+CREATE TABLE `address` (
+  `id` varchar(36) NOT NULL,
+  `street_address` longtext,
+  `zipcode_Id` int(11) NOT NULL,
+  `create_datetime` datetime NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
+
+
+CREATE TABLE `telephone` (
+  `telephone_id` char(36) NOT NULL,
+  `phone_number` varchar(50) NOT NULL,
+  `address_id` varchar(36) NOT NULL,
+  `create_datetime` datetime NOT NULL,
+  PRIMARY KEY (`telephone_id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

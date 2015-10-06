@@ -11,8 +11,7 @@ spl_autoload_register(function($class) {
     $classes[] = '{{escapedNamespace}}{{className}}DaoFactory';
     {{/tables}}
 
-    if(in_array($class, $classes))
-    {
+    if(in_array($class, $classes)) {
         require_once dirname(__FILE__) . DIRECTORY_SEPARATOR . substr($class, {{namespaceLength}}) . '.php';
     }
 

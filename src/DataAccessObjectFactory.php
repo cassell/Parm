@@ -89,7 +89,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find an object by primary key
-     * @param  integer $id ID of the row in the database
+     * @param  integer|string $id ID of the row in the database
      * @return null|object The record from the database
      * @throws ErrorException
      */
@@ -98,7 +98,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         $this->clearBindings();
 
         if (static::getIdField()) {
-            $this->addBinding(new EqualsBinding(static::getIdField(), (int)$id));
+            $this->addBinding(new EqualsBinding(static::getIdField(), $id));
             return $this->getFirstObject();
         } else {
             throw new ErrorException('Unable to findId on a table that does not have a primary key');
