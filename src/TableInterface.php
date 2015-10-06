@@ -2,6 +2,8 @@
 
 namespace Parm;
 
+use Doctrine\DBAL\Connection;
+
 interface TableInterface
 {
     public static function getTableName();
@@ -13,9 +15,10 @@ interface TableInterface
     public static function getDatabaseName();
 
     /**
+     * @param Connection $connection
      * @return DataAccessObjectFactory
      */
-    public static function getFactory();
+    public static function getFactory(Connection $connection = null);
 
     public static function getDefaultRow();
 }
