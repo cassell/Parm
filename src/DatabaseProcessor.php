@@ -7,7 +7,7 @@ use Parm\Exception\ErrorException;
 use Parm\Exception\TimezoneConversionException;
 use Parm\Exception\UpdateFailedException;
 
-class DatabaseProcessor
+class DatabaseProcessor implements \Serializable
 {
     protected $sql = null;
     /**
@@ -168,6 +168,7 @@ class DatabaseProcessor
      * Execute a sql update
      *
      * @param string $sql The SQL to execute
+     * @throws UpdateFailedException
      */
     public function update($sql)
     {
@@ -290,35 +291,28 @@ class DatabaseProcessor
     }
 
     /**
-     * serialize() checks if your class has a function with the magic name __sleep.
-     * If so, that function is executed prior to any serialization.
-     * It can clean up the object and is supposed to return an array with the names of all variables of that object that should be serialized.
-     * If the method doesn't return anything then NULL is serialized and E_NOTICE is issued.
-     * The intended use of __sleep is to commit pending data or perform similar cleanup tasks.
-     * Also, the function is useful if you have very large objects which do not need to be saved completely.
-     *
-     * @return array|NULL
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.sleep
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
      */
-    function __sleep()
+    public function serialize()
     {
         throw new \RuntimeException("You can not serialize a DatabaseProcessor because it contains an open database connection.");
     }
 
     /**
-     * unserialize() checks for the presence of a function with the magic name __wakeup.
-     * If present, this function can reconstruct any resources that the object may have.
-     * The intended use of __wakeup is to reestablish any database connections that may have been lost during
-     * serialization and perform other reinitialization tasks.
-     *
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param  string $serialized <p>
+     *                            The string representation of the object.
+     *                            </p>
      * @return void
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.sleep
      */
-    function __wakeup()
+    public function unserialize($serialized)
     {
         throw new \RuntimeException("Unable to deserialize DatabaseProcessor because it requires a database connection.");
     }
-
-
 
 }

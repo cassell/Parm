@@ -90,7 +90,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Find an object by primary key
      * @param  integer|string $id ID of the row in the database
-     * @return null|object The record from the database
+     * @return null|object    The record from the database
      * @throws ErrorException
      */
     public function findId($id)
@@ -99,6 +99,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
         if (static::getIdField()) {
             $this->addBinding(new EqualsBinding(static::getIdField(), $id));
+
             return $this->getFirstObject();
         } else {
             throw new ErrorException('Unable to findId on a table that does not have a primary key');
@@ -106,8 +107,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     }
 
     /**
-     * @param  integer $id ID of the row in the database
-     * @return object|null                             The record from the database
+     * @param  integer|string          $id ID of the row in the database
+     * @return object|null             The record from the database
      * @throws RecordNotFoundException
      * @throws ErrorException
      */
@@ -118,7 +119,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         if ($object) {
             return $object;
         } else {
-            throw new RecordNotFoundException('Unable to find object #' . (int)$id);
+            throw new RecordNotFoundException('Unable to find object #' . $id);
         }
     }
 
@@ -135,8 +136,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Get objects with completely custom join, where, group, and order by clause
-     * @param string $clause
-     * @return array of DataAccessObjects
+     * @param  string         $clause
+     * @return array          of DataAccessObjects
      * @throws ErrorException
      */
     public function find($clause = "")
@@ -152,7 +153,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Adds to the default factory Binding which is an AND conditional
-     * @param  Binding|string $binding
+     * @param  Binding|string          $binding
      * @return DataAccessObjectFactory so that you can chain bindings
      */
     public function addBinding($binding)
@@ -164,7 +165,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Alias to addBinding. Adds a binding to the default factory Binding which is an AND conditional
-     * @param  Binding|string $binding
+     * @param  Binding|string          $binding
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -175,8 +176,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Adds a conditional to the default FactoryConditional which is an AND conditional
-     * @param  Conditional $conditional
-     * @return DataAccessObjectFactory   so that you can chain bindings and conditionals
+     * @param  Conditional             $conditional
+     * @return DataAccessObjectFactory so that you can chain bindings and conditionals
      * @codeCoverageIgnore
      */
     public function addConditional(Conditional $conditional)
@@ -188,9 +189,9 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Adds to the default Factory Binding which is an AND conditional
-     * @param  DataAccessObject $object
-     * @param  string $localField
-     * @param  string $remoteField
+     * @param  DataAccessObject        $object
+     * @param  string                  $localField
+     * @param  string                  $remoteField
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -201,8 +202,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Shorthand to add an Equals Binding to the Factory conditional
-     * @param  string $field
-     * @param  string $value
+     * @param  string                  $field
+     * @param  string                  $value
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -213,8 +214,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Shorthand to add a NotEqualsBinding to the Factory conditional
-     * @param  string $field
-     * @param  string $value
+     * @param  string                  $field
+     * @param  string                  $value
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -225,8 +226,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Shorthand to add a ContainsBinding to the Factory conditional
-     * @param  string $field
-     * @param  string $value
+     * @param  string                  $field
+     * @param  string                  $value
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -237,7 +238,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
-     * @param  string $field
+     * @param  string                  $field
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -248,7 +249,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Shorthand to add an TrueBooleanBinding Binding to the Factory conditional
-     * @param  string $field
+     * @param  string                  $field
      * @return DataAccessObjectFactory so that you can chain bindings
      * @codeCoverageIgnore
      */
@@ -333,7 +334,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Add a column to the select clause. Useful when using join.
      * Usage: $f->addSelectField("company.company_name");
-     * @param  string $field The name of the column
+     * @param  string                  $field The name of the column
      * @return DataAccessObjectFactory for chaining
      */
     public function addSelectField($field)
@@ -353,7 +354,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Add a join to the select clause
-     * @param  string $clause The join clause
+     * @param  string                  $clause The join clause
      * @return DataAccessObjectFactory for chaining
      */
     public function join($clause)
@@ -365,7 +366,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Set and replace the entire join clause
-     * @param  string $val The join clause
+     * @param  string                  $val The join clause
      * @return DataAccessObjectFactory for chaining
      */
     public function setJoinClause($val)
@@ -386,7 +387,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Alias to the join() function
-     * @param  string $clause join clause
+     * @param  string           $clause join clause
      * @return DataAccessObject
      * @codeCoverageIgnore
      */
@@ -398,7 +399,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Add to the group by clause
      * Usage: $f->groupBy("last_name");
-     * @param  array|string $fieldOrArray An array of strings or all the fields separated by commas
+     * @param  array|string     $fieldOrArray An array of strings or all the fields separated by commas
      * @return DataAccessObject
      */
     public function groupBy($fieldOrArray)
@@ -425,7 +426,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Set and replace the entire group yb clause
-     * @param  string $groupByClause The group by clause
+     * @param  string                  $groupByClause The group by clause
      * @return DataAccessObjectFactory for chaining
      */
     public function setGroupByClause($groupByClause)
@@ -448,7 +449,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
      * Usage: $f->orderBy("last_name","asc");
      * Alt Usage: $f->orderBy("last_name, first_name");
      * @param $fieldOrSort string field to sort on or the order by clause
-     * @param string $direction
+     * @param  string $direction
      * @return $this
      */
     public function orderBy($fieldOrSort, $direction = 'asc')
@@ -470,7 +471,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Set and replace the entire order by clause
-     * @param string $val order by clause
+     * @param  string                  $val order by clause
      * @return DataAccessObjectFactory for chaining
      */
     public function setOrderByClause($val)
@@ -492,7 +493,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Add a bunch of fields to the order by clause ascending
      * Usage: $f->orderByAsc("last_name","first_name");
-     * @param  array|string $arrayOfFields An array of strings or all the fields separated by commas
+     * @param  array|string     $arrayOfFields An array of strings or all the fields separated by commas
      * @return DataAccessObject
      */
     public function orderByAsc($arrayOfFields)
@@ -511,16 +512,16 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Limit the number of rows returned by the database
      * Usage: $f->limit(10);
-     * @param  integer $number The number of rows to return
-     * @param  integer $offset The row to start at
+     * @param  integer          $number The number of rows to return
+     * @param  integer          $offset The row to start at
      * @return DataAccessObject
      */
     public function limit($number, $offset = 0)
     {
-        if ((int)$offset > 0) {
-            $this->setLimitClause("LIMIT " . (int)$offset . "," . (int)$number);
+        if ((int) $offset > 0) {
+            $this->setLimitClause("LIMIT " . (int) $offset . "," . (int) $number);
         } else {
-            $this->setLimitClause("LIMIT " . (int)$number);
+            $this->setLimitClause("LIMIT " . (int) $number);
         }
 
         return $this;
@@ -528,7 +529,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Set and replace the entire limit clause
-     * @param  string $limitClause The limit clause
+     * @param  string                  $limitClause The limit clause
      * @return DataAccessObjectFactory for chaining
      */
     public function setLimitClause($limitClause)
@@ -550,8 +551,8 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     /**
      * Wrapper to the limit function to paging to page through data
      * Usage: $f->paging(2,50);
-     * @param  integer $pageNumber The page number the cursor is on
-     * @param  integer $rowsPerPage Number of rows per page
+     * @param  integer          $pageNumber  The page number the cursor is on
+     * @param  integer          $rowsPerPage Number of rows per page
      * @return DataAccessObject
      */
     public function paging($pageNumber, $rowsPerPage = 20)
@@ -605,7 +606,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Delete rows based on custom where clause
-     * @param string $whereClause
+     * @param  string $whereClause
      * @return bool
      */
     public function deleteWhere($whereClause)
@@ -615,7 +616,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find the first object based on the clause
-     * @param  string $clause
+     * @param  string           $clause
      * @return DataAccessObject
      */
     public function findFirst($clause = "")
@@ -630,7 +631,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find distinct values of a single column. Can be filtered by the clause
-     * @param  string $field The field to select
+     * @param  string $field  The field to select
      * @param  string $clause The the clause to filter on
      * @return array
      */
@@ -640,8 +641,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
         $this->setSQL('SELECT DISTINCT(' . $field . ") as fdf FROM " . static::getEscapedTableName() . " " . $clause);
 
-        foreach($this->getArray() as $row)
-        {
+        foreach ($this->getArray() as $row) {
             $array[] = $row["fdf"];
         }
 
@@ -651,7 +651,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find all the values of a single column. Can be filtered by the clause
-     * @param  string $field The field to select
+     * @param  string $field  The field to select
      * @param  string $clause The the clause to filter on
      * @return array
      */
@@ -661,8 +661,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
         $this->setSQL('SELECT ' . $field . " as ff FROM " . static::getEscapedTableName() . " " . $clause);
 
-        foreach($this->getArray() as $row)
-        {
+        foreach ($this->getArray() as $row) {
             $array[] = $row["ff"];
         }
 
@@ -671,7 +670,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find the first value of a single column. Can be filtered by the clause
-     * @param  string $field The field to select
+     * @param  string $field  The field to select
      * @param  string $clause The the clause to filter on
      * @return string
      */
@@ -688,21 +687,21 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Get a count of rows based on the filter clause
-     * @param  string $clause The the clause to filter on
+     * @param  string  $clause The the clause to filter on
      * @return integer the count of rows
      */
     public function getCount($clause = "")
     {
         if ($this->getIdField() != '') {
-            return (int)($this->sqlFunctionFieldQuery('COUNT', static::getEscapedTableName() . "." . static::getIdField(), $clause));
+            return (int) ($this->sqlFunctionFieldQuery('COUNT', static::getEscapedTableName() . "." . static::getIdField(), $clause));
         } else {
-            return (int)($this->sqlFunctionFieldQuery('COUNT', '*', $clause));
+            return (int) ($this->sqlFunctionFieldQuery('COUNT', '*', $clause));
         }
     }
 
     /**
      * Find the maximum value of a single column. Can be filtered by the clause
-     * @param  string $field The field to get the max value of
+     * @param  string $field  The field to get the max value of
      * @param  string $clause The the clause to filter on
      * @return string
      */
@@ -713,7 +712,7 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
 
     /**
      * Find the sum of values for a single column. Can be filtered by the clause
-     * @param  string $field The field to sum
+     * @param  string $field  The field to sum
      * @param  string $clause The the clause to filter on
      * @return string
      */
@@ -747,12 +746,11 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
         return $conditionalSQL;
     }
 
-
     private function getSingleFieldFunctionValue($function, $field)
     {
         $result = $this->getResult(implode(" ", array("SELECT " . $function . "(" . $field . ") as val", $this->getFromClause(), $this->getJoinClause(), $this->getConditionalSql())));
 
-        return (int)$result->fetchColumn();
+        return $result->fetchColumn();
     }
 
     /**
@@ -768,35 +766,45 @@ abstract class DataAccessObjectFactory extends DatabaseProcessor implements Tabl
     }
 
     /**
-     * serialize() checks if your class has a function with the magic name __sleep.
-     * If so, that function is executed prior to any serialization.
-     * It can clean up the object and is supposed to return an array with the names of all variables of that object that should be serialized.
-     * If the method doesn't return anything then NULL is serialized and E_NOTICE is issued.
-     * The intended use of __sleep is to commit pending data or perform similar cleanup tasks.
-     * Also, the function is useful if you have very large objects which do not need to be saved completely.
-     *
-     * @return array|NULL
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.sleep
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * String representation of object
+     * @link http://php.net/manual/en/serializable.serialize.php
+     * @return string the string representation of the object or null
      */
-    function __sleep()
+    public function serialize()
     {
-        return ['fields','conditional','joinClause','groupByClause','orderByClause','limitClause'];
+        return serialize([
+            'fields' => $this->fields,
+            'conditional' => $this->conditional,
+            'joinClause' => $this->joinClause,
+            'groupByClause' => $this->groupByClause,
+            'orderByClause' => $this->orderByClause,
+            'limitClause' => $this->limitClause
+        ]);
     }
 
     /**
-     * unserialize() checks for the presence of a function with the magic name __wakeup.
-     * If present, this function can reconstruct any resources that the object may have.
-     * The intended use of __wakeup is to reestablish any database connections that may have been lost during
-     * serialization and perform other reinitialization tasks.
-     *
+     * (PHP 5 &gt;= 5.1.0)<br/>
+     * Constructs the object
+     * @link http://php.net/manual/en/serializable.unserialize.php
+     * @param  string $serialized <p>
+     *                            The string representation of the object.
+     *                            </p>
      * @return void
-     * @link http://php.net/manual/en/language.oop5.magic.php#language.oop5.magic.sleep
      */
-    function __wakeup()
+    public function unserialize($serialized)
     {
+        $unserialized = unserialize($serialized);
+        $this->fields = $unserialized['fields'];
+        $this->conditional = $unserialized['conditional'];
+        $this->joinClause = $unserialized['joinClause'];
+        $this->groupByClause = $unserialized['groupByClause'];
+        $this->orderByClause = $unserialized['orderByClause'];
+        $this->limitClause = $unserialized['limitClause'];
+
         // reconnect to database
         parent::__construct(static::getDatabaseName());
-    }
 
+    }
 
 }
