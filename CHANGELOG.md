@@ -1,3 +1,9 @@
+# 4.0.0
+## Migration Guide (from 3.0.0):
+* Renamed \Parm\Generator\DatabaseGenerator to \Parm\Generator\Generator
+
+-----------------
+
 # 3.0.0
 
 ## Migration Guide:
