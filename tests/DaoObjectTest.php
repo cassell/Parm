@@ -695,10 +695,25 @@ class DaoObjectTest extends PHPUnit_Framework_TestCase
         $this->assertEquals('0',$telephoneTty->getPhoneNumber());
         $this->assertEquals($addressUuid,$telephoneTty->getAddressId());
 
+        $tf = new \ParmTests\Dao\TelephoneDaoFactory();
+        $foundTty = $tf->findId($telephoneTtyUuid);
+        $this->assertEquals($telephoneTtyUuid,$foundTty->getId());
+        $this->assertEquals('0',$foundTty->getPhoneNumber());
+        $this->assertEquals($addressUuid,$foundTty->getAddressId());
+
         $telephoneTty->setPhoneNumber('8778892457');
         $telephoneTty->save();
 
         $this->assertEquals('8778892457',$telephoneTty->getPhoneNumber());
+        $tf = new \ParmTests\Dao\TelephoneDaoFactory();
+        $foundTty = $tf->findId($telephoneTtyUuid);
+        $this->assertEquals('8778892457',$foundTty->getPhoneNumber());
+
+        $telephoneTty->delete();
+
+        $af = new \ParmTests\Dao\TelephoneDaoFactory();
+        $foundTty = $af->findId($telephoneTtyUuid);
+        $this->assertNull($foundTty);
 
     }
 

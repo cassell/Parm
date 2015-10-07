@@ -143,7 +143,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     public function delete()
     {
         if (!$this->isNewObject()) {
-            $this->factory->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . $this->getId());
+            $this->factory->update("DELETE FROM " . $this->getTableName() . " WHERE " . $this->getIdField() . " = " . $this->factory->escapeString($this->getId()));
         } else {
             throw new RecordNotFoundException("delete() failed: You can't delete this object from the database as it hasn't been saved yet.");
         }
