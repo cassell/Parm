@@ -15,6 +15,7 @@ class Config
     private static $connections = Array();
     private static $dateStorageFormat = 'Y-m-d';
     private static $datetimeStorageFormat = 'Y-m-d H:i:s';
+    private static $characterSet = 'utf8';
     private static $caseSensitiveCollation = 'utf8_bin';
 
     /**
@@ -28,6 +29,7 @@ class Config
             'password' => $databasePassword,
             'host' => $databaseHost,
             'driver' => 'pdo_mysql',
+            'charset' => static::getCharacterSet()
         ], new \Doctrine\DBAL\Driver\PDOMySql\Driver(), null, null));
     }
 
@@ -111,5 +113,23 @@ class Config
     {
         self::$datetimeStorageFormat = $datetimeStorageFormat;
     }
+
+    /**
+     * @return string
+     */
+    public static function getCharacterSet()
+    {
+        return self::$characterSet;
+    }
+
+    /**
+     * @param string $characterSet
+     */
+    public static function setCharacterSet($characterSet)
+    {
+        self::$characterSet = $characterSet;
+    }
+
+
 
 }
