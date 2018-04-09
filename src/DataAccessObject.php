@@ -375,7 +375,7 @@ abstract class DataAccessObject extends Row implements TableInterface
      */
     protected function setNumericalFieldValue($columnName, $val)
     {
-        if ($val == null) {
+        if ($val === null) {
             return $this->setFieldValue($columnName, NULL);
         } else {
             return $this->setFieldValue($columnName, (float) $val);
@@ -390,7 +390,7 @@ abstract class DataAccessObject extends Row implements TableInterface
     protected function getNumericalFieldValue($columnName)
     {
         $val = $this->getFieldValue($columnName);
-        if ($val == null) {
+        if ($val === null) {
             return null;
         } else {
             return (float) $val;
